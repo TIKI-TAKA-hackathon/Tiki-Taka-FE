@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="고찌봄">
+  <rect width="512" height="512" rx="112" fill="#3b5bdb" />
+  <g transform="rotate(-40 256 256)">
+    <rect x="191" y="121" width="130" height="270" rx="65" fill="#ffffff" />
+    <line x1="191" y1="256" x2="321" y2="256" stroke="#c7d2fe" stroke-width="12" />
+  </g>
+</svg>

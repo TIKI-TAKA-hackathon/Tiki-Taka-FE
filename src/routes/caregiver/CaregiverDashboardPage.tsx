@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { Badge, Card } from '../../components/ui';
-import { caregiverBoard } from '../../lib/mock';
+import { Badge, Card, ErrorNote, Loading } from '../../components/ui';
+import { fetchCaregiverBoard } from '../../lib/api';
+import { useAsync } from '../../lib/useAsync';
 import type { WeekDayStatus } from '../../lib/types';
 
 const WEEK_DOT: Record<WeekDayStatus, string> = {
@@ -10,11 +11,20 @@ const WEEK_DOT: Record<WeekDayStatus, string> = {
 };
 
 export function CaregiverDashboardPage() {
-  const { patientName, circle, doses, confirmations, pills, week, alert } = caregiverBoard;
   const navigate = useNavigate();
+  const { data, loading, error } = useAsync(fetchCaregiverBoard);
+
+  if (loading) {
+    return <Loading label="복약 상태를 불러오는 중…" />;
+  }
+  if (error || !data) {
+    return <ErrorNote message={error ?? '복약 상태를 불러오지 못했어요.'} />;
+  }
+
+  const { patientName, circle, doses, confirmations, pills, week, alert } = data;
 
   return (
-    <div className="flex min-h-full flex-col gap-4 px-5 pb-10 pt-2">
+    <div className="flex min-h-full flex-col gap-4 px-5 pb-10 pt-4">
       <header>
         <div className="flex items-start justify-between">
           <div>

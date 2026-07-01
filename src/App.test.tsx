@@ -16,13 +16,13 @@ describe('App', () => {
     expect(screen.getByTestId('api-base')).toHaveTextContent(env.apiBaseUrl);
   });
 
-  it('shows the caregiver monitoring dashboard', () => {
+  it('loads the caregiver monitoring dashboard from the data layer', async () => {
     render(
       <MemoryRouter initialEntries={['/caregiver']}>
         <App />
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('heading', { name: '어머니 복약 상태' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: '어머니 복약 상태' })).toBeInTheDocument();
   });
 });

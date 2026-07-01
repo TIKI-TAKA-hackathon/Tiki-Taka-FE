@@ -1,4 +1,8 @@
 import '@testing-library/jest-dom/vitest';
+import { vi } from 'vitest';
+
+// Tests run against fixtures (no network): force demo mode before env.ts is evaluated.
+vi.stubEnv('VITE_DEMO_MODE', 'true');
 
 const storageState = new Map<string, string>();
 

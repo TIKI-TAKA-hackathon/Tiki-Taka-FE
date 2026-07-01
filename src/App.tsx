@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { PhoneShell } from './components/PhoneShell';
+import { AppLayout } from './components/AppLayout';
 import { CaregiverDashboardPage } from './routes/caregiver/CaregiverDashboardPage';
 import { ManagePage } from './routes/caregiver/ManagePage';
 import { PillDetailPage } from './routes/caregiver/PillDetailPage';
@@ -17,7 +17,7 @@ import { SeniorHomePage } from './routes/senior/SeniorHomePage';
 export default function App() {
   return (
     <Routes>
-      <Route element={<PhoneShell />}>
+      <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/onboarding" replace />} />
         <Route path="onboarding" element={<OnboardingPage />} />
         <Route path="senior" element={<SeniorHomePage />} />

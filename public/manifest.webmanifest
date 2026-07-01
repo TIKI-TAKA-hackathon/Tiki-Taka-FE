@@ -1,0 +1,14 @@
+{
+  "name": "고찌봄 · 복약 안부",
+  "short_name": "고찌봄",
+  "description": "가족이 함께 챙기는 복약 안부",
+  "lang": "ko",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#eef1f5",
+  "theme_color": "#3b5bdb",
+  "icons": [
+    { "src": "/icon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any maskable" }
+  ]
+}

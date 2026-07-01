@@ -66,3 +66,20 @@ export function BackHeader({ title }: { title: string }) {
     </div>
   );
 }
+
+export function Loading({ label = '불러오는 중…' }: { label?: string }) {
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center gap-3 py-16 text-stone-400">
+      <span className="h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-brand-600" />
+      <p className="text-base">{label}</p>
+    </div>
+  );
+}
+
+export function ErrorNote({ message }: { message: string }) {
+  return (
+    <div className="m-6 rounded-2xl bg-warn-50 p-4 text-center text-base font-semibold text-warn-700">
+      {message}
+    </div>
+  );
+}

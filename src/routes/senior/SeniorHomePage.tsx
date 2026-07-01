@@ -1,13 +1,23 @@
 import { useNavigate } from 'react-router-dom';
-import { Badge } from '../../components/ui';
-import { seniorDay } from '../../lib/mock';
+import { Badge, ErrorNote, Loading } from '../../components/ui';
+import { fetchSeniorDay } from '../../lib/api';
+import { useAsync } from '../../lib/useAsync';
 
 export function SeniorHomePage() {
   const navigate = useNavigate();
-  const { dateLabel, nextDose, doses } = seniorDay;
+  const { data, loading, error } = useAsync(fetchSeniorDay);
+
+  if (loading) {
+    return <Loading label="오늘 약을 불러오는 중…" />;
+  }
+  if (error || !data) {
+    return <ErrorNote message={error ?? '복약 정보를 불러오지 못했어요.'} />;
+  }
+
+  const { dateLabel, nextDose, doses } = data;
 
   return (
-    <div className="flex min-h-full flex-col gap-5 px-5 pb-8 pt-2">
+    <div className="flex min-h-full flex-col gap-5 px-5 pb-8 pt-4">
       <header className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-stone-400">{dateLabel}</p>
