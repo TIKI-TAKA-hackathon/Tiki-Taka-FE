@@ -46,6 +46,11 @@ export const seniorDay: SeniorDay = {
     baselineNote: '저녁 식사 오후 7시 기준',
     spokenText: '저녁 식사 30분 후, 오후 7시 30분입니다. 1번 봉지를 꺼내 약 3개를 모두 드세요.',
     doneTimeLabel: '오후 7:32',
+    pills: [
+      { id: 'p1', name: '흰색 동그란 약', shape: 'round', note: '작은 알약' },
+      { id: 'p2', name: '노란색 긴 약', shape: 'oval', note: '타원형 알약' },
+      { id: 'p3', name: '파란색 캡슐', shape: 'capsule', note: '긴 캡슐' },
+    ],
   },
   doses,
 };

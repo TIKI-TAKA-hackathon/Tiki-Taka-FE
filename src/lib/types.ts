@@ -1,6 +1,9 @@
 export type DoseStatus = 'done' | 'upcoming' | 'missed';
 export type ConfirmMethod = 'voice' | 'button';
 
+export type PillShape = 'round' | 'oval' | 'capsule';
+export type Pill = { id: string; name: string; shape: PillShape; note: string };
+
 export type Dose = {
   id: string;
   label: string; // 아침약 / 점심약 / 저녁약
@@ -23,6 +26,7 @@ export type NextDose = {
   baselineNote: string; // '저녁 식사 오후 7시 기준'
   spokenText: string;
   doneTimeLabel: string; // '오후 7:32'
+  pills: Pill[];
 };
 
 export type PillTracking = {
