@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import { env } from '../lib/env';
 
 const LARGE_TEXT_KEY = 'tikitaka-large-text';
 
@@ -31,6 +32,9 @@ export function Layout() {
         <main className="mx-auto max-w-5xl px-5 py-8">
           <Outlet />
         </main>
+        <footer className="sr-only" data-testid="api-base">
+          API base: {env.apiBaseUrl}
+        </footer>
       </div>
     </div>
   );

@@ -42,7 +42,7 @@ async function requestJson<T>(path: string, init: ApiRequestInit = {}): Promise<
 }
 
 async function withMockFallback<T>(producer: () => Promise<T>, fallback: () => T): Promise<T> {
-  if (env.useMockApi) {
+  if (env.demoMode) {
     return fallback();
   }
 

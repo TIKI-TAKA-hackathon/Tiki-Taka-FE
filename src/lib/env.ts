@@ -34,5 +34,5 @@ export const env = {
     typeof window === 'undefined' ? DEFAULT_FRONTEND_BASE_URL : window.location.origin,
     'VITE_FRONTEND_BASE_URL',
   ),
-  useMockApi: readBoolean(import.meta.env.VITE_USE_MOCK_API, false),
+  demoMode: readBoolean(import.meta.env.VITE_DEMO_MODE, false),
 } as const;
