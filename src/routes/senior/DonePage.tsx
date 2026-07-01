@@ -27,7 +27,7 @@ export function DonePage() {
             <circle cx="9.5" cy="8" r="3" stroke="currentColor" strokeWidth="1.7" />
             <path d="M17 8h4M19 6v4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
           </svg>
-          {photo ? '약 사진을 가족에게 보냈어요.' : '가족에게도 전해졌어요.'}
+          {photo ? '약 사진과 함께 카카오톡으로 가족에게 알렸어요.' : '가족에게 카카오톡으로 알렸어요.'}
         </div>
         <p className="mt-4 rounded-2xl bg-stone-100 px-5 py-3 text-base font-medium text-stone-500">
           {nextDose.doneTimeLabel} · 저녁약 1번 봉지 · 완료
