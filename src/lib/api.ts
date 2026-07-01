@@ -35,10 +35,24 @@ async function load<T>(path: string, fixture: T): Promise<T> {
   }
 }
 
-export function fetchSeniorDay(): Promise<SeniorDay> {
-  return load('/senior/today', seniorDay);
+function query(params: Record<string, string | undefined> = {}): string {
+  const search = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value) {
+      search.set(key, value);
+    }
+  }
+  const serialized = search.toString();
+  return serialized ? `?${serialized}` : '';
 }
 
-export function fetchCaregiverBoard(): Promise<CaregiverBoard> {
-  return load('/caregiver/board', caregiverBoard);
+// Identifiers are optional for now: BE uses the latest care group when omitted (demo fallback, plan §7).
+export function fetchSeniorDay(params: { seniorId?: string; date?: string } = {}): Promise<SeniorDay> {
+  return load(`/senior/today${query(params)}`, seniorDay);
+}
+
+export function fetchCaregiverBoard(
+  params: { careGroupId?: string; date?: string } = {},
+): Promise<CaregiverBoard> {
+  return load(`/caregiver/board${query(params)}`, caregiverBoard);
 }
