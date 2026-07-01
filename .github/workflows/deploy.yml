@@ -36,9 +36,36 @@ jobs:
           VITE_API_BASE_URL: https://api.stdiodh.xyz/api
           VITE_DEMO_MODE: "true"
 
+      - name: Write Firebase service account
+        shell: bash
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          test -n "$FIREBASE_SERVICE_ACCOUNT"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-service-account.json"
+          chmod 600 "$RUNNER_TEMP/firebase-service-account.json"
+
       - name: Deploy to Firebase Hosting (live)
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: gojjibom
-          channelId: live
+        shell: bash
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+          FIREBASE_DEPLOY_LOG: ${{ runner.temp }}/firebase-deploy.log
+        run: |
+          set +e
+          npx firebase-tools@15.22.4 deploy --only hosting --project gojjibom --non-interactive 2>&1 | tee "$FIREBASE_DEPLOY_LOG"
+          deploy_status=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$deploy_status" -eq 0 ]; then
+            exit 0
+          fi
+
+          if grep -Fq "is the current active version" "$FIREBASE_DEPLOY_LOG"; then
+            echo "Firebase Hosting release is already active; treating the idempotent release retry as success."
+            exit 0
+          fi
+
+          exit "$deploy_status"
+
+      - name: Verify live site
+        run: curl -fsSI https://gojjibom.web.app
