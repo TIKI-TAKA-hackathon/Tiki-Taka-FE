@@ -2,6 +2,9 @@ import { env } from './env';
 import { caregiverBoard, seniorDay } from './mock';
 import type { CaregiverBoard, SeniorDay } from './types';
 
+// BE wraps every response as { data, error }.
+type ApiEnvelope<T> = { data: T | null; error: { code?: string; message?: string } | null };
+
 async function getJson<T>(path: string): Promise<T> {
   const response = await fetch(`${env.apiBaseUrl}${path}`, {
     headers: { Accept: 'application/json' },
@@ -9,7 +12,14 @@ async function getJson<T>(path: string): Promise<T> {
   if (!response.ok) {
     throw new Error(`API request failed: ${response.status} ${response.statusText}`);
   }
-  return (await response.json()) as T;
+  const body = (await response.json()) as ApiEnvelope<T>;
+  if (body.error) {
+    throw new Error(body.error.message ?? body.error.code ?? 'API error');
+  }
+  if (body.data === null || body.data === undefined) {
+    throw new Error('API response has no data');
+  }
+  return body.data;
 }
 
 // Demo mode returns fixtures. Otherwise call the backend and fall back to fixtures on failure.
