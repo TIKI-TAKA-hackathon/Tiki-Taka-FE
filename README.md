@@ -106,6 +106,45 @@ flowchart LR
     E --> F[사진·알림 확인]
 ```
 
+### 실제 서비스 화면 흐름
+
+아래 GIF는 현재 FE 라우트에서 직접 실행한 화면 흐름입니다.
+사이트에 접속하지 않아도 어르신과 보호자가 어떤 순서로 서비스를 사용하는지 확인할 수 있습니다.
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>어르신 복약 확인</strong><br />
+      알림을 누르고 복용할 약을 확인한 뒤 사진을 보내 완료합니다.<br /><br />
+      <img src="./docs/assets/flows/senior-medication-flow.gif" width="300" alt="어르신 복약 확인 화면 흐름" />
+    </td>
+    <td width="50%" align="center">
+      <strong>사진 재확인 및 보호자 연결</strong><br />
+      사진이 헷갈릴 때 다시 촬영을 반복하면 대표 보호자 연락으로 이어집니다.<br /><br />
+      <img src="./docs/assets/flows/senior-camera-retry-flow.gif" width="300" alt="사진 재확인 후 보호자 연결 화면 흐름" />
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <strong>처방 QR 등록</strong><br />
+      약국 처방 QR을 읽고 병원, 약, 알림 시간을 순서대로 확인합니다.<br /><br />
+      <img src="./docs/assets/flows/prescription-registration-flow.gif" width="300" alt="처방 QR 등록 화면 흐름" />
+    </td>
+    <td width="50%" align="center">
+      <strong>보호자 복약 모니터링</strong><br />
+      보호자 대시보드에서 복약 상태와 사진 기록을 확인하고 재요청할 수 있습니다.<br /><br />
+      <img src="./docs/assets/flows/caregiver-monitoring-flow.gif" width="300" alt="보호자 복약 모니터링 화면 흐름" />
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <strong>데모 알림 미리보기</strong><br />
+      보호자 알림 카드에서 복용 완료, 미확인, 날씨 안내가 어떻게 이어지는지 보여줍니다.<br /><br />
+      <img src="./docs/assets/flows/demo-notification-flow.gif" width="300" alt="데모 알림 미리보기 화면 흐름" />
+    </td>
+  </tr>
+</table>
+
 ---
 
 ## 🖥️ Main Screens
