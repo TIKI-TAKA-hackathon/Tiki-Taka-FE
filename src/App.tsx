@@ -22,7 +22,8 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/onboarding" replace />} />
         <Route path="onboarding" element={<OnboardingPage />} />
-        <Route path="senior" element={<SeniorHomePage />} />
+        <Route path="senior" element={<AlarmPage />} />
+        <Route path="senior/today" element={<SeniorHomePage />} />
         <Route path="senior/register" element={<RegisterPage />} />
         <Route path="senior/connected" element={<ConnectedPage />} />
         <Route path="senior/dose" element={<DosePage />} />

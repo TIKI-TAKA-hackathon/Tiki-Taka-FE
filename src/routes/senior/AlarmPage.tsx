@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PrimaryButton, SecondaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
@@ -5,6 +6,20 @@ import { seniorDay } from '../../lib/mock';
 export function AlarmPage() {
   const navigate = useNavigate();
   const { nextDose } = seniorDay;
+
+  useEffect(() => {
+    // If the senior already granted permission, arriving reminder pops a real OS notification.
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        new Notification('고찌봄 · 복약 알림', {
+          body: `${seniorDay.nextDose.label} 드실 시간이에요. 약 ${seniorDay.nextDose.pillCount}개를 드세요.`,
+          icon: '/icon.svg',
+        });
+      } catch {
+        // 알림 표시 실패는 무시 (인앱 알림 화면은 그대로 노출)
+      }
+    }
+  }, []);
 
   return (
     <div className="flex min-h-full flex-col px-6 py-10">
@@ -24,7 +39,7 @@ export function AlarmPage() {
         <PrimaryButton size="lg" onClick={() => navigate('/senior/dose')}>
           지금 확인하기
         </PrimaryButton>
-        <SecondaryButton onClick={() => navigate('/senior')}>10분 뒤에 다시 알림</SecondaryButton>
+        <SecondaryButton onClick={() => navigate('/senior/today')}>10분 뒤에 다시 알림</SecondaryButton>
       </div>
     </div>
   );

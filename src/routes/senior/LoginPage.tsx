@@ -7,7 +7,7 @@ export function LoginPage() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    navigate('/senior');
+    navigate('/senior/today');
   }
 
   return (

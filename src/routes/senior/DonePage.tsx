@@ -34,7 +34,7 @@ export function DonePage() {
         </p>
       </div>
 
-      <PrimaryButton onClick={() => navigate('/senior')}>오늘 약 홈으로</PrimaryButton>
+      <PrimaryButton onClick={() => navigate('/senior/today')}>오늘 약 홈으로</PrimaryButton>
     </div>
   );
 }
