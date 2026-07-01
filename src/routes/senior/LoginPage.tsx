@@ -1,6 +1,6 @@
 import type { FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BackHeader } from '../../components/ui';
+import { BackHeader, PrimaryButton } from '../../components/ui';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -34,12 +34,9 @@ export function LoginPage() {
           placeholder="6자리 숫자"
           className="mt-2 rounded-2xl border border-stone-200 px-4 py-3 text-lg"
         />
-        <button
-          type="submit"
-          className="mt-6 w-full rounded-2xl bg-brand-600 py-4 text-lg font-bold text-white shadow-sm"
-        >
-          로그인
-        </button>
+        <div className="mt-6">
+          <PrimaryButton type="submit">로그인</PrimaryButton>
+        </div>
         <p className="mt-4 text-center text-sm text-stone-400">
           어르신 기기는 로그인 없이 QR·연결 코드로 시작할 수 있어요.
         </p>

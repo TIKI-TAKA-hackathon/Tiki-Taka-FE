@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { BackHeader } from '../../components/ui';
+import { BackHeader, PrimaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import type { PillShape } from '../../lib/types';
 
@@ -63,13 +63,9 @@ export function MedicationPhotoPage() {
             <br />
             봉지 안 약을 모두 드시면 됩니다.
           </div>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="mt-4 w-full rounded-2xl bg-brand-600 py-4 text-lg font-bold text-white shadow-sm"
-          >
-            알겠습니다
-          </button>
+          <div className="mt-4">
+            <PrimaryButton onClick={() => navigate(-1)}>알겠습니다</PrimaryButton>
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { PrimaryButton, SecondaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 
 export function AlarmPage() {
@@ -20,20 +21,10 @@ export function AlarmPage() {
       </div>
 
       <div className="space-y-3">
-        <button
-          type="button"
-          onClick={() => navigate('/senior/dose')}
-          className="w-full rounded-2xl bg-brand-600 py-5 text-xl font-bold text-white shadow-sm"
-        >
+        <PrimaryButton size="lg" onClick={() => navigate('/senior/dose')}>
           지금 확인하기
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/senior')}
-          className="w-full rounded-2xl border-2 border-stone-200 py-4 text-lg font-bold text-stone-600"
-        >
-          10분 뒤에 다시 알림
-        </button>
+        </PrimaryButton>
+        <SecondaryButton onClick={() => navigate('/senior')}>10분 뒤에 다시 알림</SecondaryButton>
       </div>
     </div>
   );

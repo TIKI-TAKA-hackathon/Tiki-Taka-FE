@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle } from '../../components/ui';
+import { CheckCircle, PrimaryButton } from '../../components/ui';
 
 export function ConnectedPage() {
   const navigate = useNavigate();
@@ -21,13 +21,7 @@ export function ConnectedPage() {
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => navigate('/senior')}
-        className="w-full rounded-2xl bg-brand-600 py-4 text-lg font-bold text-white shadow-sm"
-      >
-        오늘 약 보기
-      </button>
+      <PrimaryButton onClick={() => navigate('/senior')}>오늘 약 보기</PrimaryButton>
     </div>
   );
 }

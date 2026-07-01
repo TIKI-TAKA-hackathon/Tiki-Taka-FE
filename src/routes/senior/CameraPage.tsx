@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BackHeader } from '../../components/ui';
+import { BackHeader, PrimaryButton, SecondaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import { shareDosePhoto } from '../../lib/shareStore';
 
@@ -100,30 +100,14 @@ export function CameraPage() {
 
       <div className="mt-4 space-y-3">
         {!error && !photo && (
-          <button
-            type="button"
-            onClick={capture}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-600 py-4 text-lg font-bold text-white shadow-sm"
-          >
-            📷 촬영하기
-          </button>
+          <PrimaryButton onClick={capture}>📷 촬영하기</PrimaryButton>
         )}
         {photo && (
           <>
-            <button
-              type="button"
-              onClick={send}
-              className="w-full rounded-2xl bg-success-600 py-4 text-lg font-bold text-white shadow-sm"
-            >
+            <PrimaryButton tone="success" onClick={send}>
               가족에게 보내기
-            </button>
-            <button
-              type="button"
-              onClick={() => setPhoto(null)}
-              className="w-full rounded-2xl border-2 border-stone-200 py-3 text-base font-bold text-stone-600"
-            >
-              다시 찍기
-            </button>
+            </PrimaryButton>
+            <SecondaryButton onClick={() => setPhoto(null)}>다시 찍기</SecondaryButton>
           </>
         )}
         <button

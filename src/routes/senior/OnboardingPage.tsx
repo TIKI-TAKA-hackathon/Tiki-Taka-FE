@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { PrimaryButton, SecondaryButton } from '../../components/ui';
 
 export function OnboardingPage() {
   const navigate = useNavigate();
@@ -13,20 +14,8 @@ export function OnboardingPage() {
         <p className="mt-3 text-lg text-stone-500">가족이 함께 챙기는 복약 안부</p>
 
         <div className="mt-10 w-full space-y-3">
-          <button
-            type="button"
-            onClick={() => navigate('/caregiver')}
-            className="w-full rounded-2xl bg-brand-600 py-4 text-lg font-bold text-white shadow-sm transition active:scale-[0.99]"
-          >
-            보호자·복지사로 시작하기
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/senior/register')}
-            className="w-full rounded-2xl border-2 border-stone-200 py-4 text-lg font-bold text-stone-800 transition active:scale-[0.99]"
-          >
-            어르신 기기로 시작하기
-          </button>
+          <PrimaryButton onClick={() => navigate('/caregiver')}>보호자·복지사로 시작하기</PrimaryButton>
+          <SecondaryButton onClick={() => navigate('/senior/register')}>어르신 기기로 시작하기</SecondaryButton>
         </div>
       </div>
 

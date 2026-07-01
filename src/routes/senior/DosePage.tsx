@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PrimaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 
 export function DosePage() {
@@ -54,13 +55,9 @@ export function DosePage() {
       </div>
 
       <div className="space-y-3 px-6 pt-4">
-        <button
-          type="button"
-          onClick={() => navigate('/senior/camera')}
-          className="w-full rounded-2xl bg-success-600 py-5 text-xl font-bold text-white shadow-sm"
-        >
+        <PrimaryButton tone="success" size="lg" onClick={() => navigate('/senior/camera')}>
           네, 먹었어요 ✓
-        </button>
+        </PrimaryButton>
         <button
           type="button"
           onClick={() => setHelpSent(true)}

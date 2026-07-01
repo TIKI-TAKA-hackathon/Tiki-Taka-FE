@@ -83,3 +83,57 @@ export function ErrorNote({ message }: { message: string }) {
     </div>
   );
 }
+
+type ButtonTone = 'brand' | 'success';
+type ButtonSize = 'md' | 'lg';
+
+const BUTTON_SIZE: Record<ButtonSize, string> = {
+  md: 'py-4 text-lg',
+  lg: 'py-5 text-xl',
+};
+
+type PrimaryButtonProps = {
+  children: ReactNode;
+  onClick?: () => void;
+  type?: 'button' | 'submit';
+  tone?: ButtonTone;
+  size?: ButtonSize;
+};
+
+export function PrimaryButton({
+  children,
+  onClick,
+  type = 'button',
+  tone = 'brand',
+  size = 'md',
+}: PrimaryButtonProps) {
+  const background = tone === 'success' ? 'bg-success-600' : 'bg-brand-600';
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      className={`flex w-full items-center justify-center gap-2 rounded-2xl ${background} ${BUTTON_SIZE[size]} font-bold text-white shadow-sm transition active:scale-[0.99]`}
+    >
+      {children}
+    </button>
+  );
+}
+
+type SecondaryButtonProps = {
+  children: ReactNode;
+  onClick?: () => void;
+  type?: 'button' | 'submit';
+  size?: ButtonSize;
+};
+
+export function SecondaryButton({ children, onClick, type = 'button', size = 'md' }: SecondaryButtonProps) {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      className={`flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-stone-200 ${BUTTON_SIZE[size]} font-bold text-stone-700 transition active:scale-[0.99]`}
+    >
+      {children}
+    </button>
+  );
+}
