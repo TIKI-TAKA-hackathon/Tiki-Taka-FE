@@ -1,12 +1,97 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+// BarcodeDetector is not in the TS DOM lib yet; describe the minimal shape we use.
+type DetectedBarcode = { rawValue: string };
+type BarcodeDetectorLike = { detect: (source: CanvasImageSource) => Promise<DetectedBarcode[]> };
+type BarcodeDetectorCtor = new (options?: { formats: string[] }) => BarcodeDetectorLike;
 
 export function RegisterPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<'qr' | 'code'>('qr');
   const [scanned, setScanned] = useState(false);
+  const [cameraError, setCameraError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
-  function simulateScan() {
+  useEffect(() => {
+    if (tab !== 'qr' || scanned) {
+      return;
+    }
+    let cancelled = false;
+    let frame = 0;
+
+    function proceed() {
+      if (cancelled) {
+        return;
+      }
+      cancelled = true;
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      setScanned(true);
+      window.setTimeout(() => navigate('/senior/connected'), 1200);
+    }
+
+    async function start() {
+      let detector: BarcodeDetectorLike | null = null;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+          audio: false,
+        });
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch {
+        if (!cancelled) {
+          setCameraError(true);
+        }
+        return;
+      }
+
+      const Ctor = (window as unknown as { BarcodeDetector?: BarcodeDetectorCtor }).BarcodeDetector;
+      if (Ctor) {
+        try {
+          detector = new Ctor({ formats: ['qr_code'] });
+        } catch {
+          detector = null;
+        }
+      }
+
+      async function tick() {
+        if (cancelled || !detector || !videoRef.current) {
+          return;
+        }
+        try {
+          const codes = await detector.detect(videoRef.current);
+          if (codes.length > 0) {
+            proceed();
+            return;
+          }
+        } catch {
+          // ignore per-frame detection errors
+        }
+        frame = window.requestAnimationFrame(() => void tick());
+      }
+
+      frame = window.requestAnimationFrame(() => void tick());
+    }
+
+    void start();
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(frame);
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+    };
+  }, [tab, scanned, navigate]);
+
+  function connectManually() {
     setScanned(true);
     window.setTimeout(() => navigate('/senior/connected'), 1200);
   }
@@ -54,7 +139,7 @@ export function RegisterPage() {
       </div>
 
       {tab === 'qr' ? (
-        <div className="mt-5 flex aspect-square w-full items-center justify-center rounded-3xl bg-[#0e1726] p-6">
+        <div className="mt-5 flex aspect-square w-full items-center justify-center overflow-hidden rounded-3xl bg-[#0e1726] p-4">
           {scanned ? (
             <div className="flex flex-col items-center gap-4 text-white">
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-success-500">
@@ -64,20 +149,28 @@ export function RegisterPage() {
               </span>
               <p className="text-lg font-bold">QR 스캔 완료!</p>
             </div>
+          ) : cameraError ? (
+            <div className="flex flex-col items-center gap-3 px-4 text-center text-stone-300">
+              <svg className="h-9 w-9 text-success-500" viewBox="0 0 24 24" fill="none" aria-hidden>
+                <rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
+                <circle cx="12" cy="12.5" r="3.2" stroke="currentColor" strokeWidth="1.8" />
+              </svg>
+              <p className="text-sm">
+                카메라를 켤 수 없어요.
+                <br />
+                아래 버튼이나 ‘연결 코드’로 진행해주세요.
+              </p>
+            </div>
           ) : (
-            <div className="relative flex h-full w-full items-center justify-center">
-              <span className="absolute left-0 top-0 h-8 w-8 rounded-tl-lg border-l-2 border-t-2 border-success-500" />
-              <span className="absolute right-0 top-0 h-8 w-8 rounded-tr-lg border-r-2 border-t-2 border-success-500" />
-              <span className="absolute bottom-0 left-0 h-8 w-8 rounded-bl-lg border-b-2 border-l-2 border-success-500" />
-              <span className="absolute bottom-0 right-0 h-8 w-8 rounded-br-lg border-b-2 border-r-2 border-success-500" />
-              <div className="flex flex-col items-center gap-3 text-stone-300">
-                <svg className="h-9 w-9 text-success-500" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" strokeWidth="1.8" />
-                  <circle cx="12" cy="12.5" r="3.2" stroke="currentColor" strokeWidth="1.8" />
-                  <path d="M8 6l1.2-2h5.6L16 6" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
-                </svg>
-                <p className="text-sm">보호자에게 받은 QR을 비춰주세요</p>
-              </div>
+            <div className="relative h-full w-full">
+              <video ref={videoRef} autoPlay muted playsInline className="h-full w-full rounded-2xl object-cover" />
+              <span className="absolute left-1 top-1 h-8 w-8 rounded-tl-lg border-l-2 border-t-2 border-success-500" />
+              <span className="absolute right-1 top-1 h-8 w-8 rounded-tr-lg border-r-2 border-t-2 border-success-500" />
+              <span className="absolute bottom-1 left-1 h-8 w-8 rounded-bl-lg border-b-2 border-l-2 border-success-500" />
+              <span className="absolute bottom-1 right-1 h-8 w-8 rounded-br-lg border-b-2 border-r-2 border-success-500" />
+              <p className="absolute inset-x-0 bottom-3 text-center text-sm font-medium text-white/85">
+                보호자에게 받은 QR을 비춰주세요
+              </p>
             </div>
           )}
         </div>
@@ -85,9 +178,9 @@ export function RegisterPage() {
         <div className="mt-5 rounded-3xl border border-stone-200 p-6">
           <p className="text-center text-base text-stone-500">가족방 연결 코드 6자리를 입력하세요</p>
           <div className="mt-4 flex justify-center gap-2">
-            {[0, 1, 2, 3, 4, 5].map((i) => (
+            {[0, 1, 2, 3, 4, 5].map((index) => (
               <span
-                key={i}
+                key={index}
                 className="flex h-12 w-10 items-center justify-center rounded-xl border-2 border-stone-200 text-xl font-bold text-stone-300"
               >
                 •
@@ -100,10 +193,10 @@ export function RegisterPage() {
       {!scanned && (
         <button
           type="button"
-          onClick={simulateScan}
+          onClick={connectManually}
           className="mt-4 w-full rounded-2xl bg-success-50 py-4 text-base font-bold text-success-700"
         >
-          {tab === 'qr' ? 'QR 스캔 시뮬레이션 →' : '연결 코드 확인 →'}
+          {tab === 'qr' ? 'QR 없이 연결하기 (데모)' : '연결 코드 확인 →'}
         </button>
       )}
 
