@@ -13,7 +13,7 @@ export function PillDetailPage() {
   return (
     <div className="flex min-h-full flex-col pb-8">
       <BackHeader title="약 개수 상세" />
-      <div className="px-5">
+      <div className="px-6">
         <div className="grid grid-cols-3 gap-2">
           {[
             { big: `${pills.remaining}개`, small: '남은 개수' },

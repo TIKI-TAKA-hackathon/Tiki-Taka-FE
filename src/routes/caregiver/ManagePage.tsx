@@ -11,7 +11,7 @@ export function ManagePage() {
   return (
     <div className="flex min-h-full flex-col pb-8">
       <BackHeader title="가족방 관리" />
-      <div className="px-5">
+      <div className="px-6">
         <h2 className="mb-2 text-base font-bold text-stone-500">구성원</h2>
         <ul className="space-y-2.5">
           {members.map((member) => (

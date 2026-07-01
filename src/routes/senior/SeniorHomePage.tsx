@@ -35,7 +35,7 @@ export function SeniorHomePage() {
   }
 
   return (
-    <div className="flex min-h-full flex-col gap-5 px-5 pb-8 pt-4">
+    <div className="flex min-h-full flex-col gap-5 px-6 pb-8 pt-4">
       <header className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-stone-400">{dateLabel}</p>

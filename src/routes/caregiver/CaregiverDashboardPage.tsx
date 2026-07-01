@@ -26,7 +26,7 @@ export function CaregiverDashboardPage() {
   const { patientName, circle, doses, confirmations, pills, week, alert } = data;
 
   return (
-    <div className="flex min-h-full flex-col gap-4 px-5 pb-10 pt-4">
+    <div className="flex min-h-full flex-col gap-4 px-6 pb-10 pt-4">
       <header>
         <div className="flex items-start justify-between">
           <div>
@@ -55,7 +55,7 @@ export function CaregiverDashboardPage() {
       </header>
 
       <Card className="p-4">
-        <h2 className="mb-3 text-base font-bold text-stone-500">오늘 복약</h2>
+        <h2 className="mb-3 text-base font-bold text-stone-900">오늘 복약</h2>
         <ul className="space-y-2.5">
           {doses.map((dose) => (
             <li key={dose.id} className="flex items-center justify-between">
@@ -74,7 +74,7 @@ export function CaregiverDashboardPage() {
       </Card>
 
       <Card className="p-4">
-        <h2 className="mb-3 flex items-center gap-1.5 text-base font-bold text-stone-700">
+        <h2 className="mb-3 flex items-center gap-1.5 text-base font-bold text-stone-900">
           <span className="text-success-600">✓</span> 오늘의 복용 확인
         </h2>
         <ul className="space-y-2">
@@ -128,7 +128,7 @@ export function CaregiverDashboardPage() {
       </Card>
 
       <Card className="p-4">
-        <h2 className="mb-3 text-base font-bold text-stone-700">최근 7일 요약</h2>
+        <h2 className="mb-3 text-base font-bold text-stone-900">최근 7일 요약</h2>
         <div className="flex justify-between">
           {week.map((day) => (
             <div key={day.label} className="flex flex-col items-center gap-1.5">
