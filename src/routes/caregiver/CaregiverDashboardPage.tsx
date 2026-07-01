@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Badge, Card } from '../../components/ui';
 import { caregiverBoard } from '../../lib/mock';
 import type { WeekDayStatus } from '../../lib/types';
@@ -10,6 +11,7 @@ const WEEK_DOT: Record<WeekDayStatus, string> = {
 
 export function CaregiverDashboardPage() {
   const { patientName, circle, doses, confirmations, pills, week, alert } = caregiverBoard;
+  const navigate = useNavigate();
 
   return (
     <div className="flex min-h-full flex-col gap-4 px-5 pb-10 pt-2">
@@ -30,7 +32,11 @@ export function CaregiverDashboardPage() {
             <Badge tone="success">가족 {circle.family}명</Badge>
             <Badge tone="info">사회복지사 {circle.social}명</Badge>
           </div>
-          <button type="button" className="text-sm font-semibold text-stone-500">
+          <button
+            type="button"
+            onClick={() => navigate('/caregiver/manage')}
+            className="text-sm font-semibold text-stone-500"
+          >
             관리 →
           </button>
         </div>
@@ -92,6 +98,7 @@ export function CaregiverDashboardPage() {
         </div>
         <button
           type="button"
+          onClick={() => navigate('/caregiver/pills')}
           className="mt-3 flex w-full items-center justify-center gap-1 rounded-2xl bg-brand-50 py-3 text-base font-bold text-brand-700"
         >
           개수 상세 보기 ›
@@ -135,15 +142,19 @@ export function CaregiverDashboardPage() {
             ))}
           </div>
           <div className="mt-3 flex gap-2">
-            <button type="button" className="flex-1 rounded-2xl bg-warn-100 py-3 text-sm font-bold text-warn-700">
-              🕐 타임라인 보기
-            </button>
             <button
               type="button"
-              className="flex-1 rounded-2xl border border-stone-200 bg-white py-3 text-sm font-bold text-stone-700"
+              onClick={() => navigate('/caregiver/timeline')}
+              className="flex-1 rounded-2xl bg-warn-100 py-3 text-sm font-bold text-warn-700"
+            >
+              🕐 타임라인 보기
+            </button>
+            <a
+              href="tel:0212345678"
+              className="flex flex-1 items-center justify-center rounded-2xl border border-stone-200 bg-white py-3 text-sm font-bold text-stone-700"
             >
               📞 전화하기
-            </button>
+            </a>
           </div>
         </div>
       )}

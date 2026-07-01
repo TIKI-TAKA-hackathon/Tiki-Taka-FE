@@ -16,6 +16,7 @@ export function SeniorHomePage() {
         <button
           type="button"
           aria-label="알림"
+          onClick={() => navigate('/senior/alerts')}
           className="flex h-11 w-11 items-center justify-center rounded-full bg-stone-100 text-stone-500"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -43,6 +44,7 @@ export function SeniorHomePage() {
         </div>
         <button
           type="button"
+          onClick={() => navigate('/senior/photo')}
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-stone-200 py-3 text-base font-semibold text-stone-700"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden>

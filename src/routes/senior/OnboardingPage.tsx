@@ -32,7 +32,7 @@ export function OnboardingPage() {
 
       <button
         type="button"
-        onClick={() => navigate('/senior')}
+        onClick={() => navigate('/senior/login')}
         className="mt-6 text-base font-semibold text-stone-500 underline underline-offset-4"
       >
         이미 계정이 있어요 · 로그인

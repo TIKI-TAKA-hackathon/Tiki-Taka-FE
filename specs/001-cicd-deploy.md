@@ -1,58 +1,44 @@
-# 001 — Make CI/CD deploy to Firebase Hosting (verified green)
+# 001 — Push & deploy the 고찌봄 redesign (verified green + live)
 
 ## Goal
-Get the `Deploy` GitHub Actions workflow to build and deploy the FE to Firebase Hosting on push to
-`main`, and prove it end-to-end: the Actions run is green AND the live site responds.
+Get the current local work (고찌봄 redesign) onto the team repo's `main` and prove the deploy
+end-to-end: the `Deploy` GitHub Actions run is green AND the live site serves the new 고찌봄 app.
 
 ## Assumptions
-- Deploy-target repo: `TIKI-TAKA-hackathon/Tiki-Taka-FE` (public), branch `main`.
-- Firebase Hosting project id: `gojjibom` (live channel). Backend API: `https://api.stdiodh.xyz/api`.
-- Exactly one GitHub Actions secret is used: `FIREBASE_SERVICE_ACCOUNT` (service-account JSON with
-  Firebase Hosting deploy permission). `VITE_API_BASE_URL` + `VITE_DEMO_MODE=true` are baked into the
-  workflow build step; project id lives in `.firebaserc`. No other secrets.
-- A bootstrap commit (`.github/workflows/deploy.yml`, `.firebaserc`=gojjibom, single-secret model,
-  `VITE_DEMO_MODE`, review-loop files, old workflows removed) currently exists only locally / on a
-  different remote. Landing it on the deploy-target repo's `main` is part of this task.
-- The running agent has git push rights and `gh` authenticated for the target repo, plus network
-  access. NOTE: the read-only review loop (`loop.sh`) CANNOT push — run this as a write-enabled task.
-
-## API contract
-No API/behavior change. Build-time env only: `VITE_API_BASE_URL=https://api.stdiodh.xyz/api`,
-`VITE_DEMO_MODE=true` (set in the workflow build step).
+- Deploy-target repo: `TIKI-TAKA-hackathon/Tiki-Taka-FE` (public), branch `main`. It is `origin`.
+- Firebase Hosting project id: `gojjibom` (live). Live URL: https://gojjibom.web.app.
+- The redesign commit (`feat(fe): redesign to 고찌봄 medication check-in app`) plus secondary screens
+  exist on local `main`, ahead of `origin/main`. This session cannot push (no GitHub credentials);
+  run this as a write-enabled agent (git push rights + `gh` authenticated + network).
+- `.github/workflows/deploy.yml` already: gates (`npm ci` → lint → `tsc --noEmit` → test → build with
+  `VITE_API_BASE_URL` + `VITE_DEMO_MODE=true`) → writes `FIREBASE_SERVICE_ACCOUNT` to a temp file →
+  `npx firebase-tools@15.22.4 deploy --only hosting --project gojjibom` (idempotent "already active"
+  retry treated as success) → `curl -fsSI https://gojjibom.web.app`. Only secret: `FIREBASE_SERVICE_ACCOUNT`.
 
 ## Acceptance criteria
 - [ ] `npm ci && npm run lint && npx tsc --noEmit && npm test && npm run build` pass locally.
 - [ ] `gh secret list -R TIKI-TAKA-hackathon/Tiki-Taka-FE` shows `FIREBASE_SERVICE_ACCOUNT`.
-- [ ] Target repo `main` has the bootstrap: `deploy.yml` present; `fe-ci.yml` and
-      `fe-deploy-firebase.yml` absent; `.firebaserc` = `gojjibom`; env example uses `VITE_DEMO_MODE`.
-- [ ] The latest `Deploy` run on `main` is **success** (`gh run watch --exit-status`).
-- [ ] Live site returns HTTP 200: `curl -I https://gojjibom.web.app` (and serves the app).
-
-## Out of scope
-- No app/product/UI changes beyond what deployment requires.
-- Do not reintroduce `fe-ci.yml` / `fe-deploy-firebase.yml`; keep the single `deploy.yml`.
-- Never commit secrets or the service-account JSON (keep it gitignored).
+- [ ] Local `main` (redesign) is pushed to `origin/main`.
+- [ ] Latest `Deploy` run on `main` is **success** (`gh run watch --exit-status`).
+- [ ] Live check: `curl -fsSL https://gojjibom.web.app` returns the 고찌봄 app (title "고찌봄 · 복약 안부",
+      not the old "기억카드").
 
 ## Procedure (iterate until green, max 5 pushes)
-1. `git remote -v`. Ensure the target repo is a remote; add if needed:
-   `git remote add team https://github.com/TIKI-TAKA-hackathon/Tiki-Taka-FE.git`.
-2. Ensure local `main` contains the bootstrap commit; if the target `main` lacks it, prepare to push it.
-3. Make local gates green: `npm ci && npm run lint && npx tsc --noEmit && npm test && npm run build`.
-   Fix surgically if red.
-4. `gh secret list -R TIKI-TAKA-hackathon/Tiki-Taka-FE`. If `FIREBASE_SERVICE_ACCOUNT` is missing,
-   STOP and ask the human to add it (Settings -> Secrets and variables -> Actions). Do not fabricate it.
-5. Push: `git push team main` (or the correct target remote).
-6. Watch: `gh run watch -R TIKI-TAKA-hackathon/Tiki-Taka-FE --exit-status` (or poll `gh run list`).
-7. On failure: `gh run view --log-failed`, fix the root cause (surgical), commit, push, repeat.
-8. On success: `curl -I https://gojjibom.web.app` -> expect 200. Report the run URL and live URL.
+1. `git status` / `git log --oneline -3` — confirm the redesign commit is on local `main` and `origin`
+   is `TIKI-TAKA-hackathon/Tiki-Taka-FE`.
+2. Make local gates green (command above); fix surgically if red.
+3. `gh secret list -R TIKI-TAKA-hackathon/Tiki-Taka-FE`. If `FIREBASE_SERVICE_ACCOUNT` is missing, STOP
+   and ask the human to add it (Settings → Secrets and variables → Actions). Do not fabricate it.
+4. `git push origin main`.
+5. `gh run watch -R TIKI-TAKA-hackathon/Tiki-Taka-FE --exit-status` (or poll `gh run list`).
+6. On failure: `gh run view --log-failed`, fix the root cause (surgical), commit, push, repeat.
+7. On success: `curl -sSI https://gojjibom.web.app` → 200; fetch the HTML and confirm it is the 고찌봄 app.
 
 ## Likely failure modes to check first
-- Service account lacks the Firebase Hosting deploy role, or the JSON is malformed / partial.
-- `projectId` / `.firebaserc` doesn't match the real Firebase project (`gojjibom`), or Hosting isn't
-  initialized for that project.
-- `npm ci` lockfile/Node mismatch, or a lint/type/test failure introduced by the bootstrap.
+- Service account lacks Firebase Hosting deploy role, or the JSON secret is malformed / partial.
+- `tsc`/lint/test failure introduced by the redesign; run gates locally before pushing.
+- Firebase project mismatch (must be `gojjibom`), or Hosting not initialized for that project.
 
 ## Report
-Conclusion first: run status + URL, live URL status, exactly what changed, and any human action still
-required (e.g. missing secret or IAM role). Do not overstate; if you could not verify the live deploy,
-say so.
+Conclusion first: run status + URL, live URL status + which app is served, what changed, and any human
+action still required. Do not overstate; if the live deploy could not be verified, say so.

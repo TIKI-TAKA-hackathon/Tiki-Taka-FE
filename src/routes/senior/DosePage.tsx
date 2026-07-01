@@ -39,7 +39,11 @@ export function DosePage() {
         <div className="mt-4 rounded-2xl bg-stone-100 px-5 py-4 text-base leading-relaxed text-stone-600">
           “{nextDose.spokenText}”
         </div>
-        <button type="button" className="mt-3 text-base font-semibold text-brand-600 underline underline-offset-4">
+        <button
+          type="button"
+          onClick={() => navigate('/senior/photo')}
+          className="mt-3 text-base font-semibold text-brand-600 underline underline-offset-4"
+        >
           약 사진 보기
         </button>
         {helpSent && (

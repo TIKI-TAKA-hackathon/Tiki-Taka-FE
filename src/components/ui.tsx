@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export type BadgeTone = 'success' | 'neutral' | 'meal' | 'next' | 'info' | 'warn';
 
@@ -44,5 +45,24 @@ export function CheckCircle({ size = 'lg' }: { size?: 'sm' | 'lg' }) {
         />
       </svg>
     </span>
+  );
+}
+
+export function BackHeader({ title }: { title: string }) {
+  const navigate = useNavigate();
+  return (
+    <div className="flex items-center gap-3 px-6 py-3">
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        aria-label="뒤로"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 text-stone-600"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+      <h1 className="text-xl font-bold text-stone-900">{title}</h1>
+    </div>
   );
 }
