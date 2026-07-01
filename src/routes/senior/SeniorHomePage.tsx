@@ -16,6 +16,24 @@ export function SeniorHomePage() {
 
   const { dateLabel, nextDose, doses } = data;
 
+  async function triggerReminder() {
+    try {
+      if ('Notification' in window) {
+        const permission =
+          Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
+        if (permission === 'granted') {
+          new Notification('고찌봄 · 복약 알림', {
+            body: `${nextDose.label} 드실 시간이에요. 약 ${nextDose.pillCount}개를 드세요.`,
+            icon: '/icon.svg',
+          });
+        }
+      }
+    } catch {
+      // 알림 미지원/거부는 무시하고 인앱 알림 화면으로 이동
+    }
+    navigate('/senior/alarm');
+  }
+
   return (
     <div className="flex min-h-full flex-col gap-5 px-5 pb-8 pt-4">
       <header className="flex items-start justify-between">
@@ -62,6 +80,13 @@ export function SeniorHomePage() {
             <circle cx="12" cy="12.5" r="3.2" stroke="currentColor" strokeWidth="1.7" />
           </svg>
           약 사진 보기
+        </button>
+        <button
+          type="button"
+          onClick={triggerReminder}
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-50 py-3 text-base font-bold text-brand-700"
+        >
+          🔔 지금 알림 받아보기
         </button>
       </section>
 

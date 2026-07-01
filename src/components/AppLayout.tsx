@@ -7,7 +7,7 @@ export function AppLayout() {
   return (
     <div className="min-h-[100dvh] bg-stone-100 sm:flex sm:items-center sm:justify-center sm:p-6">
       <div
-        className="relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-white sm:h-[min(880px,94vh)] sm:min-h-0 sm:w-[430px] sm:rounded-[2.25rem] sm:shadow-xl sm:ring-1 sm:ring-black/5"
+        className="relative flex h-[100dvh] w-full flex-col overflow-hidden bg-white sm:h-[min(880px,94vh)] sm:w-[430px] sm:rounded-[2.25rem] sm:shadow-xl sm:ring-1 sm:ring-black/5"
         style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="flex flex-1 flex-col overflow-y-auto">

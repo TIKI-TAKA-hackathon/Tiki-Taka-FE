@@ -56,7 +56,7 @@ export function DosePage() {
       <div className="space-y-3 px-6 pt-4">
         <button
           type="button"
-          onClick={() => navigate('/senior/done')}
+          onClick={() => navigate('/senior/camera')}
           className="w-full rounded-2xl bg-success-600 py-5 text-xl font-bold text-white shadow-sm"
         >
           네, 먹었어요 ✓

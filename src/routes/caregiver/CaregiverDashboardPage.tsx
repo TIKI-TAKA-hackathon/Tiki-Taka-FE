@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Badge, Card, ErrorNote, Loading } from '../../components/ui';
 import { fetchCaregiverBoard } from '../../lib/api';
+import { useSharedDosePhoto } from '../../lib/shareStore';
 import { useAsync } from '../../lib/useAsync';
 import type { WeekDayStatus } from '../../lib/types';
 
@@ -13,6 +14,7 @@ const WEEK_DOT: Record<WeekDayStatus, string> = {
 export function CaregiverDashboardPage() {
   const navigate = useNavigate();
   const { data, loading, error } = useAsync(fetchCaregiverBoard);
+  const photo = useSharedDosePhoto();
 
   if (loading) {
     return <Loading label="복약 상태를 불러오는 중…" />;
@@ -91,6 +93,16 @@ export function CaregiverDashboardPage() {
         </ul>
         <p className="mt-3 text-xs text-stone-400">앱의 확인 결과는 보조 정보입니다.</p>
       </Card>
+
+      {photo && (
+        <Card className="p-4">
+          <h2 className="mb-3 text-base font-bold text-stone-700">📷 어르신이 보낸 복약 사진</h2>
+          <img src={photo.dataUrl} alt="어르신이 보낸 약 사진" className="w-full rounded-2xl object-cover" />
+          <p className="mt-2 text-sm text-stone-400">
+            {photo.doseLabel} · {photo.at} 전송됨
+          </p>
+        </Card>
+      )}
 
       <Card className="border-l-4 border-l-brand-500 p-4">
         <h2 className="mb-3 text-base font-bold text-stone-900">💊 약 개수 추적</h2>

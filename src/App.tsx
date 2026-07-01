@@ -4,7 +4,9 @@ import { CaregiverDashboardPage } from './routes/caregiver/CaregiverDashboardPag
 import { ManagePage } from './routes/caregiver/ManagePage';
 import { PillDetailPage } from './routes/caregiver/PillDetailPage';
 import { TimelinePage } from './routes/caregiver/TimelinePage';
+import { AlarmPage } from './routes/senior/AlarmPage';
 import { AlertsPage } from './routes/senior/AlertsPage';
+import { CameraPage } from './routes/senior/CameraPage';
 import { ConnectedPage } from './routes/senior/ConnectedPage';
 import { DonePage } from './routes/senior/DonePage';
 import { DosePage } from './routes/senior/DosePage';
@@ -28,6 +30,8 @@ export default function App() {
         <Route path="senior/photo" element={<MedicationPhotoPage />} />
         <Route path="senior/alerts" element={<AlertsPage />} />
         <Route path="senior/login" element={<LoginPage />} />
+        <Route path="senior/alarm" element={<AlarmPage />} />
+        <Route path="senior/camera" element={<CameraPage />} />
         <Route path="caregiver" element={<CaregiverDashboardPage />} />
         <Route path="caregiver/pills" element={<PillDetailPage />} />
         <Route path="caregiver/timeline" element={<TimelinePage />} />
