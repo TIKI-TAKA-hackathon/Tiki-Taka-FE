@@ -5,10 +5,10 @@ import { env } from '../lib/env';
 const LARGE_TEXT_KEY = 'tikitaka-large-text';
 
 export function Layout() {
-  const [largeText, setLargeText] = useState(() => localStorage.getItem(LARGE_TEXT_KEY) === 'true');
+  const [largeText, setLargeText] = useState(() => window.localStorage.getItem(LARGE_TEXT_KEY) === 'true');
 
   useEffect(() => {
-    localStorage.setItem(LARGE_TEXT_KEY, String(largeText));
+    window.localStorage.setItem(LARGE_TEXT_KEY, String(largeText));
   }, [largeText]);
 
   return (
