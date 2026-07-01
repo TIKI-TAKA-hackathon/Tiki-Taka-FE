@@ -4,17 +4,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        warm: {
-          50: '#fff8ed',
-          100: '#ffefd5',
-          200: '#f9d7a8',
-          500: '#d9822b',
-          700: '#8a4b14',
+        brand: {
+          50: '#eef2ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          500: '#4f6bed',
+          600: '#3b5bdb',
+          700: '#2f49b2',
         },
-        leaf: {
-          50: '#f1f8f4',
-          500: '#4f8f65',
-          700: '#2e5d40',
+        success: {
+          50: '#eafaf0',
+          100: '#d6f4e0',
+          500: '#22a55a',
+          600: '#1c8f4d',
+          700: '#166b3a',
+        },
+        warn: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          500: '#f59e0b',
+          700: '#b45309',
         },
       },
       fontFamily: {

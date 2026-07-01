@@ -1,20 +1,26 @@
-import { Route, Routes } from 'react-router-dom';
-import { Layout } from './components/Layout';
-import { CardPreviewPage } from './routes/CardPreviewPage';
-import { HomePage } from './routes/HomePage';
-import { QuestionPage } from './routes/QuestionPage';
-import { SharedCardPage } from './routes/SharedCardPage';
-import { TopicsPage } from './routes/TopicsPage';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { PhoneShell } from './components/PhoneShell';
+import { CaregiverDashboardPage } from './routes/caregiver/CaregiverDashboardPage';
+import { ConnectedPage } from './routes/senior/ConnectedPage';
+import { DonePage } from './routes/senior/DonePage';
+import { DosePage } from './routes/senior/DosePage';
+import { OnboardingPage } from './routes/senior/OnboardingPage';
+import { RegisterPage } from './routes/senior/RegisterPage';
+import { SeniorHomePage } from './routes/senior/SeniorHomePage';
 
 export default function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
-        <Route index element={<HomePage />} />
-        <Route path="topics" element={<TopicsPage />} />
-        <Route path="topics/:topicId/question" element={<QuestionPage />} />
-        <Route path="preview/:cardId" element={<CardPreviewPage />} />
-        <Route path="t/:shareToken" element={<SharedCardPage />} />
+      <Route element={<PhoneShell />}>
+        <Route index element={<Navigate to="/onboarding" replace />} />
+        <Route path="onboarding" element={<OnboardingPage />} />
+        <Route path="senior" element={<SeniorHomePage />} />
+        <Route path="senior/register" element={<RegisterPage />} />
+        <Route path="senior/connected" element={<ConnectedPage />} />
+        <Route path="senior/dose" element={<DosePage />} />
+        <Route path="senior/done" element={<DonePage />} />
+        <Route path="caregiver" element={<CaregiverDashboardPage />} />
+        <Route path="*" element={<Navigate to="/onboarding" replace />} />
       </Route>
     </Routes>
   );

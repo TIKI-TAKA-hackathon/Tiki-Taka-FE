@@ -5,14 +5,24 @@ import App from './App';
 import { env } from './lib/env';
 
 describe('App', () => {
-  it('renders the home screen and shows the configured API base URL', () => {
+  it('renders the 고찌봄 onboarding and shows the configured API base URL', () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter initialEntries={['/onboarding']}>
         <App />
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('기억카드 만들기')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '고찌봄' })).toBeInTheDocument();
     expect(screen.getByTestId('api-base')).toHaveTextContent(env.apiBaseUrl);
+  });
+
+  it('shows the caregiver monitoring dashboard', () => {
+    render(
+      <MemoryRouter initialEntries={['/caregiver']}>
+        <App />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading', { name: '어머니 복약 상태' })).toBeInTheDocument();
   });
 });

@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  color: #2b2118;
-  background: #fff8ed;
+  color: #1c1917;
+  background: #eef1f5;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -25,7 +25,8 @@ input {
 
 button:focus-visible,
 a:focus-visible,
+input:focus-visible,
 textarea:focus-visible {
-  outline: 4px solid #4f8f65;
-  outline-offset: 3px;
+  outline: 3px solid #3b5bdb;
+  outline-offset: 2px;
 }
