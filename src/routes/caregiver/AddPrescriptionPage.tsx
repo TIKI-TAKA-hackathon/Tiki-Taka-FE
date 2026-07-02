@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BackHeader, Card, CheckCircle, PrimaryButton, SecondaryButton, TextField } from '../../components/ui';
 import { fetchPrescriptionByCode } from '../../lib/api';
+import { env } from '../../lib/env';
 import type { ConfirmMedsView } from '../../lib/types';
 
 // BarcodeDetector is not in the TS DOM lib yet; describe the minimal shape we use.
@@ -20,7 +21,9 @@ export function AddPrescriptionPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('scan');
   const [cameraError, setCameraError] = useState(false);
-  const [manualCode, setManualCode] = useState('');
+  // Demo mode pre-fills a manual registration code so "코드로 등록하기" works in one tap
+  // (fetchPrescriptionByCode falls back to the fixture regardless of the code value).
+  const [manualCode, setManualCode] = useState(env.demoMode ? 'RX0012024' : '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<ConfirmMedsView | null>(null);
