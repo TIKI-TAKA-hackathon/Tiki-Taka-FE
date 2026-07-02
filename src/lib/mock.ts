@@ -2,6 +2,7 @@ import type {
   CareGroup,
   CaregiverBoard,
   ChangeLog,
+  ConfirmMedsView,
   Dose,
   InviteLink,
   MealTimes,
@@ -140,6 +141,42 @@ export const notificationSettings: NotificationSettings = {
   enabled: true,
   remindIntervalMin: 10,
   maxRetries: 3,
+};
+
+// Demo-fallback fixture for the prescription QR lookup (confirm-meds view).
+export const confirmMedsView: ConfirmMedsView = {
+  seniorDisplayName: '김순자',
+  prescribedDateLabel: '2026년 6월 25일',
+  pharmacyName: '행복약국',
+  schedules: [
+    {
+      displayName: '아침약',
+      timesPerDay: 3,
+      doseBasis: '식후',
+      offsetMin: 30,
+      pillCount: 3,
+      dispensedDays: 30,
+      dispensingNumber: 1,
+    },
+    {
+      displayName: '점심약',
+      timesPerDay: 3,
+      doseBasis: '식후',
+      offsetMin: 30,
+      pillCount: 2,
+      dispensedDays: 30,
+      dispensingNumber: 2,
+    },
+    {
+      displayName: '저녁약',
+      timesPerDay: 3,
+      doseBasis: '식후',
+      offsetMin: 30,
+      pillCount: 3,
+      dispensedDays: 30,
+      dispensingNumber: 3,
+    },
+  ],
 };
 
 export const inviteLink: InviteLink = {

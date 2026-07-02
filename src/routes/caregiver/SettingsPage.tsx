@@ -40,7 +40,7 @@ export function SettingsPage() {
     const [g, m, n] = await Promise.all([
       getCareGroup(session.careGroupId),
       getMealTimes(session.seniorId),
-      getNotificationSettings(),
+      getNotificationSettings(session.seniorId),
     ]);
     setGroup(g);
     setMeal(m);
@@ -99,9 +99,26 @@ export function SettingsPage() {
   }
 
   async function saveNotif(next: NotificationSettings) {
+    if (!session) {
+      return;
+    }
+    const previous = notif;
     setNotif(next);
-    await saveNotificationSettings(next);
-    setNotifMessage('알림 설정을 저장했어요.');
+    setNotifMessage(null);
+    try {
+      const saved = await saveNotificationSettings(session.seniorId, session.ownerUserId, next);
+      setNotif(saved);
+      setNotifMessage('알림 설정을 저장했어요.');
+    } catch (err) {
+      // Roll back the optimistic update so the UI matches the server.
+      setNotif(previous);
+      const message = err instanceof Error ? err.message : '';
+      setNotifMessage(
+        message.includes('PRIMARY_REQUIRED')
+          ? '알림 설정은 대표자만 변경할 수 있어요.'
+          : '알림 설정을 저장하지 못했어요.',
+      );
+    }
   }
 
   return (
@@ -149,21 +166,25 @@ export function SettingsPage() {
       <Card className="p-4">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-stone-900">🔔 알림 주기</h2>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={notif?.enabled ?? false}
-            onClick={() => notif && void saveNotif({ ...notif, enabled: !notif.enabled })}
-            className={`relative h-7 w-12 rounded-full transition ${
-              notif?.enabled ? 'bg-brand-600' : 'bg-stone-300'
-            }`}
-          >
-            <span
-              className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${
-                notif?.enabled ? 'left-6' : 'left-1'
+          <div className="flex items-center gap-2">
+            {!canEdit && <span className="text-sm font-semibold text-stone-400">🔒 대표자만 변경</span>}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={notif?.enabled ?? false}
+              disabled={!canEdit}
+              onClick={() => notif && void saveNotif({ ...notif, enabled: !notif.enabled })}
+              className={`relative h-7 w-12 rounded-full transition disabled:opacity-50 ${
+                notif?.enabled ? 'bg-brand-600' : 'bg-stone-300'
               }`}
-            />
-          </button>
+            >
+              <span
+                className={`absolute top-1 h-5 w-5 rounded-full bg-white transition ${
+                  notif?.enabled ? 'left-6' : 'left-1'
+                }`}
+              />
+            </button>
+          </div>
         </div>
         <p className="mt-1 text-sm text-stone-400">복약 확인이 없을 때 다시 알리는 간격이에요.</p>
         {notif?.enabled && (
@@ -175,8 +196,9 @@ export function SettingsPage() {
                   <button
                     key={min}
                     type="button"
+                    disabled={!canEdit}
                     onClick={() => void saveNotif({ ...notif, remindIntervalMin: min })}
-                    className={`flex-1 rounded-xl py-2.5 text-sm font-bold ${
+                    className={`flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ${
                       notif.remindIntervalMin === min ? 'bg-brand-600 text-white' : 'bg-stone-100 text-stone-500'
                     }`}
                   >
@@ -192,8 +214,9 @@ export function SettingsPage() {
                   <button
                     key={count}
                     type="button"
+                    disabled={!canEdit}
                     onClick={() => void saveNotif({ ...notif, maxRetries: count })}
-                    className={`flex-1 rounded-xl py-2.5 text-sm font-bold ${
+                    className={`flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ${
                       notif.maxRetries === count ? 'bg-brand-600 text-white' : 'bg-stone-100 text-stone-500'
                     }`}
                   >

@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Badge, BackHeader, Card, Loading, PrimaryButton } from '../../components/ui';
 import { createInviteLink, getCareGroup } from '../../lib/api';
 import { env } from '../../lib/env';
@@ -19,6 +20,7 @@ const ROLE_EMOJI: Record<MemberRole, string> = {
 };
 
 export function ManagePage() {
+  const navigate = useNavigate();
   const session = loadSession();
   const careGroupId = session?.careGroupId;
   const loadGroup = useCallback(() => getCareGroup(careGroupId ?? 'latest'), [careGroupId]);
@@ -117,6 +119,16 @@ export function ManagePage() {
           <p className="mt-2 text-sm text-stone-400">
             어르신은 등록된 휴대폰 번호로 인증하면 이 가족방에 연결돼요.
           </p>
+        </Card>
+
+        <Card className="p-4">
+          <h2 className="text-base font-bold text-stone-900">약 등록</h2>
+          <p className="mt-1 text-sm text-stone-400">약국에서 받은 처방 QR을 스캔해 복약 정보를 등록해요.</p>
+          <div className="mt-3">
+            <PrimaryButton onClick={() => navigate('/caregiver/add-prescription')}>
+              💊 처방 QR 등록하기
+            </PrimaryButton>
+          </div>
         </Card>
 
         <Card className="p-4">
