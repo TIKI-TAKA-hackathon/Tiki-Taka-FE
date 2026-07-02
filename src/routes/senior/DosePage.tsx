@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DemoImage, PrimaryButton, SeniorActionZone } from '../../components/ui';
+import { DemoImage, PrimaryButton, SeniorActionZone, SeniorHomeButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import { detailGuideUrl, type DispensingType } from '../../lib/guide';
 import { useCaregiverExitAlert } from '../../lib/useCaregiverExitAlert';
@@ -34,21 +34,22 @@ export function DosePage() {
   }, [play]);
 
   return (
-    <div className="flex min-h-full flex-col">
+    <div className="relative flex min-h-full flex-col">
+      <SeniorHomeButton />
       <div className="flex items-center bg-brand-50 px-5 py-3">
         <span className="flex items-center gap-2 text-base font-semibold text-brand-700">🔊 음성 안내 중</span>
       </div>
       <audio ref={audioRef} src={detailGuideUrl(dispensingType)} preload="auto" />
 
-      <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-6 pt-5 text-center">
-        <h1 className="text-2xl font-extrabold text-stone-900">지금 드실 약이에요</h1>
+      <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-[var(--gjb-screen-x)] pt-5 text-center">
+        <h1 className="text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">지금 드실 약이에요</h1>
         <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-success-50 px-3 py-1 text-base font-semibold text-success-700">
           🍽 {nextDose.mealTag}
         </span>
-        <p className="mt-3 text-5xl font-black tracking-tight text-stone-900">{nextDose.alarmLabel}</p>
+        <p className="mt-3 text-[length:var(--gjb-senior-display)] font-black text-stone-900">{nextDose.alarmLabel}</p>
         <p className="mt-2 text-base text-stone-400">{nextDose.baselineNote}</p>
 
-        <div className="mt-5 flex flex-col items-center rounded-3xl border-2 border-dashed border-brand-200 bg-brand-50 px-10 py-6">
+        <div className="mt-5 flex flex-col items-center rounded-3xl border-2 border-dashed border-brand-200 bg-brand-50 px-[clamp(2rem,10vw,2.5rem)] py-[clamp(1.25rem,4dvh,1.5rem)]">
           {nextDose.pills.some((pill) => pill.image) ? (
             <div className="flex items-center gap-2">
               {nextDose.pills.map((pill) =>
@@ -58,28 +59,28 @@ export function DosePage() {
                     src={pill.image}
                     alt={pill.name}
                     className="h-14 w-14 rounded-2xl object-cover"
-                    fallback={<span className="text-6xl">💊</span>}
+                    fallback={<span className="text-[length:var(--gjb-senior-icon)]">💊</span>}
                   />
                 ) : (
-                  <span key={pill.id} className="text-6xl">
+                  <span key={pill.id} className="text-[length:var(--gjb-senior-icon)]">
                     💊
                   </span>
                 ),
               )}
             </div>
           ) : (
-            <span className="text-6xl">💊</span>
+            <span className="text-[length:var(--gjb-senior-icon)]">💊</span>
           )}
           <span className="mt-2 flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-base font-bold text-white">
             {nextDose.packetNo}
           </span>
         </div>
-        <h2 className="mt-4 text-2xl font-extrabold text-stone-900">{nextDose.label}</h2>
+        <h2 className="mt-4 text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">{nextDose.label}</h2>
         <p className="mt-1 text-lg text-stone-500">약 {nextDose.pillCount}개</p>
       </div>
 
-      <SeniorActionZone className="px-6 pb-6 pt-4">
-        <PrimaryButton size="xl" className="flex-1 text-3xl" onClick={() => navigate('/senior/camera')}>
+      <SeniorActionZone className="px-[var(--gjb-screen-x)] pb-6 pt-4">
+        <PrimaryButton size="xl" className="flex-1" onClick={() => navigate('/senior/camera')}>
           네, 먹었어요 ✓
         </PrimaryButton>
       </SeniorActionZone>

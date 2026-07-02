@@ -48,6 +48,21 @@
   --gjb-h1:        24px;
   --gjb-tap:       48px;
   --gjb-lh:        1.6;    /* 행간 공통 */
+  --gjb-screen-x: clamp(1rem, 5.5vw, 1.5rem);
+  --gjb-screen-top: clamp(1rem, 4dvh, 1.5rem);
+  --gjb-senior-title: clamp(1.65rem, 7.2vw, 2rem);
+  --gjb-senior-copy: clamp(1.1rem, 4.8vw, 1.25rem);
+  --gjb-senior-subtitle: clamp(1.35rem, 5.8vw, 1.5rem);
+  --gjb-senior-display: clamp(2.75rem, 13vw, 3rem);
+  --gjb-senior-action-label: clamp(1.55rem, 7.4vw, 1.875rem);
+  --gjb-senior-action-min: clamp(5rem, 22dvh, 7rem);
+  --gjb-senior-action-py: clamp(1.35rem, 4dvh, 1.75rem);
+  --gjb-senior-action-zone: clamp(9rem, 28dvh, 14rem);
+  --gjb-senior-qr-frame: min(20rem, calc(100vw - (var(--gjb-screen-x) * 2)), 37dvh);
+  --gjb-senior-qr-entry-min: clamp(16rem, 41dvh, 22rem);
+  --gjb-senior-icon: clamp(3.25rem, 16vw, 4.5rem);
+  --gjb-senior-mascot: clamp(7rem, 26dvh, 10rem);
+  --gjb-senior-thumb: clamp(4.25rem, 18vw, 5rem);
 
   /* ── 형태·질감 ─────────────────────────────────────────── */
   --gjb-radius-pill: 999px;                          /* 캡슐(알약) 버튼 */
@@ -135,6 +150,45 @@ textarea:focus-visible {
       #fffdf7 55%,
       var(--gjb-surface) 100%
     );
+  }
+
+  .gjb-senior-title {
+    font-size: var(--gjb-senior-title);
+    line-height: 1.18;
+  }
+
+  .gjb-senior-copy {
+    font-size: var(--gjb-senior-copy);
+    line-height: 1.55;
+  }
+
+  .gjb-senior-scan-shell {
+    width: var(--gjb-senior-qr-frame);
+    max-width: 100%;
+    padding: clamp(0.75rem, 3vw, 1rem);
+    border-radius: clamp(1.5rem, 7vw, 2rem);
+  }
+
+  .gjb-senior-action-link {
+    min-height: var(--gjb-senior-action-min);
+    padding-block: var(--gjb-senior-action-py);
+    font-size: var(--gjb-senior-action-label);
+    line-height: 1.15;
+  }
+
+  .gjb-senior-home-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: var(--gjb-screen-x);
+    z-index: 20;
+    min-height: 2.25rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.45rem 0.8rem;
+    color: var(--gjb-ink-soft);
+    font-size: 0.875rem;
+    font-weight: 800;
+    box-shadow: var(--gjb-shadow-soft);
   }
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DemoImage, PrimaryButton, SecondaryButton, SeniorActionZone } from '../../components/ui';
+import { DemoImage, PrimaryButton, SecondaryButton, SeniorActionZone, SeniorHomeButton } from '../../components/ui';
 import { DEMO_DAYS } from '../../lib/demoImages';
 import { seniorDay } from '../../lib/mock';
 import { shareDosePhoto } from '../../lib/shareStore';
@@ -104,10 +104,11 @@ export function CameraPage() {
   }
 
   return (
-    <div className="flex min-h-full flex-col px-6 pt-6">
+    <div className="relative flex min-h-full flex-col px-[var(--gjb-screen-x)] pt-[var(--gjb-screen-top)]">
+      <SeniorHomeButton />
       {photo ? (
         <>
-          <h1 className="mt-1 text-2xl font-extrabold text-stone-900">이 사진이 약이 맞나요?</h1>
+          <h1 className="text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">이 사진이 약이 맞나요?</h1>
           <p className="mt-1 text-base text-stone-500">
             {shouldCallCaregiver ? '사진이 헷갈리면 보호자에게 바로 전화하세요.' : '맞으면 보호자에게 보여드릴게요.'}
           </p>
@@ -127,28 +128,30 @@ export function CameraPage() {
             {shouldCallCaregiver ? (
               <a
                 href={`tel:${CAREGIVER_PHONE}`}
-                className="gjb-pill-btn flex flex-1 w-full items-center justify-center gap-2 px-5 py-7 text-3xl font-extrabold text-stone-900 transition active:scale-[0.99]"
+                className="gjb-pill-btn gjb-senior-action-link flex w-full flex-1 items-center justify-center gap-2 px-5 font-extrabold text-stone-900 transition active:scale-[0.99]"
               >
                 📞 보호자에게 전화하기
               </a>
             ) : (
-              <PrimaryButton tone="success" size="xl" className="flex-1 text-3xl" onClick={confirmPhoto}>
+              <PrimaryButton tone="success" size="xl" className="flex-1" onClick={confirmPhoto}>
                 ✓ 네, 맞아요
               </PrimaryButton>
             )}
-            <SecondaryButton size="lg" onClick={retake}>
-              ↻ 다시
-            </SecondaryButton>
+            {!shouldCallCaregiver && (
+              <SecondaryButton size="lg" onClick={retake}>
+                ↻ 다시
+              </SecondaryButton>
+            )}
           </SeniorActionZone>
         </>
       ) : (
         <>
-          <h1 className="text-2xl font-extrabold text-stone-900">약 봉지 사진</h1>
+          <h1 className="text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">약 봉지 사진</h1>
           <p className="text-base text-stone-500">약 봉지를 사진으로 남겨 보호자에게 보여주세요.</p>
 
           <div className="mt-4 min-h-0 flex-1">
             {error ? (
-              <div className="flex h-full min-h-72 w-full items-center justify-center rounded-3xl bg-warn-50 p-6 text-center text-base font-semibold text-warn-700">
+              <div className="flex h-full min-h-[clamp(16rem,46dvh,18rem)] w-full items-center justify-center rounded-3xl bg-warn-50 p-6 text-center text-base font-semibold text-warn-700">
                 {error}
               </div>
             ) : (
@@ -157,19 +160,19 @@ export function CameraPage() {
                 autoPlay
                 muted
                 playsInline
-                className="h-full min-h-72 w-full rounded-3xl bg-stone-900 object-cover"
+                className="h-full min-h-[clamp(16rem,46dvh,18rem)] w-full rounded-3xl bg-stone-900 object-cover"
               />
             )}
           </div>
 
           <SeniorActionZone className="pb-8 pt-4">
             {!error && (
-              <PrimaryButton size="xl" className="flex-1 text-3xl" onClick={capture}>
+              <PrimaryButton size="xl" className="flex-1" onClick={capture}>
                 📷 사진 촬영
               </PrimaryButton>
             )}
             {error && (
-              <PrimaryButton size="xl" className="flex-1 text-3xl" onClick={useFallbackPhoto}>
+              <PrimaryButton size="xl" className="flex-1" onClick={useFallbackPhoto}>
                 📷 예시 사진으로 계속
               </PrimaryButton>
             )}

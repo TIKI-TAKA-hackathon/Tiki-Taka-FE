@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, DemoImage, PrimaryButton, SeniorActionZone } from '../../components/ui';
+import { CheckCircle, DemoImage, PrimaryButton, SeniorActionZone, SeniorHomeButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import { useSharedDosePhoto } from '../../lib/shareStore';
 import { GUIDE_AUDIO } from '../../lib/guide';
@@ -24,12 +24,13 @@ export function DonePage() {
   }, []);
 
   return (
-    <div className="flex min-h-full flex-col px-6">
+    <div className="relative flex min-h-full flex-col px-[var(--gjb-screen-x)]">
+      <SeniorHomeButton />
       <audio ref={audioRef} src={GUIDE_AUDIO.done} preload="auto" />
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto py-6 text-center">
         <CheckCircle />
-        <h1 className="mt-5 text-3xl font-extrabold text-stone-900">잘 하셨어요!</h1>
-        <p className="mt-2 text-xl font-semibold text-stone-500">저녁약을 드셨어요.</p>
+        <h1 className="gjb-senior-title mt-5 font-extrabold text-stone-900">잘 하셨어요!</h1>
+        <p className="gjb-senior-copy mt-2 font-semibold text-stone-500">저녁약을 드셨어요.</p>
 
         <section className="mt-6 w-full rounded-3xl border border-stone-100 bg-white p-5 text-left shadow-sm">
           <div className="flex items-center gap-4">
@@ -37,10 +38,10 @@ export function DonePage() {
               <DemoImage
                 src={photo.dataUrl}
                 alt="보호자에게 보낸 약 사진"
-                className="h-20 w-20 shrink-0 rounded-2xl object-cover shadow-sm"
+                className="h-[var(--gjb-senior-thumb)] w-[var(--gjb-senior-thumb)] shrink-0 rounded-2xl object-cover shadow-sm"
               />
             ) : (
-              <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-success-50 text-4xl">
+              <span className="flex h-[var(--gjb-senior-thumb)] w-[var(--gjb-senior-thumb)] shrink-0 items-center justify-center rounded-2xl bg-success-50 text-4xl">
                 ✓
               </span>
             )}
@@ -60,7 +61,7 @@ export function DonePage() {
       </div>
 
       <SeniorActionZone className="pb-8 pt-4">
-        <PrimaryButton size="xl" className="flex-1 text-3xl" onClick={() => navigate('/senior/today')}>
+        <PrimaryButton size="xl" className="flex-1" onClick={() => navigate('/senior/today')}>
           오늘 약 홈으로
         </PrimaryButton>
       </SeniorActionZone>

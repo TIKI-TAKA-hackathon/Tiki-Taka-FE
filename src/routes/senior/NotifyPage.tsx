@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { SeniorHomeButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 
 // Phone lock-screen mock: a calm dark background with a big clock/date and a single
@@ -12,10 +13,11 @@ export function NotifyPage() {
   const shortDate = dateLabel.replace(/^\d{4}년\s*/, '');
 
   return (
-    <div className="flex min-h-full flex-col bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 px-6 pb-10 pt-16 text-white">
+    <div className="relative flex min-h-full flex-col bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 px-[var(--gjb-screen-x)] pb-10 pt-16 text-white">
+      <SeniorHomeButton />
       <div className="flex flex-col items-center text-center">
         <p className="text-lg font-medium text-white/70">{shortDate}</p>
-        <p className="mt-1 text-7xl font-extralight tracking-tight tabular-nums">{nextDose.alarmLabel}</p>
+        <p className="mt-1 text-[length:clamp(3.5rem,18vw,4.5rem)] font-extralight tabular-nums">{nextDose.alarmLabel}</p>
       </div>
 
       <div className="mt-14 flex flex-1 flex-col justify-start">
@@ -33,7 +35,7 @@ export function NotifyPage() {
             <span>고찌봄</span>
             <span className="ml-auto font-medium text-stone-400">지금</span>
           </div>
-          <p className="mt-2 text-2xl font-extrabold text-stone-900">{doseName} 드실 시간이에요</p>
+          <p className="mt-2 text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">{doseName} 드실 시간이에요</p>
           <p className="mt-1 text-lg font-medium text-stone-500">지금 눌러서 확인하세요</p>
         </button>
       </div>

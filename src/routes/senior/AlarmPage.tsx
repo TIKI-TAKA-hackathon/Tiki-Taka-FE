@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PrimaryButton, SeniorActionZone } from '../../components/ui';
+import { PrimaryButton, SeniorActionZone, SeniorHomeButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import { GUIDE_AUDIO } from '../../lib/guide';
 
@@ -34,24 +34,25 @@ export function AlarmPage() {
   }, []);
 
   return (
-    <div className="gjb-hero-gradient flex min-h-full flex-col px-6 pt-10">
+    <div className="gjb-hero-gradient relative flex min-h-full flex-col px-[var(--gjb-screen-x)] pt-10">
+      <SeniorHomeButton />
       <audio ref={audioRef} src={GUIDE_AUDIO.alarm} preload="auto" />
       <div className="flex flex-1 flex-col items-center justify-center text-center">
         <img
           src="/brand/고찌봄 인사.svg"
           alt="고찌봄 캐릭터"
-          className="gjb-mascot-muted h-40 w-auto rounded-3xl drop-shadow-[var(--gjb-shadow-soft)]"
+          className="gjb-mascot-muted h-[var(--gjb-senior-mascot)] w-auto rounded-3xl drop-shadow-[var(--gjb-shadow-soft)]"
         />
         <p className="mt-6 text-base font-bold text-citrus-deep">복약 알림</p>
-        <h1 className="mt-2 text-3xl font-extrabold text-ink">약 드실 시간이에요</h1>
-        <p className="mt-4 text-2xl font-bold text-ink">{nextDose.label}</p>
+        <h1 className="gjb-senior-title mt-2 font-extrabold text-ink">약 드실 시간이에요</h1>
+        <p className="mt-4 text-[length:var(--gjb-senior-subtitle)] font-bold leading-snug text-ink">{nextDose.label}</p>
         <p className="mt-1 text-lg text-ink-soft">
           {nextDose.alarmLabel} · 약 {nextDose.pillCount}개
         </p>
       </div>
 
       <SeniorActionZone className="pb-8 pt-4">
-        <PrimaryButton size="xl" className="flex-1 text-3xl" onClick={() => navigate('/senior/dose')}>
+        <PrimaryButton size="xl" className="flex-1" onClick={() => navigate('/senior/dose')}>
           지금 확인하기
         </PrimaryButton>
       </SeniorActionZone>
