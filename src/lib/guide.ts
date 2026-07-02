@@ -6,11 +6,13 @@
 //   done           "잘하셨어요. 가족에게 알렸어요."
 //   help           "가족에게 도움 요청을 보냈어요."
 
+const GUIDE_AUDIO_CACHE_VERSION = '20260703-tts';
+
 export const GUIDE_AUDIO = {
-  detailEnvelope: '/audio/guide/detail_envelope.mp3',
-  detailPill: '/audio/guide/detail_pill.mp3',
-  done: '/audio/guide/done.mp3',
-  help: '/audio/guide/help.mp3',
+  detailEnvelope: `/audio/guide/detail_envelope.mp3?v=${GUIDE_AUDIO_CACHE_VERSION}`,
+  detailPill: `/audio/guide/detail_pill.mp3?v=${GUIDE_AUDIO_CACHE_VERSION}`,
+  done: `/audio/guide/done.mp3?v=${GUIDE_AUDIO_CACHE_VERSION}`,
+  help: `/audio/guide/help.mp3?v=${GUIDE_AUDIO_CACHE_VERSION}`,
 } as const;
 
 export type DispensingType = 'pouch' | 'organizer';
