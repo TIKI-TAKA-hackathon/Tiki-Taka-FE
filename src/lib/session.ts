@@ -6,6 +6,9 @@ export type Session = {
   careGroupId: string;
   seniorId: string;
   ownerUserId: string;
+  groupName?: string;
+  ownerName?: string;
+  seniorName?: string;
   // Kept locally so the senior phone-pairing flow can match on the same demo device
   // (BE has no "find care group by senior phone" endpoint yet).
   seniorPhone?: string;
@@ -19,8 +22,16 @@ function isSession(value: unknown): value is Session {
   return (
     typeof candidate.careGroupId === 'string' &&
     typeof candidate.seniorId === 'string' &&
-    typeof candidate.ownerUserId === 'string'
+    typeof candidate.ownerUserId === 'string' &&
+    optionalString(candidate.groupName) &&
+    optionalString(candidate.ownerName) &&
+    optionalString(candidate.seniorName) &&
+    optionalString(candidate.seniorPhone)
   );
+}
+
+function optionalString(value: unknown): boolean {
+  return value === undefined || typeof value === 'string';
 }
 
 export function saveSession(session: Session): void {

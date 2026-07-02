@@ -164,13 +164,16 @@ export function SeniorAddPrescriptionPage() {
                 <video ref={videoRef} autoPlay muted playsInline className="h-full w-full rounded-3xl bg-stone-800 object-cover" />
               )}
               {!scanComplete && !cameraReady && !cameraError && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-stone-800">
-                  <span className="text-[length:var(--gjb-senior-icon)]">▦</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-3xl bg-stone-800 p-6 text-center text-white">
+                  <QrMark />
+                  <span className="text-lg font-bold">카메라 준비 중이에요</span>
                 </div>
               )}
               {!scanComplete && cameraError && (
-                <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-stone-800 p-6 text-center text-lg font-bold text-white">
-                  카메라를 사용할 수 없어요.
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-3xl bg-stone-800 p-6 text-center text-white">
+                  <QrMark />
+                  <span className="text-lg font-bold">데모 QR로 등록할게요</span>
+                  <span className="text-base text-white/75">카메라 대신 준비된 처방 정보로 이어갈게요.</span>
                 </div>
               )}
               <ScanFrame />
@@ -236,7 +239,7 @@ export function SeniorAddPrescriptionPage() {
             {(view.medicines ?? []).map((medicine) => (
               <Card key={medicine.name} className="flex items-center gap-4 p-5">
                 <DemoImage
-                  src={medicine.image ?? '/mock/pill-placeholder.jpg'}
+                  src={medicine.image ?? '/mock/pill-placeholder.svg'}
                   alt={`${medicine.name} 사진`}
                   className="h-24 w-24 shrink-0 rounded-3xl object-cover"
                   fallback={
@@ -256,7 +259,11 @@ export function SeniorAddPrescriptionPage() {
       )}
 
       {step === 'alarms' && (
-        <StepLayout title="식사 시간에 맞춰 알려드릴게요" description="보호자가 정한 식사 시간으로 계산했어요." onConfirm={confirm}>
+        <StepLayout
+          title="식사 시간에 맞춰 알려드릴게요"
+          description="며칠치 처방이어도 매일 같은 순서로 반복해서 알려드려요."
+          onConfirm={confirm}
+        >
           <div className="space-y-3">
             {alarmPreviews.map((item) => (
               <Card key={item.id} className="p-5">
@@ -272,6 +279,9 @@ export function SeniorAddPrescriptionPage() {
                 <p className="mt-3 text-base font-semibold text-stone-500">{item.mealLabel}</p>
                 <p className="mt-1 text-base text-stone-500">
                   {item.basisLabel} · {item.pillText}
+                </p>
+                <p className="mt-2 rounded-2xl bg-brand-50 px-4 py-3 text-base font-semibold text-brand-700">
+                  {item.repeatLabel}
                 </p>
               </Card>
             ))}
@@ -348,5 +358,18 @@ function ScanFrame() {
       <span className="absolute bottom-4 right-4 h-10 w-10 rounded-br-2xl border-b-4 border-r-4 border-success-500" />
       <span className="absolute left-8 right-8 top-1/2 h-1 -translate-y-1/2 rounded-full bg-success-500" />
     </>
+  );
+}
+
+function QrMark() {
+  return (
+    <span className="grid h-20 w-20 grid-cols-3 gap-1 rounded-2xl bg-white p-3" aria-hidden>
+      {Array.from({ length: 9 }).map((_, index) => (
+        <span
+          key={index}
+          className={`rounded-sm ${index === 4 ? 'bg-success-500' : index % 2 === 0 ? 'bg-stone-900' : 'bg-stone-300'}`}
+        />
+      ))}
+    </span>
   );
 }

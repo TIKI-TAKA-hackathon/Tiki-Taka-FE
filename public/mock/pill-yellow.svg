@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="yellow oval pill">
+  <rect width="160" height="160" rx="32" fill="#fff7df"/>
+  <g transform="rotate(-24 80 80)">
+    <rect x="32" y="56" width="96" height="48" rx="24" fill="#ffd04d" stroke="#d79b1f" stroke-width="6"/>
+    <path d="M80 56v48" stroke="#d79b1f" stroke-width="6" stroke-linecap="round"/>
+    <path d="M48 70h24" stroke="#ffe698" stroke-width="8" stroke-linecap="round" opacity=".9"/>
+  </g>
+</svg>

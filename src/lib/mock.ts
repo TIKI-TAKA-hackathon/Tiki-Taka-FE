@@ -76,14 +76,14 @@ export const seniorDay: SeniorDay = {
   dateLabel: '2026년 7월 2일 목요일',
   nextDose: {
     doseId: 'dinner',
-    label: '저녁약 · 1번 봉지',
+    label: '저녁약 · 저녁용 봉지',
     alarmLabel: '오후 7:30',
     pillCount: 3,
     packetNo: 1,
     mealTag: '식후 30분',
     includesNote: '혈압약이 포함돼 있어요',
     baselineNote: '저녁 식사 오후 7시 기준',
-    spokenText: '저녁 식사 30분 후, 오후 7시 30분입니다. 1번 봉지를 꺼내 약 3개를 모두 드세요.',
+    spokenText: '저녁 식사 30분 후, 오후 7시 30분입니다. 저녁용 봉지를 꺼내 약 3개를 모두 드세요.',
     doneTimeLabel: '오후 7:32',
     pills: [
       { id: 'p1', name: '흰색 동그란 약', shape: 'round', note: '작은 알약', image: DEMO_IMG.pillWhite },
@@ -188,7 +188,7 @@ export const confirmMedsView: ConfirmMedsView = {
   schedules: [
     {
       displayName: '아침약',
-      timesPerDay: 3,
+      timesPerDay: 1,
       doseBasis: '식후',
       offsetMin: 30,
       pillCount: 3,
@@ -197,7 +197,7 @@ export const confirmMedsView: ConfirmMedsView = {
     },
     {
       displayName: '점심약',
-      timesPerDay: 3,
+      timesPerDay: 1,
       doseBasis: '식후',
       offsetMin: 30,
       pillCount: 2,
@@ -206,7 +206,7 @@ export const confirmMedsView: ConfirmMedsView = {
     },
     {
       displayName: '저녁약',
-      timesPerDay: 3,
+      timesPerDay: 1,
       doseBasis: '식후',
       offsetMin: 30,
       pillCount: 3,
@@ -301,7 +301,7 @@ export const notifications: AppNotification[] = [
     type: 'reminder',
     level: 'info',
     title: '저녁약 드실 시간이에요',
-    body: '1번 봉지 약 3개를 드세요.',
+    body: '저녁용 봉지 약 3개를 드세요.',
     createdAtLabel: '오후 7:30',
     read: true,
   },

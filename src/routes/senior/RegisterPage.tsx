@@ -36,6 +36,9 @@ export function RegisterPage() {
         careGroupId: group.id,
         seniorId: pairing.seniorId,
         ownerUserId: existing?.ownerUserId ?? owner?.user.id ?? group.senior.id,
+        groupName: existing?.groupName ?? group.name,
+        ownerName: existing?.ownerName ?? owner?.user.name,
+        seniorName: existing?.seniorName ?? group.senior.name,
         seniorPhone: digitsOnly(phone),
       });
       navigate('/senior/connected');

@@ -8,6 +8,7 @@ import { useCaregiverExitAlert } from '../../lib/useCaregiverExitAlert';
 export function DosePage() {
   const navigate = useNavigate();
   const { nextDose } = seniorDay;
+  const pouchName = nextDose.label.split('·')[1]?.trim().replace(/ 봉지$/, '') ?? `${nextDose.packetNo}번`;
   const dispensingType = (nextDose as { dispensingType?: DispensingType }).dispensingType ?? 'pouch';
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -71,8 +72,8 @@ export function DosePage() {
           ) : (
             <span className="text-[length:var(--gjb-senior-icon)]">💊</span>
           )}
-          <span className="mt-2 flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-base font-bold text-white">
-            {nextDose.packetNo}
+          <span className="mt-2 flex min-h-9 items-center justify-center rounded-full bg-brand-600 px-3 text-base font-bold text-white">
+            {pouchName}
           </span>
         </div>
         <h2 className="mt-4 text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">{nextDose.label}</h2>

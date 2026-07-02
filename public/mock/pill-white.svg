@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="white round pill">
+  <rect width="160" height="160" rx="32" fill="#f5f7f8"/>
+  <circle cx="80" cy="80" r="48" fill="#ffffff" stroke="#d8dee2" stroke-width="6"/>
+  <path d="M46 80h68" stroke="#d8dee2" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="64" cy="62" r="10" fill="#ffffff" opacity=".8"/>
+</svg>

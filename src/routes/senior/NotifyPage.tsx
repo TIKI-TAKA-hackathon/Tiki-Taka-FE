@@ -3,7 +3,7 @@ import { SeniorHomeButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 
 // Phone lock-screen mock: a calm dark background with a big clock/date and a single
-// push-notification card. Tapping the card opens the in-app alarm (mock-only, no OS push).
+// push-notification card. Tapping the card opens the dose confirmation flow.
 export function NotifyPage() {
   const navigate = useNavigate();
   const { nextDose, dateLabel } = seniorDay;
@@ -23,7 +23,7 @@ export function NotifyPage() {
       <div className="mt-14 flex flex-1 flex-col justify-start">
         <button
           type="button"
-          onClick={() => navigate('/senior/alarm')}
+          onClick={() => navigate('/senior/dose')}
           className="w-full rounded-3xl bg-white/85 p-5 text-left shadow-2xl backdrop-blur-md"
         >
           <div className="flex items-center gap-2 text-sm font-semibold text-stone-500">
