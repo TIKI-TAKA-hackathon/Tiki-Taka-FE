@@ -7,11 +7,13 @@ import {
   dosePhotos as dosePhotosFixture,
   inviteLink as inviteLinkFixture,
   mealTimes as mealTimesFixture,
+  notifications as notificationsFixture,
   notificationSettings as notificationSettingsFixture,
   seniorDay,
 } from './mock';
 import { loadSession, saveSession } from './session';
 import type {
+  AppNotification,
   CareGroup,
   CaregiverBoard,
   CaregiverPhotos,
@@ -23,6 +25,7 @@ import type {
   InviteLink,
   MealTimes,
   NotificationSettings,
+  NotificationType,
   PrescriptionResponse,
   ReviewStatus,
   SeniorDay,
@@ -288,6 +291,65 @@ export async function saveNotificationSettings(
     actorUserId,
     ...settings,
   });
+}
+
+// --- In-app notifications (real endpoints, demo-fallback) ---
+// Backend may send createdAtLabel or a raw createdAt; keep the shape tolerant so the FE never breaks on either.
+type RawNotification = Partial<AppNotification> & { createdAt?: string };
+
+function normalizeNotification(raw: RawNotification): AppNotification {
+  return {
+    id: raw.id ?? '',
+    type: (raw.type as NotificationType | undefined) ?? 'reminder',
+    level: raw.level ?? 'info',
+    title: raw.title ?? '',
+    body: raw.body ?? '',
+    createdAtLabel: raw.createdAtLabel ?? raw.createdAt ?? '',
+    read: raw.read ?? false,
+  };
+}
+
+// GET /seniors/{id}/notifications?actorUserId= — in-app notification records for the senior (newest first).
+export async function fetchSeniorNotifications(
+  seniorId: string,
+  actorUserId?: string,
+): Promise<AppNotification[]> {
+  if (env.demoMode) {
+    return notificationsFixture;
+  }
+  try {
+    const raw = await getJson<RawNotification[]>(
+      `/seniors/${seniorId}/notifications${query({ actorUserId })}`,
+    );
+    return raw.map(normalizeNotification);
+  } catch {
+    return notificationsFixture;
+  }
+}
+
+// GET /care-groups/{id}/notifications — BFF feed for caregivers (newest first).
+export async function fetchCareGroupNotifications(careGroupId: string): Promise<AppNotification[]> {
+  if (env.demoMode) {
+    return notificationsFixture;
+  }
+  try {
+    const raw = await getJson<RawNotification[]>(`/care-groups/${careGroupId}/notifications`);
+    return raw.map(normalizeNotification);
+  } catch {
+    return notificationsFixture;
+  }
+}
+
+// PATCH /notifications/{id}:read — marks a notification read. Best-effort in demo/offline mode.
+export async function markNotificationRead(id: string, actorUserId?: string): Promise<void> {
+  if (env.demoMode) {
+    return;
+  }
+  try {
+    await sendJson<AppNotification>('PATCH', `/notifications/${id}:read`, { actorUserId });
+  } catch {
+    // Optimistic UI already reflects the read state; ignore transient failures.
+  }
 }
 
 // --- Caregiver photo gallery (real endpoints, demo-fallback) ---
