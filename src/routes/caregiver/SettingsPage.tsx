@@ -61,7 +61,7 @@ export function SettingsPage() {
       <div className="flex min-h-full flex-col pb-8">
         <BackHeader title="설정" />
         <div className="m-6 rounded-2xl bg-warn-50 p-4 text-center text-base font-semibold text-warn-700">
-          먼저 가족방을 만들어주세요.
+          먼저 보호자 방을 만들어주세요.
         </div>
       </div>
     );
@@ -85,7 +85,7 @@ export function SettingsPage() {
         dinner: meal.dinner,
       });
       setMeal(updated);
-      setMealMessage('식사시간을 저장했어요. 어르신·가족에게 알림이 갑니다.');
+      setMealMessage('식사시간을 저장했어요. 어르신·보호자에게 알림이 갑니다.');
     } catch (err) {
       const message = err instanceof Error ? err.message : '';
       setMealMessage(

@@ -31,7 +31,7 @@ export function ManagePage() {
   const [resentTo, setResentTo] = useState<string | null>(null);
 
   if (loading) {
-    return <Loading label="가족방을 불러오는 중…" />;
+    return <Loading label="보호자 방을 불러오는 중…" />;
   }
 
   const members = group?.members ?? [];
@@ -56,7 +56,7 @@ export function ManagePage() {
 
   return (
     <div className="flex min-h-full flex-col gap-4 pb-8">
-      <BackHeader title="가족방 관리" />
+      <BackHeader title="보호자 방 관리" />
       <div className="flex flex-col gap-4 px-6">
         <section>
           <h2 className="mb-2 text-base font-bold text-stone-500">구성원</h2>
@@ -117,7 +117,7 @@ export function ManagePage() {
             </p>
           )}
           <p className="mt-2 text-sm text-stone-400">
-            어르신은 등록된 휴대폰 번호로 인증하면 이 가족방에 연결돼요.
+            어르신은 등록된 휴대폰 번호로 인증하면 이 보호자 방에 연결돼요.
           </p>
         </Card>
 
@@ -135,8 +135,8 @@ export function ManagePage() {
         </Card>
 
         <Card className="p-4">
-          <h2 className="text-base font-bold text-stone-900">가족 초대</h2>
-          <p className="mt-1 text-sm text-stone-400">초대 링크를 만들어 가족·복지사에게 보내세요.</p>
+          <h2 className="text-base font-bold text-stone-900">보호자 초대</h2>
+          <p className="mt-1 text-sm text-stone-400">초대 링크를 만들어 보호자에게 보내세요.</p>
           {inviteUrl ? (
             <div className="mt-3 rounded-2xl bg-stone-50 p-3">
               <p className="break-all text-sm font-semibold text-brand-700">{inviteUrl}</p>

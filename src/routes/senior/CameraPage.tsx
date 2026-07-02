@@ -146,7 +146,7 @@ export function CameraPage() {
       {photo ? (
         <>
           <h1 className="mt-1 text-2xl font-extrabold text-stone-900">이 사진이 약이 맞나요?</h1>
-          <p className="mt-1 text-base text-stone-500">맞으면 가족에게 보여드릴게요.</p>
+          <p className="mt-1 text-base text-stone-500">맞으면 보호자에게 보여드릴게요.</p>
           <div className="mt-4 flex-1">
             <DemoImage
               src={photo}
@@ -170,7 +170,7 @@ export function CameraPage() {
         </>
       ) : (
         <>
-          <p className="text-base text-stone-500">약 봉지를 사진으로 남겨 가족에게 보여주세요.</p>
+          <p className="text-base text-stone-500">약 봉지를 사진으로 남겨 보호자에게 보여주세요.</p>
 
           <div className="mt-4 flex-1">
             {error ? (

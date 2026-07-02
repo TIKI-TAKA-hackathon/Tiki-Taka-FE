@@ -56,7 +56,7 @@ export function CaregiverDashboardPage() {
         </div>
         <div className="mt-3 flex items-center justify-between">
           <div className="flex gap-2">
-            <Badge tone="success">가족 {circle.family}명</Badge>
+            <Badge tone="success">보호자 {circle.family}명</Badge>
             <Badge tone="info">사회복지사 {circle.social}명</Badge>
           </div>
           <div className="flex items-center gap-3">

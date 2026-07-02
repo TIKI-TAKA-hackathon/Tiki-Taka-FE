@@ -79,9 +79,9 @@ export function RegisterPage() {
             입력해주세요
           </h2>
           <p className="mt-3 text-lg leading-relaxed text-stone-500">
-            가족이 등록한 번호를 넣으면
+            보호자가 등록한 번호를 넣으면
             <br />
-            가족방에 연결돼요.
+            보호자 방에 연결돼요.
           </p>
           <div className="mt-8">
             <TextField

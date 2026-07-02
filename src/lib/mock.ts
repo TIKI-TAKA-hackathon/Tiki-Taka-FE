@@ -124,7 +124,7 @@ export const caregiverBoard: CaregiverBoard = {
 // Demo-fallback fixture for the care group (used when the backend is down or in demo mode).
 export const careGroup: CareGroup = {
   id: 'demo-group',
-  name: '우리 가족방',
+  name: '우리 보호자 방',
   senior: { id: 'demo-senior', name: '어머니', userType: 'SENIOR' },
   members: [
     {
@@ -254,7 +254,7 @@ export const notifications: AppNotification[] = [
     type: 'escalation',
     level: 'high',
     title: '저녁약 확인이 아직 없어요',
-    body: '재알림 3회 후에도 확인이 없어 가족에게 안내를 보냈어요.',
+    body: '재알림 3회 후에도 확인이 없어 보호자에게 안내를 보냈어요.',
     createdAtLabel: '오후 7:45',
     read: false,
   },
@@ -299,7 +299,7 @@ export const changeLog: ChangeLog[] = [
     id: 'log-2',
     action: 'MEMBER_JOINED',
     actorName: '김지은',
-    detail: '가족방에 참여',
+    detail: '보호자 방에 참여',
     createdAt: '2026-06-21T10:00:00',
   },
 ];

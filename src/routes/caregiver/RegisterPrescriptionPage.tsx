@@ -137,7 +137,7 @@ export function RegisterPrescriptionPage() {
           value={displayName}
           onChange={setDisplayName}
           placeholder="예) 6월 정기 처방"
-          hint="가족방에서 이 처방을 구분하는 이름이에요."
+          hint="보호자 방에서 이 처방을 구분하는 이름이에요."
         />
       </div>
 

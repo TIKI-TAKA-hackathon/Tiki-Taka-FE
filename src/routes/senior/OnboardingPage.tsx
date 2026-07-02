@@ -11,7 +11,7 @@ export function OnboardingPage() {
           💊
         </div>
         <h1 className="mt-6 text-4xl font-extrabold tracking-tight text-stone-900">고찌봄</h1>
-        <p className="mt-3 text-lg text-stone-500">가족이 함께 챙기는 복약 안부</p>
+        <p className="mt-3 text-lg text-stone-500">보호자가 함께 챙기는 복약 안부</p>
 
         <div className="mt-10 w-full space-y-3">
           <PrimaryButton onClick={() => navigate('/caregiver/signup')}>보호자·복지사로 시작하기</PrimaryButton>
