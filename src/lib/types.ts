@@ -138,9 +138,28 @@ export type ChangeLog = {
   createdAt: string;
 };
 
-// --- Notification cadence (mock-only, no BE endpoint yet) ---
+// --- Notification cadence (BE contract: GET/PUT /seniors/{id}/notification-settings) ---
 export type NotificationSettings = {
   enabled: boolean;
   remindIntervalMin: number;
   maxRetries: number;
+};
+
+// --- Prescription confirm-meds view (BE contract: GET /prescriptions:lookup?code=) ---
+// One dosing schedule inside a prescription (아침/점심/저녁 등).
+export type ConfirmMedsSchedule = {
+  displayName: string; // '아침약' / '저녁약'
+  timesPerDay: number; // 하루 횟수
+  doseBasis: string; // 복용기준: '식후' / '식전' / '취침전'
+  offsetMin: number; // 기준시각 대비 오프셋(분)
+  pillCount: number; // 1회 복용 알약 수
+  dispensedDays: number; // 조제일수
+  dispensingNumber: number; // 조제번호(봉지 번호)
+};
+
+export type ConfirmMedsView = {
+  seniorDisplayName: string; // '김순자'
+  prescribedDateLabel: string; // '2026년 6월 25일'
+  pharmacyName: string; // '행복약국'
+  schedules: ConfirmMedsSchedule[];
 };

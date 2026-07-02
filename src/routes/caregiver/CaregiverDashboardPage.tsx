@@ -51,6 +51,13 @@ export function CaregiverDashboardPage() {
           <div className="flex items-center gap-3">
             <button
               type="button"
+              onClick={() => navigate('/caregiver/add-prescription')}
+              className="text-sm font-semibold text-brand-600"
+            >
+              약 등록
+            </button>
+            <button
+              type="button"
               onClick={() => navigate('/caregiver/settings')}
               className="text-sm font-semibold text-stone-500"
             >

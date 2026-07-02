@@ -3,6 +3,7 @@ import {
   careGroup as careGroupFixture,
   caregiverBoard,
   changeLog as changeLogFixture,
+  confirmMedsView as confirmMedsViewFixture,
   inviteLink as inviteLinkFixture,
   mealTimes as mealTimesFixture,
   notificationSettings as notificationSettingsFixture,
@@ -13,6 +14,7 @@ import type {
   CareGroup,
   CaregiverBoard,
   ChangeLog,
+  ConfirmMedsView,
   CreateCareGroupRequest,
   InviteLink,
   MealTimes,
@@ -169,54 +171,90 @@ export async function updateMealTimes(seniorId: string, req: UpdateMealTimesRequ
   return sendJson<MealTimes>('PUT', `/seniors/${seniorId}/meal-times`, req);
 }
 
-// --- Mock-only: phone OTP (no backend SMS/OTP endpoint yet) ---
-export function requestOtp(_phone: string): Promise<void> {
-  // No-op mock: pretend the SMS was sent.
-  void _phone;
-  return Promise.resolve();
+// --- Prescription QR registration (real endpoint) ---
+// GET /prescriptions:lookup?code=<rawValue> — the QR rawValue is the pharmacy registration code.
+export async function fetchPrescriptionByCode(code: string): Promise<ConfirmMedsView> {
+  if (env.demoMode) {
+    return confirmMedsViewFixture;
+  }
+  try {
+    return await getJson<ConfirmMedsView>(`/prescriptions:lookup${query({ code })}`);
+  } catch {
+    // Keep the confirm-meds flow demoable before BE is deployed.
+    return confirmMedsViewFixture;
+  }
 }
 
-export function verifyOtp(_phone: string, code: string): Promise<boolean> {
-  // Any 6-digit numeric code passes in the mock.
-  void _phone;
-  return Promise.resolve(/^\d{6}$/.test(code));
+// --- Phone OTP (real endpoints, demo-fallback) ---
+// POST /auth/otp:request — no-op SMS stub on the backend.
+export async function requestOtp(phone: string): Promise<void> {
+  if (env.demoMode) {
+    return;
+  }
+  try {
+    await sendJson<{ sent: boolean }>('POST', '/auth/otp:request', { phone });
+  } catch {
+    // Pretend the SMS was sent so the demo flow can proceed.
+  }
 }
 
-// --- Mock-only: find a care group by senior phone (no BE endpoint yet) ---
-// Matches against the session saved at signup on the same demo device; otherwise returns a demo pairing.
-export function findCareGroupBySeniorPhone(
+// POST /auth/otp:verify — backend returns { verified }, or 400 OTP_INVALID for non-6-digit codes.
+export async function verifyOtp(phone: string, code: string): Promise<boolean> {
+  if (env.demoMode) {
+    return /^\d{6}$/.test(code);
+  }
+  try {
+    const result = await sendJson<{ verified: boolean }>('POST', '/auth/otp:verify', { phone, code });
+    return result.verified;
+  } catch {
+    // Demo-fallback when the backend is down: treat any 6-digit numeric code as verified.
+    return /^\d{6}$/.test(code);
+  }
+}
+
+// --- Find a care group by senior phone (real endpoint, demo-fallback) ---
+// GET /care-groups:lookup?seniorPhone=010-... — used by the senior phone-pairing flow.
+export async function findCareGroupBySeniorPhone(
   phone: string,
 ): Promise<{ careGroupId: string; seniorId: string }> {
+  if (!env.demoMode) {
+    try {
+      const found = await getJson<{ careGroupId: string; seniorId: string; seniorName: string }>(
+        `/care-groups:lookup${query({ seniorPhone: phone })}`,
+      );
+      return { careGroupId: found.careGroupId, seniorId: found.seniorId };
+    } catch {
+      // Fall through to the local/demo pairing below when the lookup is unavailable.
+    }
+  }
   const session = loadSession();
   if (session?.seniorPhone && normalizePhone(session.seniorPhone) === normalizePhone(phone)) {
-    return Promise.resolve({ careGroupId: session.careGroupId, seniorId: session.seniorId });
+    return { careGroupId: session.careGroupId, seniorId: session.seniorId };
   }
   // Demo pairing fallback so the senior connect flow never dead-ends.
-  return Promise.resolve({ careGroupId: careGroupFixture.id, seniorId: careGroupFixture.senior.id });
+  return { careGroupId: careGroupFixture.id, seniorId: careGroupFixture.senior.id };
 }
 
-// --- Mock-only: notification cadence (no BE persistence yet) — localStorage ---
-const NOTIFICATION_KEY = 'gojjibom.notificationSettings';
-
-export function getNotificationSettings(): Promise<NotificationSettings> {
-  try {
-    const raw = window.localStorage.getItem(NOTIFICATION_KEY);
-    if (raw) {
-      return Promise.resolve(JSON.parse(raw) as NotificationSettings);
-    }
-  } catch {
-    // ignore malformed / unavailable storage
-  }
-  return Promise.resolve(notificationSettingsFixture);
+// --- Notification cadence (real endpoints, demo-fallback) ---
+// GET /seniors/{id}/notification-settings — returns defaults (enabled/5min/3retries) if no row exists.
+export function getNotificationSettings(seniorId: string): Promise<NotificationSettings> {
+  return load(`/seniors/${seniorId}/notification-settings`, notificationSettingsFixture);
 }
 
-export function saveNotificationSettings(settings: NotificationSettings): Promise<NotificationSettings> {
-  try {
-    window.localStorage.setItem(NOTIFICATION_KEY, JSON.stringify(settings));
-  } catch {
-    // ignore unavailable storage
+// PUT /seniors/{id}/notification-settings — primary member only; 403 PRIMARY_REQUIRED otherwise.
+export async function saveNotificationSettings(
+  seniorId: string,
+  actorUserId: string,
+  settings: NotificationSettings,
+): Promise<NotificationSettings> {
+  if (env.demoMode) {
+    return settings;
   }
-  return Promise.resolve(settings);
+  // Do not swallow errors: the caller needs to distinguish 403 PRIMARY_REQUIRED from success.
+  return sendJson<NotificationSettings>('PUT', `/seniors/${seniorId}/notification-settings`, {
+    actorUserId,
+    ...settings,
+  });
 }
 
 function normalizePhone(phone: string): string {

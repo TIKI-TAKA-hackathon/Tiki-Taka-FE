@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from './components/AppLayout';
+import { AddPrescriptionPage } from './routes/caregiver/AddPrescriptionPage';
 import { CaregiverDashboardPage } from './routes/caregiver/CaregiverDashboardPage';
 import { CaregiverSignupPage } from './routes/caregiver/CaregiverSignupPage';
 import { ManagePage } from './routes/caregiver/ManagePage';
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="caregiver/pills" element={<PillDetailPage />} />
         <Route path="caregiver/timeline" element={<TimelinePage />} />
         <Route path="caregiver/manage" element={<ManagePage />} />
+        <Route path="caregiver/add-prescription" element={<AddPrescriptionPage />} />
         <Route path="*" element={<Navigate to="/onboarding" replace />} />
       </Route>
     </Routes>
