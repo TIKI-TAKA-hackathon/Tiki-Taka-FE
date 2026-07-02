@@ -2,31 +2,38 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PrimaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
-import { getVoice } from '../../lib/voices';
+import { GUIDE_AUDIO, detailGuideUrl, type DispensingType } from '../../lib/guide';
 
 export function DosePage() {
   const navigate = useNavigate();
   const [helpSent, setHelpSent] = useState(false);
   const { nextDose } = seniorDay;
-  const voice = getVoice();
+  const dispensingType = (nextDose as { dispensingType?: DispensingType }).dispensingType ?? 'pouch';
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const helpAudioRef = useRef<HTMLAudioElement | null>(null);
 
-  const playGuide = useCallback(() => {
-    const el = audioRef.current;
+  // 모바일 자동재생 차단·미지원 환경에서는 조용히 무시하고 화면 텍스트 안내로 폴백한다.
+  const play = useCallback((el: HTMLAudioElement | null) => {
     if (!el) return;
     el.currentTime = 0;
     try {
       const played = el.play();
-      // 모바일 자동재생 차단·미지원 환경에서는 조용히 무시하고 아래 텍스트 안내로 폴백한다.
       if (played && typeof played.catch === 'function') played.catch(() => undefined);
     } catch {
-      // 재생을 지원하지 않는 환경(테스트 등)
+      // 재생 미지원 환경(테스트 등)
     }
   }, []);
+
+  const playGuide = useCallback(() => play(audioRef.current), [play]);
 
   useEffect(() => {
     playGuide();
   }, [playGuide]);
+
+  const sendHelp = () => {
+    setHelpSent(true);
+    play(helpAudioRef.current);
+  };
 
   return (
     <div className="flex min-h-full flex-col pb-6">
@@ -40,7 +47,8 @@ export function DosePage() {
           ↻ 다시 듣기
         </button>
       </div>
-      <audio ref={audioRef} src={voice.sampleUrl} preload="auto" />
+      <audio ref={audioRef} src={detailGuideUrl(dispensingType)} preload="auto" />
+      <audio ref={helpAudioRef} src={GUIDE_AUDIO.help} preload="auto" />
 
 
       <div className="flex flex-1 flex-col items-center px-6 pt-5 text-center">
@@ -83,7 +91,7 @@ export function DosePage() {
         </PrimaryButton>
         <button
           type="button"
-          onClick={() => setHelpSent(true)}
+          onClick={sendHelp}
           className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-red-200 py-4 text-lg font-bold text-red-500"
         >
           📞 도와주세요

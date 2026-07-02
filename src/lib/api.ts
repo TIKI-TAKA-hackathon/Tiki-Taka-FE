@@ -4,6 +4,7 @@ import {
   caregiverBoard,
   changeLog as changeLogFixture,
   confirmMedsView as confirmMedsViewFixture,
+  dosePhotos as dosePhotosFixture,
   inviteLink as inviteLinkFixture,
   mealTimes as mealTimesFixture,
   notifications as notificationsFixture,
@@ -15,13 +16,18 @@ import type {
   AppNotification,
   CareGroup,
   CaregiverBoard,
+  CaregiverPhotos,
   ChangeLog,
   ConfirmMedsView,
   CreateCareGroupRequest,
+  CreatePrescriptionRequest,
+  DosePhoto,
   InviteLink,
   MealTimes,
   NotificationSettings,
   NotificationType,
+  PrescriptionResponse,
+  ReviewStatus,
   SeniorDay,
   UpdateMealTimesRequest,
 } from './types';
@@ -188,6 +194,33 @@ export async function fetchPrescriptionByCode(code: string): Promise<ConfirmMeds
   }
 }
 
+// POST /seniors/{seniorId}/prescriptions — pharmacy pre-creates the prescription (D-A).
+// The prescription is persisted + ACTIVE at create time; its registrationCode is scanned/entered later.
+export async function createPrescription(
+  seniorId: string,
+  request: CreatePrescriptionRequest,
+): Promise<PrescriptionResponse> {
+  if (env.demoMode) {
+    return {
+      id: Date.now(),
+      seniorId: Number(seniorId) || 0,
+      status: 'ACTIVE',
+      registrationCode: request.registrationCode ?? null,
+    };
+  }
+  try {
+    return await sendJson<PrescriptionResponse>('POST', `/seniors/${seniorId}/prescriptions`, request);
+  } catch {
+    // Keep the pharmacy-registration flow demoable before BE is deployed.
+    return {
+      id: Date.now(),
+      seniorId: Number(seniorId) || 0,
+      status: 'ACTIVE',
+      registrationCode: request.registrationCode ?? null,
+    };
+  }
+}
+
 // --- Phone OTP (real endpoints, demo-fallback) ---
 // POST /auth/otp:request — no-op SMS stub on the backend.
 export async function requestOtp(phone: string): Promise<void> {
@@ -316,6 +349,45 @@ export async function markNotificationRead(id: string, actorUserId?: string): Pr
     await sendJson<AppNotification>('PATCH', `/notifications/${id}:read`, { actorUserId });
   } catch {
     // Optimistic UI already reflects the read state; ignore transient failures.
+  }
+}
+
+// --- Caregiver photo gallery (real endpoints, demo-fallback) ---
+// GET /care-groups/{id}/photos?from=&to= — dose photos for the caregiver review gallery.
+export async function fetchCaregiverPhotos(
+  careGroupId: string | undefined,
+  params: { from?: string; to?: string } = {},
+): Promise<DosePhoto[]> {
+  const id = careGroupId ?? 'latest';
+  const view = await load<CaregiverPhotos>(
+    `/care-groups/${id}/photos${query(params)}`,
+    { careGroupId: id, photos: dosePhotosFixture },
+  );
+  return view.photos;
+}
+
+// PATCH /dose-events/{id}/photo:review — caregiver marks a photo reviewed or flagged.
+export async function reviewDosePhoto(
+  doseEventId: string,
+  reviewStatus: Exclude<ReviewStatus, 'pending'>,
+  actorUserId: string,
+): Promise<DosePhoto> {
+  const fallback: DosePhoto = {
+    ...(dosePhotosFixture.find((photo) => photo.doseEventId === doseEventId) ?? dosePhotosFixture[0]),
+    doseEventId,
+    reviewStatus,
+  };
+  if (env.demoMode) {
+    return fallback;
+  }
+  try {
+    return await sendJson<DosePhoto>('PATCH', `/dose-events/${doseEventId}/photo:review`, {
+      actorUserId,
+      reviewStatus,
+    });
+  } catch {
+    // Optimistic fallback so the review flow works before BE is deployed.
+    return fallback;
   }
 }
 

@@ -177,3 +177,67 @@ export type AppNotification = {
   createdAtLabel: string; // '오후 7:30' — the backend may send createdAtLabel or a raw createdAt (normalized in api.ts).
   read: boolean;
 };
+
+// --- Caregiver photo gallery (BE contract: GET /care-groups/{id}/photos) ---
+// Caregiver review state for a dose photo. Photos are reference-only, not proof of intake.
+export type ReviewStatus = 'pending' | 'reviewed' | 'flagged';
+
+// One photo per dose event (WP2 decision: 1 photo per dose_event).
+export type DosePhoto = {
+  doseEventId: string;
+  doseLabel: string; // '아침약'
+  takenAtLabel: string; // '오전 8:32'
+  status: DoseStatus; // 'done' | 'upcoming' | 'missed'
+  method?: ConfirmMethod; // 'voice' | 'button'
+  reviewStatus: ReviewStatus;
+  photoUrl: string;
+  thumbnailUrl: string;
+};
+
+// GET /care-groups/{id}/photos response.
+export type CaregiverPhotos = {
+  careGroupId: string;
+  photos: DosePhoto[];
+};
+
+// --- Prescription create (BE contract: POST /seniors/{id}/prescriptions) ---
+// String unions mirror the BE enums; only the values the FE actually sends/reads are kept.
+export type DoseSlot = 'MORNING' | 'LUNCH' | 'DINNER' | 'BEDTIME' | 'CUSTOM';
+export type MealRelation = 'BEFORE_MEAL' | 'AFTER_MEAL' | 'WITH_MEAL' | 'NONE';
+export type DoseBasis = 'BEFORE_MEAL' | 'AFTER_MEAL' | 'BEDTIME' | 'EMPTY_STOMACH' | 'FIXED';
+export type DispensingType = 'POUCH' | 'ORGANIZER';
+export type PrescriptionStatus = 'ACTIVE' | 'ENDED';
+
+export type CreateDoseScheduleItemRequest = {
+  medicationName: string;
+  count: number;
+};
+
+export type CreateDoseScheduleRequest = {
+  slot: DoseSlot;
+  label: string;
+  scheduledTime: string; // LocalTime 'HH:mm:ss'
+  mealRelation: MealRelation;
+  pillCount: number;
+  doseBasis?: DoseBasis;
+  items: CreateDoseScheduleItemRequest[];
+};
+
+export type CreatePrescriptionRequest = {
+  pharmacistUserId: number;
+  pharmacy: { name: string; phone: string; address?: string };
+  prescribedDate: string; // LocalDate 'YYYY-MM-DD'
+  startDate: string; // LocalDate 'YYYY-MM-DD'
+  endDate?: string;
+  dispensingType?: DispensingType;
+  registrationCode?: string;
+  schedules: CreateDoseScheduleRequest[];
+};
+
+// Subset of BE PrescriptionResponse — only the fields the FE reads.
+export type PrescriptionResponse = {
+  id: number;
+  seniorId: number;
+  status: PrescriptionStatus;
+  registrationCode: string | null;
+};

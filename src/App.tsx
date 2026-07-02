@@ -4,7 +4,9 @@ import { AddPrescriptionPage } from './routes/caregiver/AddPrescriptionPage';
 import { CaregiverDashboardPage } from './routes/caregiver/CaregiverDashboardPage';
 import { CaregiverSignupPage } from './routes/caregiver/CaregiverSignupPage';
 import { ManagePage } from './routes/caregiver/ManagePage';
+import { PhotoGalleryPage } from './routes/caregiver/PhotoGalleryPage';
 import { PillDetailPage } from './routes/caregiver/PillDetailPage';
+import { RegisterPrescriptionPage } from './routes/caregiver/RegisterPrescriptionPage';
 import { SettingsPage } from './routes/caregiver/SettingsPage';
 import { TimelinePage } from './routes/caregiver/TimelinePage';
 import { AlarmPage } from './routes/senior/AlarmPage';
@@ -41,9 +43,11 @@ export default function App() {
         <Route path="caregiver/signup" element={<CaregiverSignupPage />} />
         <Route path="caregiver/settings" element={<SettingsPage />} />
         <Route path="caregiver/pills" element={<PillDetailPage />} />
+        <Route path="caregiver/photos" element={<PhotoGalleryPage />} />
         <Route path="caregiver/timeline" element={<TimelinePage />} />
         <Route path="caregiver/manage" element={<ManagePage />} />
         <Route path="caregiver/add-prescription" element={<AddPrescriptionPage />} />
+        <Route path="caregiver/register-prescription" element={<RegisterPrescriptionPage />} />
         <Route path="*" element={<Navigate to="/onboarding" replace />} />
       </Route>
     </Routes>
