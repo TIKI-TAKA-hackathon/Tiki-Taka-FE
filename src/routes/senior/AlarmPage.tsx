@@ -40,7 +40,7 @@ export function AlarmPage() {
         <img
           src="/brand/고찌봄 인사.svg"
           alt="고찌봄 캐릭터"
-          className="h-40 w-auto rounded-3xl drop-shadow-[var(--gjb-shadow-soft)]"
+          className="gjb-mascot-muted h-40 w-auto rounded-3xl drop-shadow-[var(--gjb-shadow-soft)]"
         />
         <p className="mt-6 text-base font-bold text-citrus-deep">복약 알림</p>
         <h1 className="mt-2 text-3xl font-extrabold text-ink">약 드실 시간이에요</h1>

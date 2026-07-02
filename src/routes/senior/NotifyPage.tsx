@@ -28,7 +28,7 @@ export function NotifyPage() {
             <img
               src="/brand/고찌봄 기본.svg"
               alt="고찌봄"
-              className="h-6 w-6 rounded-lg object-contain shadow-[var(--gjb-shadow-soft)]"
+              className="gjb-mascot-muted h-6 w-6 rounded-lg object-contain shadow-[var(--gjb-shadow-soft)]"
             />
             <span>고찌봄</span>
             <span className="ml-auto font-medium text-stone-400">지금</span>

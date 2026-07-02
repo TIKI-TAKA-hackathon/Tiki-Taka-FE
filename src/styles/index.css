@@ -149,3 +149,8 @@ textarea:focus-visible {
     animation: none;
   }
 }
+
+/* 마스코트가 든 중앙 청록 알약이 튀지 않게 채도만 은은하게 낮춤 (원본 래스터 유지) */
+.gjb-mascot-muted {
+  filter: saturate(0.5);
+}
