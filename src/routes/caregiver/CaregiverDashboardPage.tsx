@@ -124,6 +124,7 @@ export function CaregiverDashboardPage() {
           <p className="mt-2 text-sm text-stone-400">
             {photo.doseLabel} · {photo.at} 전송됨
           </p>
+          <p className="mt-1 text-xs text-stone-400">사진은 참고용이며 복용 증명은 아니에요.</p>
         </Card>
       )}
 
