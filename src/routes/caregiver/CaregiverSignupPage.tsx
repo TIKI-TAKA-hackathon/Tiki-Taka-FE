@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BackHeader, PrimaryButton, TextField } from '../../components/ui';
 import { createCareGroup, requestOtp, saveSession, verifyOtp } from '../../lib/api';
+import { env } from '../../lib/env';
 import { digitsOnly, formatPhone, isValidPhone } from '../../lib/phone';
 
 type Step = 'owner' | 'otp' | 'group';
@@ -12,19 +13,19 @@ export function CaregiverSignupPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Step 1: caregiver identity
-  const [ownerName, setOwnerName] = useState('');
-  const [ownerPhone, setOwnerPhone] = useState('');
+  // Step 1: caregiver identity (demo mode pre-fills so the presenter can advance in one tap)
+  const [ownerName, setOwnerName] = useState(env.demoMode ? '김보호' : '');
+  const [ownerPhone, setOwnerPhone] = useState(env.demoMode ? '010-1234-5678' : '');
 
   // Step 2: OTP
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(env.demoMode ? '123456' : '');
 
   // Step 3: family group + senior
-  const [groupName, setGroupName] = useState('');
-  const [seniorName, setSeniorName] = useState('');
-  const [seniorPhone, setSeniorPhone] = useState('');
+  const [groupName, setGroupName] = useState(env.demoMode ? '우리 엄마 방' : '');
+  const [seniorName, setSeniorName] = useState(env.demoMode ? '김순자' : '');
+  const [seniorPhone, setSeniorPhone] = useState(env.demoMode ? '010-9876-5432' : '');
   const [seniorBirth, setSeniorBirth] = useState('');
-  const [relationship, setRelationship] = useState('');
+  const [relationship, setRelationship] = useState(env.demoMode ? '딸' : '');
 
   const ownerValid = ownerName.trim().length > 0 && isValidPhone(ownerPhone);
   const otpValid = /^\d{6}$/.test(otp);

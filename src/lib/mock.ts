@@ -230,7 +230,27 @@ export const inviteLink: InviteLink = {
 };
 
 // Demo-fallback fixture for in-app notifications (newest first, mixed read state).
+// Covers each caregiver-facing type: 복용 완료(taken) · 미복용→연락(missed/escalation) · 제주 우천(weather).
+// TODO: real push delivery is Kakao 알림톡 / SMS (out of demo scope; these are fixtures only).
 export const notifications: AppNotification[] = [
+  {
+    id: 'notif-taken',
+    type: 'reminder',
+    level: 'info',
+    title: '💊 복용 완료 — 저녁약',
+    body: `${caregiverBoard.patientName}가 저녁약을 드셨어요. 사진으로 확인할 수 있어요.`,
+    createdAtLabel: '오후 7:32',
+    read: false,
+  },
+  {
+    id: 'notif-missed-contact',
+    type: 'missed',
+    level: 'warn',
+    title: '아침약 미복용 — 연락이 필요해요',
+    body: `${caregiverBoard.patientName}가 아침약을 아직 안 드셨어요. 재알림 2회 후 확인이 필요해요.`,
+    createdAtLabel: '오전 9:15',
+    read: false,
+  },
   {
     id: 'notif-refill',
     type: 'escalation',
