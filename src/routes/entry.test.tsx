@@ -14,6 +14,11 @@ function renderAt(path: string) {
 describe('entry points', () => {
   afterEach(() => cleanup());
 
+  it('app root shows the splash screen before onboarding', () => {
+    renderAt('/');
+    expect(screen.getByRole('img', { name: /고찌봄/ })).toBeInTheDocument();
+  });
+
   it('caregiver signup renders the first step (owner info)', () => {
     renderAt('/caregiver/signup');
     expect(screen.getByRole('heading', { name: '보호자 정보를 입력해요' })).toBeInTheDocument();

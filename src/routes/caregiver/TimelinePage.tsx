@@ -8,8 +8,8 @@ import type { AppNotification, NotificationType } from '../../lib/types';
 
 const TYPE_TONE: Record<NotificationType, BadgeTone> = {
   reminder: 'neutral',
-  missed: 'warn',
-  escalation: 'warn',
+  missed: 'check', // 미확인 = 주의(attention), 경고 아님 (안심 원칙)
+  escalation: 'check',
 };
 
 const TYPE_LABEL: Record<NotificationType, string> = {
@@ -19,9 +19,9 @@ const TYPE_LABEL: Record<NotificationType, string> = {
 };
 
 const DOT: Record<NotificationType, string> = {
-  reminder: 'bg-stone-300',
-  missed: 'bg-warn-500',
-  escalation: 'bg-warn-500',
+  reminder: 'bg-basalt-300',
+  missed: 'bg-check', // 미확인 = 테라코타 주의색 (빨강 금지)
+  escalation: 'bg-check',
 };
 
 export function TimelinePage() {

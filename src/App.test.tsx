@@ -12,7 +12,7 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('heading', { name: '고찌봄' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: '고찌봄' })).toBeInTheDocument();
     expect(screen.getByTestId('api-base')).toHaveTextContent(env.apiBaseUrl);
   });
 
