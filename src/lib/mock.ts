@@ -9,7 +9,9 @@ import type {
   InviteLink,
   MealTimes,
   NotificationSettings,
+  RefillStatus,
   SeniorDay,
+  Weather,
 } from './types';
 import { DEMO_DAYS, DEMO_IMG } from './demoImages';
 
@@ -46,6 +48,27 @@ const doses: Dose[] = [
   },
 ];
 
+// 약 소진 → 병원 재처방 안내 (mock-only). Demo set: 약이 다 떨어진 상태(depleted).
+export const refillStatus: RefillStatus = {
+  daysTotal: 30,
+  daysRemaining: 0,
+  depleted: true,
+  hospitalName: '제주한라병원',
+  hospitalAddress: '제주특별자치도 제주시 도령로 65',
+  hospitalPhone: '064-740-5000',
+  pharmacyName: '늘푸른약국',
+};
+
+// 제주 우천 알림 (mock weather). Demo set: 비.
+// TODO: 실제 날씨는 기상청 동네예보 / 제주 지자체 오픈 API로 대체 (현재는 데모용 고정값).
+export const jejuWeather: Weather = {
+  region: '제주',
+  condition: 'rain',
+  label: '비',
+  tempC: 19,
+  advisory: '오늘 제주에 비가 와요. 외출·병원 방문은 내일로 미루세요.',
+};
+
 export const seniorDay: SeniorDay = {
   dateLabel: '2026년 7월 2일 목요일',
   nextDose: {
@@ -66,6 +89,8 @@ export const seniorDay: SeniorDay = {
     ],
   },
   doses,
+  refill: refillStatus,
+  weather: jejuWeather,
 };
 
 export const caregiverBoard: CaregiverBoard = {
@@ -206,6 +231,24 @@ export const inviteLink: InviteLink = {
 
 // Demo-fallback fixture for in-app notifications (newest first, mixed read state).
 export const notifications: AppNotification[] = [
+  {
+    id: 'notif-refill',
+    type: 'escalation',
+    level: 'high',
+    title: '어머니 약이 소진됐어요',
+    body: `${refillStatus.hospitalName} 재처방이 필요해요. 처방을 도와주세요.`,
+    createdAtLabel: '오전 9:00',
+    read: false,
+  },
+  {
+    id: 'notif-weather',
+    type: 'reminder',
+    level: 'info',
+    title: '☔ 제주 우천 — 재처방 방문 내일 권장',
+    body: '오늘 제주에 비가 와요. 병원 방문은 내일로 권해요.',
+    createdAtLabel: '오전 9:00',
+    read: false,
+  },
   {
     id: 'notif-1',
     type: 'escalation',
