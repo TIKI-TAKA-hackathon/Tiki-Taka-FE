@@ -84,6 +84,52 @@ export function ErrorNote({ message }: { message: string }) {
   );
 }
 
+type TextFieldProps = {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  type?: 'text' | 'tel' | 'date';
+  inputMode?: 'text' | 'tel' | 'numeric';
+  placeholder?: string;
+  maxLength?: number;
+  autoFocus?: boolean;
+  hint?: string;
+};
+
+export function TextField({
+  id,
+  label,
+  value,
+  onChange,
+  type = 'text',
+  inputMode,
+  placeholder,
+  maxLength,
+  autoFocus,
+  hint,
+}: TextFieldProps) {
+  return (
+    <div className="flex flex-col">
+      <label className="text-base font-semibold text-stone-700" htmlFor={id}>
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        inputMode={inputMode}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        placeholder={placeholder}
+        maxLength={maxLength}
+        autoFocus={autoFocus}
+        className="mt-2 rounded-2xl border border-stone-200 px-4 py-3 text-lg text-stone-900 outline-none focus:border-brand-500"
+      />
+      {hint && <p className="mt-1.5 text-sm text-stone-400">{hint}</p>}
+    </div>
+  );
+}
+
 type ButtonTone = 'brand' | 'success';
 type ButtonSize = 'md' | 'lg';
 
@@ -98,6 +144,7 @@ type PrimaryButtonProps = {
   type?: 'button' | 'submit';
   tone?: ButtonTone;
   size?: ButtonSize;
+  disabled?: boolean;
 };
 
 export function PrimaryButton({
@@ -106,13 +153,15 @@ export function PrimaryButton({
   type = 'button',
   tone = 'brand',
   size = 'md',
+  disabled = false,
 }: PrimaryButtonProps) {
   const background = tone === 'success' ? 'bg-success-600' : 'bg-brand-600';
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`flex w-full items-center justify-center gap-2 rounded-2xl ${background} ${BUTTON_SIZE[size]} font-bold text-white shadow-sm transition active:scale-[0.99]`}
+      disabled={disabled}
+      className={`flex w-full items-center justify-center gap-2 rounded-2xl ${background} ${BUTTON_SIZE[size]} font-bold text-white shadow-sm transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40`}
     >
       {children}
     </button>

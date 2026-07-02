@@ -1,46 +1,85 @@
-import type { FormEvent } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BackHeader, PrimaryButton } from '../../components/ui';
+import { BackHeader, PrimaryButton, TextField } from '../../components/ui';
+import { requestOtp, verifyOtp } from '../../lib/api';
+import { digitsOnly, formatPhone, isValidPhone } from '../../lib/phone';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const [phone, setPhone] = useState('');
+  const [code, setCode] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [codeSent, setCodeSent] = useState(false);
+  const [busy, setBusy] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    navigate('/senior/today');
+  const phoneValid = isValidPhone(phone);
+  const codeValid = /^\d{6}$/.test(code);
+
+  async function sendCode() {
+    setError(null);
+    if (!phoneValid) {
+      setError('휴대폰 번호를 정확히 입력해주세요.');
+      return;
+    }
+    await requestOtp(digitsOnly(phone));
+    setCodeSent(true);
+  }
+
+  async function submit() {
+    setError(null);
+    setBusy(true);
+    try {
+      const ok = await verifyOtp(digitsOnly(phone), code);
+      if (!ok) {
+        setError('인증 코드 6자리를 정확히 입력해주세요.');
+        return;
+      }
+      navigate('/caregiver');
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
     <div className="flex min-h-full flex-col pb-8">
       <BackHeader title="로그인" />
-      <form className="flex flex-1 flex-col px-6" onSubmit={handleSubmit}>
-        <label className="mt-2 text-base font-semibold text-stone-700" htmlFor="phone">
-          휴대폰 번호
-        </label>
-        <input
+      <div className="flex flex-1 flex-col gap-4 px-6">
+        <TextField
           id="phone"
+          label="휴대폰 번호"
           type="tel"
           inputMode="tel"
+          value={phone}
+          onChange={(value) => setPhone(formatPhone(value))}
           placeholder="010-0000-0000"
-          className="mt-2 rounded-2xl border border-stone-200 px-4 py-3 text-lg"
+          maxLength={13}
+          autoFocus
         />
-        <label className="mt-4 text-base font-semibold text-stone-700" htmlFor="code">
-          인증 코드
-        </label>
-        <input
-          id="code"
-          type="text"
-          inputMode="numeric"
-          placeholder="6자리 숫자"
-          className="mt-2 rounded-2xl border border-stone-200 px-4 py-3 text-lg"
-        />
-        <div className="mt-6">
-          <PrimaryButton type="submit">로그인</PrimaryButton>
-        </div>
-        <p className="mt-4 text-center text-sm text-stone-400">
-          어르신 기기는 로그인 없이 QR·연결 코드로 시작할 수 있어요.
+        {!codeSent ? (
+          <PrimaryButton onClick={sendCode} disabled={!phoneValid}>
+            인증번호 받기
+          </PrimaryButton>
+        ) : (
+          <>
+            <TextField
+              id="code"
+              label="인증 코드"
+              inputMode="numeric"
+              value={code}
+              onChange={(value) => setCode(digitsOnly(value).slice(0, 6))}
+              placeholder="6자리 숫자"
+              maxLength={6}
+            />
+            <PrimaryButton onClick={submit} disabled={!codeValid || busy}>
+              {busy ? '로그인 중…' : '로그인'}
+            </PrimaryButton>
+          </>
+        )}
+        {error && <p className="text-sm font-semibold text-warn-700">{error}</p>}
+        <p className="mt-2 text-center text-sm text-stone-400">
+          어르신 기기는 로그인 없이 휴대폰 번호로 연결할 수 있어요.
         </p>
-      </form>
+      </div>
     </div>
   );
 }
