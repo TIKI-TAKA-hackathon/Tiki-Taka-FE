@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Pretendard";
+  font-style: normal;
+  font-weight: 45 920;
+  font-display: swap;
+  src: url("/fonts/PretendardVariable.woff2") format("woff2");
+}
+
 :root {
   /* ── 대표 컬러 (제주 4색 · 면/배경/강조 전용) ─────────── */
   --gjb-sea:        #68D8DD; /* 에메랄드 — 시그니처·배너 포인트·마스코트 물방울 */
@@ -45,6 +53,7 @@
   --gjb-radius-pill: 999px;                          /* 캡슐(알약) 버튼 */
   --gjb-radius-card: 20px;                            /* 카드·시트 */
   --gjb-shadow-soft: 0 8px 24px rgba(42,39,36,.12);   /* 부드러운 입체 그림자 */
+  --gjb-shadow-float: 0 14px 34px rgba(42,39,36,.14);  /* 메인 마스코트·로고용 */
   --gjb-citrus-wash: #FCEFC7;                         /* 알람/히어로 배경 그라데이션 상단(연한 감귤) */
   --gjb-cream:       #FFF7E6;                         /* 캡슐 버튼의 밝은(우측) 반쪽 */
   --gjb-bg-main:     linear-gradient(180deg,#FFD04D 0%,#FFD153 11%,#FFD666 27%,#FFDE85 47%,#FFEAB0 68%,#FFF8E6 91%,#FFFFFF 100%); /* 스플래시/메인 진입 배경 (감귤→흰색) */
@@ -87,9 +96,10 @@ textarea:focus-visible {
     color: var(--gjb-ink);
     box-shadow: var(--gjb-shadow-soft);
     background: linear-gradient(
-      90deg,
-      var(--gjb-citrus) 0 50%,
-      var(--gjb-cream) 50% 100%
+      100deg,
+      var(--gjb-citrus) 0%,
+      #ffd96a 48%,
+      var(--gjb-cream) 100%
     );
   }
 
@@ -110,9 +120,10 @@ textarea:focus-visible {
   /* 보조 = 다시 알림 (현무암 2톤) */
   .gjb-pill-btn--secondary {
     background: linear-gradient(
-      90deg,
-      var(--gjb-basalt-300) 0 50%,
-      #f3f1ef 50% 100%
+      100deg,
+      var(--gjb-basalt-300) 0%,
+      #e6e2de 48%,
+      #f8f6f3 100%
     );
   }
 

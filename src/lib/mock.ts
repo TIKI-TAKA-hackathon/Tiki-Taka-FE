@@ -14,6 +14,7 @@ import type {
   Weather,
 } from './types';
 import { DEMO_DAYS, DEMO_IMG } from './demoImages';
+import { DEFAULT_SENIOR_NAME, seniorNameWithHonorific } from './seniorName';
 
 const doses: Dose[] = [
   {
@@ -57,6 +58,8 @@ export const refillStatus: RefillStatus = {
   hospitalAddress: '제주특별자치도 제주시 도령로 65',
   hospitalPhone: '064-740-5000',
   pharmacyName: '늘푸른약국',
+  pharmacyAddress: '제주특별자치도 제주시 중앙로 12',
+  pharmacyPhone: '064-755-1234',
 };
 
 // 제주 우천 알림 (mock weather). Demo set: 비.
@@ -94,7 +97,7 @@ export const seniorDay: SeniorDay = {
 };
 
 export const caregiverBoard: CaregiverBoard = {
-  patientName: '어머니',
+  patientName: DEFAULT_SENIOR_NAME,
   circle: { family: 2, social: 1 },
   doses,
   confirmations: [
@@ -125,7 +128,7 @@ export const caregiverBoard: CaregiverBoard = {
 export const careGroup: CareGroup = {
   id: 'demo-group',
   name: '우리 보호자 방',
-  senior: { id: 'demo-senior', name: '어머니', userType: 'SENIOR' },
+  senior: { id: 'demo-senior', name: DEFAULT_SENIOR_NAME, userType: 'SENIOR' },
   members: [
     {
       id: 'demo-owner',
@@ -173,9 +176,15 @@ export const notificationSettings: NotificationSettings = {
 
 // Demo-fallback fixture for the prescription QR lookup (confirm-meds view).
 export const confirmMedsView: ConfirmMedsView = {
-  seniorDisplayName: '김순자',
+  seniorDisplayName: DEFAULT_SENIOR_NAME,
   prescribedDateLabel: '2026년 6월 25일',
-  pharmacyName: '행복약국',
+  pharmacyName: '늘푸른약국',
+  hospitalName: refillStatus.hospitalName,
+  medicines: [
+    { name: '혈압약', description: '혈압을 안정적으로 관리하는 약이에요.', image: DEMO_IMG.pillWhite },
+    { name: '당뇨약', description: '식사 후 혈당 관리를 돕는 약이에요.', image: DEMO_IMG.pillYellow },
+    { name: '위장약', description: '속을 편하게 보호하는 약이에요.', image: DEMO_IMG.pillBlue },
+  ],
   schedules: [
     {
       displayName: '아침약',
@@ -238,7 +247,7 @@ export const notifications: AppNotification[] = [
     type: 'reminder',
     level: 'info',
     title: '💊 복용 완료 — 저녁약',
-    body: `${caregiverBoard.patientName}가 저녁약을 드셨어요. 사진으로 확인할 수 있어요.`,
+    body: `${seniorNameWithHonorific(caregiverBoard.patientName)}이 저녁약을 드셨어요. 사진으로 확인할 수 있어요.`,
     createdAtLabel: '오후 7:32',
     read: false,
   },
@@ -247,7 +256,7 @@ export const notifications: AppNotification[] = [
     type: 'missed',
     level: 'warn',
     title: '아침약 미복용 — 연락이 필요해요',
-    body: `${caregiverBoard.patientName}가 아침약을 아직 안 드셨어요. 재알림 2회 후 확인이 필요해요.`,
+    body: `${seniorNameWithHonorific(caregiverBoard.patientName)}이 아침약을 아직 안 드셨어요. 재알림 2회 후 확인이 필요해요.`,
     createdAtLabel: '오전 9:15',
     read: false,
   },
@@ -255,7 +264,7 @@ export const notifications: AppNotification[] = [
     id: 'notif-refill',
     type: 'escalation',
     level: 'high',
-    title: '어머니 약이 소진됐어요',
+    title: `${seniorNameWithHonorific(caregiverBoard.patientName)} 약이 소진됐어요`,
     body: `${refillStatus.hospitalName} 재처방이 필요해요. 처방을 도와주세요.`,
     createdAtLabel: '오전 9:00',
     read: false,

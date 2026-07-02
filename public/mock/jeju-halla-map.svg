@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="320" viewBox="0 0 720 320" role="img" aria-labelledby="title desc">
+  <title id="title">제주한라병원 위치 지도</title>
+  <desc id="desc">데모용 지도 이미지. 제주한라병원 주변 도로와 위치 표시를 단순화해 보여준다.</desc>
+  <rect width="720" height="320" rx="28" fill="#f7f4ee"/>
+  <path d="M0 232c94-22 174-28 260-12 89 16 149 10 224-30 72-39 145-48 236-36v166H0z" fill="#dad6d2"/>
+  <path d="M32 82c74 37 139 49 208 36 71-14 124-8 176 28 64 43 139 52 272 22" fill="none" stroke="#b2aeac" stroke-width="22" stroke-linecap="round"/>
+  <path d="M58 238c72-28 141-44 210-39 67 6 125 34 190 34 70 0 128-30 214-82" fill="none" stroke="#fff" stroke-width="26" stroke-linecap="round"/>
+  <path d="M58 238c72-28 141-44 210-39 67 6 125 34 190 34 70 0 128-30 214-82" fill="none" stroke="#b2aeac" stroke-width="4" stroke-dasharray="18 14" stroke-linecap="round"/>
+  <path d="M162 36v236" stroke="#fff" stroke-width="18" stroke-linecap="round"/>
+  <path d="M162 36v236" stroke="#dad6d2" stroke-width="3" stroke-dasharray="16 12" stroke-linecap="round"/>
+  <path d="M476 28v256" stroke="#fff" stroke-width="18" stroke-linecap="round"/>
+  <path d="M476 28v256" stroke="#dad6d2" stroke-width="3" stroke-dasharray="16 12" stroke-linecap="round"/>
+  <circle cx="394" cy="166" r="58" fill="#68d8dd" opacity=".22"/>
+  <path d="M394 80c-48 0-86 38-86 86 0 64 86 126 86 126s86-62 86-126c0-48-38-86-86-86z" fill="#ffd04d"/>
+  <circle cx="394" cy="166" r="38" fill="#fff"/>
+  <path d="M394 134v64M362 166h64" stroke="#14797b" stroke-width="14" stroke-linecap="round"/>
+  <rect x="454" y="60" width="208" height="82" rx="22" fill="#fff" opacity=".92"/>
+  <text x="482" y="96" fill="#2f2a25" font-family="Pretendard, Arial, sans-serif" font-size="25" font-weight="800">제주한라병원</text>
+  <text x="482" y="124" fill="#6f6964" font-family="Pretendard, Arial, sans-serif" font-size="18" font-weight="700">도령로 65</text>
+  <circle cx="92" cy="72" r="18" fill="#68d8dd"/>
+  <circle cx="622" cy="250" r="20" fill="#ffd04d"/>
+  <circle cx="96" cy="266" r="13" fill="#68d8dd" opacity=".7"/>
+</svg>

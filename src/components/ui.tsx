@@ -163,12 +163,13 @@ export function TextField({
 }
 
 type ButtonTone = 'brand' | 'success';
-type ButtonSize = 'md' | 'lg';
+type ButtonSize = 'md' | 'lg' | 'xl';
 
 // 캡슐 버튼 높이: 어르신 주 동작(lg) ≥ --gjb-elder-tap(64px), 기본(md) ≥ --gjb-tap(48px).
 const BUTTON_SIZE: Record<ButtonSize, string> = {
   md: 'min-h-[var(--gjb-tap)] py-4 text-lg',
   lg: 'min-h-[var(--gjb-elder-tap)] py-5 text-xl',
+  xl: 'min-h-24 py-7 text-2xl',
 };
 
 type PrimaryButtonProps = {
@@ -178,6 +179,7 @@ type PrimaryButtonProps = {
   tone?: ButtonTone;
   size?: ButtonSize;
   disabled?: boolean;
+  className?: string;
 };
 
 // 주 버튼 = 감귤 2톤 캡슐 + 은은한 상단 광택 + 잉크 글자 (7장①). 흰 글자 금지.
@@ -187,13 +189,14 @@ export function PrimaryButton({
   type = 'button',
   size = 'md',
   disabled = false,
+  className = '',
 }: PrimaryButtonProps) {
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`gjb-pill-btn flex w-full items-center justify-center gap-2 ${BUTTON_SIZE[size]} font-bold transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40`}
+      className={`gjb-pill-btn flex w-full items-center justify-center gap-2 ${BUTTON_SIZE[size]} font-bold transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
     >
       {children}
     </button>
@@ -205,17 +208,26 @@ type SecondaryButtonProps = {
   onClick?: () => void;
   type?: 'button' | 'submit';
   size?: ButtonSize;
+  className?: string;
 };
 
 // 보조 버튼 = 현무암 2톤 캡슐 + 잉크 글자 (7장①).
-export function SecondaryButton({ children, onClick, type = 'button', size = 'md' }: SecondaryButtonProps) {
+export function SecondaryButton({ children, onClick, type = 'button', size = 'md', className = '' }: SecondaryButtonProps) {
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`gjb-pill-btn gjb-pill-btn--secondary flex w-full items-center justify-center gap-2 ${BUTTON_SIZE[size]} font-bold transition active:scale-[0.99]`}
+      className={`gjb-pill-btn gjb-pill-btn--secondary flex w-full items-center justify-center gap-2 ${BUTTON_SIZE[size]} font-bold transition active:scale-[0.99] ${className}`}
     >
       {children}
     </button>
+  );
+}
+
+export function SeniorActionZone({ children, className = '' }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={`gjb-senior-action-zone flex min-h-[32dvh] shrink-0 flex-col justify-center gap-3 ${className}`}>
+      {children}
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PrimaryButton, SecondaryButton } from '../../components/ui';
+import { PrimaryButton, SeniorActionZone } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import { GUIDE_AUDIO } from '../../lib/guide';
 
@@ -34,7 +34,7 @@ export function AlarmPage() {
   }, []);
 
   return (
-    <div className="gjb-hero-gradient flex min-h-full flex-col px-6 py-10">
+    <div className="gjb-hero-gradient flex min-h-full flex-col px-6 pt-10">
       <audio ref={audioRef} src={GUIDE_AUDIO.alarm} preload="auto" />
       <div className="flex flex-1 flex-col items-center justify-center text-center">
         <img
@@ -50,12 +50,11 @@ export function AlarmPage() {
         </p>
       </div>
 
-      <div className="space-y-3">
-        <PrimaryButton size="lg" onClick={() => navigate('/senior/dose')}>
+      <SeniorActionZone className="pb-8 pt-4">
+        <PrimaryButton size="xl" className="flex-1 text-3xl" onClick={() => navigate('/senior/dose')}>
           지금 확인하기
         </PrimaryButton>
-        <SecondaryButton onClick={() => navigate('/senior/today')}>10분 뒤에 다시 알림</SecondaryButton>
-      </div>
+      </SeniorActionZone>
     </div>
   );
 }

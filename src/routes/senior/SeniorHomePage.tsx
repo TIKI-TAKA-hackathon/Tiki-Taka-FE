@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Badge, ErrorNote, Loading } from '../../components/ui';
+import { Badge, DemoImage, ErrorNote, Loading } from '../../components/ui';
 import { fetchSeniorDay } from '../../lib/api';
 import { useAsync } from '../../lib/useAsync';
+
+const HOSPITAL_MAP_IMAGE = '/mock/jeju-halla-map.svg';
 
 export function SeniorHomePage() {
   const navigate = useNavigate();
@@ -58,6 +60,22 @@ export function SeniorHomePage() {
         </button>
       </header>
 
+      <button
+        type="button"
+        onClick={() => navigate('/senior/add-prescription')}
+        className="gjb-pill-btn flex min-h-[45dvh] w-full flex-col items-center justify-center gap-5 px-6 py-8 text-center text-3xl font-extrabold leading-tight text-stone-900"
+      >
+        <span className="text-7xl" aria-hidden>
+          📷
+        </span>
+        <span>
+          처방 QR로
+          <br />
+          약 등록하기
+        </span>
+        <span className="text-lg font-bold text-stone-600">여기를 크게 눌러주세요</span>
+      </button>
+
       {refill.depleted && (
         <section className="rounded-3xl border border-brand-100 bg-brand-50 p-5 shadow-sm">
           <h2 className="text-2xl font-extrabold text-stone-900">약이 다 떨어졌어요 💊</h2>
@@ -66,6 +84,16 @@ export function SeniorHomePage() {
             <p className="text-lg font-bold text-stone-900">🏥 {refill.hospitalName}</p>
             <p className="mt-1 text-base text-stone-600">{refill.hospitalAddress}</p>
           </div>
+          <DemoImage
+            src={HOSPITAL_MAP_IMAGE}
+            alt={`${refill.hospitalName} 위치 지도`}
+            className="mt-4 h-40 w-full rounded-2xl border border-brand-100 object-cover"
+            fallback={
+              <div className="mt-4 flex h-40 w-full items-center justify-center rounded-2xl border border-brand-100 bg-white text-base font-bold text-stone-400">
+                지도 이미지를 준비 중이에요
+              </div>
+            }
+          />
           {rainy && (
             <p className="mt-3 rounded-2xl bg-white px-4 py-3 text-base font-semibold text-stone-700">
               ☔ 오늘 제주에 비가 와요 — 병원 방문은 내일로 권해요.

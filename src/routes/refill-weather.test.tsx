@@ -21,6 +21,7 @@ describe('refill + weather (mock demo)', () => {
     expect(await screen.findByText('약이 다 떨어졌어요 💊')).toBeInTheDocument();
     expect(screen.getByText('🏥 제주한라병원')).toBeInTheDocument();
     expect(screen.getByText('제주특별자치도 제주시 도령로 65')).toBeInTheDocument();
+    expect(screen.getByAltText('제주한라병원 위치 지도')).toHaveAttribute('src', '/mock/jeju-halla-map.svg');
 
     // Big 전화하기 action links to the hospital number (digits only).
     expect(screen.getByRole('link', { name: /전화하기/ })).toHaveAttribute('href', 'tel:0647405000');
@@ -42,7 +43,7 @@ describe('refill + weather (mock demo)', () => {
     renderAt('/caregiver/timeline');
 
     expect(await screen.findByRole('heading', { name: '오늘 타임라인' })).toBeInTheDocument();
-    expect(screen.getByText('어머니 약이 소진됐어요')).toBeInTheDocument();
+    expect(screen.getByText('김순자님 약이 소진됐어요')).toBeInTheDocument();
     expect(screen.getByText('☔ 제주 우천 — 재처방 방문 내일 권장')).toBeInTheDocument();
   });
 
@@ -50,6 +51,20 @@ describe('refill + weather (mock demo)', () => {
     renderAt('/senior/alerts');
 
     expect(await screen.findByRole('heading', { name: '알림함' })).toBeInTheDocument();
-    expect(screen.getByText('어머니 약이 소진됐어요')).toBeInTheDocument();
+    expect(screen.getByText('김순자님 약이 소진됐어요')).toBeInTheDocument();
+  });
+
+  it('caregiver pill tracking shows prescription, pharmacy, phone, map, and medicine details', async () => {
+    renderAt('/caregiver/pills');
+
+    expect(await screen.findByRole('heading', { name: '약 개수 상세' })).toBeInTheDocument();
+    expect(screen.getByText('처방·조제 정보')).toBeInTheDocument();
+    expect(screen.getByText('제주한라병원')).toBeInTheDocument();
+    expect(screen.getByText('늘푸른약국')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '병원 전화' })).toHaveAttribute('href', 'tel:0647405000');
+    expect(screen.getByRole('link', { name: '약국 전화' })).toHaveAttribute('href', 'tel:0647551234');
+    expect(screen.getByRole('button', { name: '지도 보기' })).toBeInTheDocument();
+    expect(screen.getByText('혈압약')).toBeInTheDocument();
+    expect(screen.getByText('혈압을 안정적으로 관리하는 약이에요.')).toBeInTheDocument();
   });
 });

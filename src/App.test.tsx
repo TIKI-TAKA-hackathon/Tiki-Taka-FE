@@ -23,6 +23,6 @@ describe('App', () => {
       </MemoryRouter>,
     );
 
-    expect(await screen.findByRole('heading', { name: '어머니 복약 상태' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: '김순자님 복약 상태' })).toBeInTheDocument();
   });
 });

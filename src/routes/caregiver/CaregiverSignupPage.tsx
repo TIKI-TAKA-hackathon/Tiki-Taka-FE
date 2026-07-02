@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BackHeader, PrimaryButton, TextField } from '../../components/ui';
-import { createCareGroup, requestOtp, saveSession, verifyOtp } from '../../lib/api';
+import {
+  createCareGroup,
+  getCareGroup,
+  requestOtp,
+  saveSession,
+  verifyOtp,
+  verifyPairingCode,
+} from '../../lib/api';
+import { connectLocalCaregiverMember, findLocalCaregiverMemberByPhone } from '../../lib/caregiverMembers';
 import { env } from '../../lib/env';
 import { digitsOnly, formatPhone, isValidPhone } from '../../lib/phone';
 
-type Step = 'owner' | 'otp' | 'group';
+type Step = 'owner' | 'otp' | 'roomCode' | 'group';
 
 export function CaregiverSignupPage() {
   const navigate = useNavigate();
@@ -19,6 +27,9 @@ export function CaregiverSignupPage() {
 
   // Step 2: OTP
   const [otp, setOtp] = useState(env.demoMode ? '123456' : '');
+  const [roomCode, setRoomCode] = useState(env.demoMode ? '123456' : '');
+  const [invitedMemberId, setInvitedMemberId] = useState<string | null>(null);
+  const [invitedCareGroupId, setInvitedCareGroupId] = useState<string | null>(null);
 
   // Step 3: family group + senior
   const [groupName, setGroupName] = useState(env.demoMode ? '우리 엄마 방' : '');
@@ -29,11 +40,14 @@ export function CaregiverSignupPage() {
 
   const ownerValid = ownerName.trim().length > 0 && isValidPhone(ownerPhone);
   const otpValid = /^\d{6}$/.test(otp);
+  const roomCodeValid = /^\d{6}$/.test(roomCode);
   const groupValid =
     groupName.trim().length > 0 && seniorName.trim().length > 0 && isValidPhone(seniorPhone);
 
   async function goToOtp() {
     setError(null);
+    setInvitedMemberId(null);
+    setInvitedCareGroupId(null);
     if (!ownerValid) {
       setError('이름과 휴대폰 번호를 확인해주세요.');
       return;
@@ -49,7 +63,50 @@ export function CaregiverSignupPage() {
       setError('인증 코드 6자리를 정확히 입력해주세요.');
       return;
     }
+    const invite = findLocalCaregiverMemberByPhone(ownerPhone);
+    if (invite) {
+      setInvitedMemberId(invite.id);
+      setInvitedCareGroupId(invite.careGroupId);
+      setRoomCode(env.demoMode ? '123456' : '');
+      setStep('roomCode');
+      return;
+    }
     setStep('group');
+  }
+
+  async function confirmRoomCode() {
+    setError(null);
+    if (!roomCodeValid || !invitedMemberId || !invitedCareGroupId) {
+      setError('대표자에게 받은 방 코드 6자리를 확인해주세요.');
+      return;
+    }
+    setSubmitting(true);
+    try {
+      const pairing = await verifyPairingCode(roomCode);
+      if (pairing.careGroupId !== invitedCareGroupId) {
+        setError('초대된 보호자 방의 코드가 아니에요.');
+        return;
+      }
+      const group = await getCareGroup(pairing.careGroupId);
+      const hasPrimaryOwner = group.members.some(
+        (member) => member.role === 'OWNER' && member.isPrimary && member.status === 'CONNECTED',
+      );
+      if (!hasPrimaryOwner) {
+        setError('대표자가 있는 보호자 방 코드만 사용할 수 있어요.');
+        return;
+      }
+      const connected = connectLocalCaregiverMember(invitedMemberId);
+      saveSession({
+        careGroupId: group.id,
+        seniorId: group.senior.id,
+        ownerUserId: connected?.id ?? invitedMemberId,
+      });
+      navigate('/caregiver');
+    } catch {
+      setError('대표자에게 받은 방 코드 6자리를 다시 확인해주세요.');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function submit() {
@@ -144,6 +201,31 @@ export function CaregiverSignupPage() {
           </>
         )}
 
+        {step === 'roomCode' && (
+          <>
+            <h2 className="text-2xl font-extrabold text-stone-900">보호자 방을 인증해요</h2>
+            <p className="text-base text-stone-500">
+              대표자가 만든 6자리 방 코드를 입력해주세요.
+            </p>
+            <TextField
+              id="caregiver-room-code"
+              label="보호자 방 코드"
+              inputMode="numeric"
+              value={roomCode}
+              onChange={(value) => setRoomCode(digitsOnly(value).slice(0, 6))}
+              placeholder="6자리 숫자"
+              maxLength={6}
+              autoFocus
+            />
+            {error && <p className="text-sm font-semibold text-warn-700">{error}</p>}
+            <div className="mt-auto pt-4">
+              <PrimaryButton onClick={confirmRoomCode} disabled={!roomCodeValid || submitting}>
+                {submitting ? '보호자 방 확인 중…' : '방 연결하기'}
+              </PrimaryButton>
+            </div>
+          </>
+        )}
+
         {step === 'group' && (
           <>
             <h2 className="text-2xl font-extrabold text-stone-900">보호자 방을 만들어요</h2>
@@ -179,7 +261,7 @@ export function CaregiverSignupPage() {
               label="관계 (선택)"
               value={relationship}
               onChange={setRelationship}
-              placeholder="예) 어머니"
+              placeholder="예) 딸"
             />
             <TextField
               id="senior-birth"
