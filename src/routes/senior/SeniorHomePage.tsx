@@ -18,6 +18,8 @@ export function SeniorHomePage() {
 
   const { dateLabel, nextDose, doses, refill, weather } = data;
   const rainy = weather.condition === 'rain';
+  const doseName = nextDose.label.split('·')[0]?.trim() ?? nextDose.label;
+  const pouchName = nextDose.label.split('·')[1]?.trim();
 
   async function triggerReminder() {
     try {
@@ -26,7 +28,7 @@ export function SeniorHomePage() {
           Notification.permission === 'granted' ? 'granted' : await Notification.requestPermission();
         if (permission === 'granted') {
           new Notification('고찌봄 · 복약 알림', {
-            body: `${nextDose.label} 드실 시간이에요. 약 ${nextDose.pillCount}개를 드세요.`,
+            body: `${doseName} 드실 시간이에요. ${pouchName ? `${pouchName} ` : ''}약 ${nextDose.pillCount}개를 드세요.`,
             icon: '/icon.svg',
           });
         }
@@ -34,7 +36,7 @@ export function SeniorHomePage() {
     } catch {
       // 알림 미지원/거부는 무시하고 인앱 알림 화면으로 이동
     }
-    navigate('/senior/alarm');
+    navigate('/senior/dose');
   }
 
   return (
@@ -63,9 +65,17 @@ export function SeniorHomePage() {
       <button
         type="button"
         onClick={() => navigate('/senior/notify')}
-        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-50 py-3 text-base font-bold text-brand-700"
+        className="flex w-full items-start gap-3 rounded-2xl border border-brand-100 bg-brand-50 px-4 py-3 text-left"
       >
-        🔔 복약 알림 미리보기
+        <span className="mt-0.5 text-2xl" aria-hidden>
+          🔔
+        </span>
+        <span>
+          <span className="block text-sm font-extrabold text-brand-700">데모 알림 미리보기</span>
+          <span className="mt-0.5 block text-base font-bold leading-snug text-stone-900">
+            실제 사용자는 {nextDose.alarmLabel}에 복약 알림을 받아요
+          </span>
+        </span>
       </button>
 
       <button

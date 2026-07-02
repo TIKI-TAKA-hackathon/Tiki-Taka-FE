@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { caregiverBoard, jejuWeather, seniorDay } from '../../lib/mock';
+import { loadSession } from '../../lib/session';
+import { seniorName } from '../../lib/seniorName';
 
 // Caregiver phone lock-screen mock (mirrors the senior NotifyPage): a calm dark background
 // with a big clock/date and a STACK of incoming push-notification cards (iOS notification-
@@ -11,7 +13,7 @@ const CAREGIVER_PHONE = '01012345678'; // demo-only 보호자 연락처
 
 export function CaregiverNotifyPage() {
   const navigate = useNavigate();
-  const patient = caregiverBoard.patientName;
+  const patient = seniorName(loadSession()?.seniorName ?? caregiverBoard.patientName);
   const { doses } = caregiverBoard;
 
   // Pull dose labels/times from the existing mock instead of hardcoding.

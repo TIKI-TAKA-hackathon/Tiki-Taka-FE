@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { BackHeader, Card, CheckCircle, PrimaryButton, SecondaryButton, TextField } from '../../components/ui';
 import { fetchPrescriptionByCode } from '../../lib/api';
 import { env } from '../../lib/env';
+import { pouchLabelForSchedule } from '../../lib/prescriptionSchedule';
 import type { ConfirmMedsView } from '../../lib/types';
 
 // BarcodeDetector is not in the TS DOM lib yet; describe the minimal shape we use.
@@ -169,7 +170,7 @@ export function AddPrescriptionPage() {
               <div className="flex items-center justify-between">
                 <h3 className="text-base font-bold text-stone-900">{schedule.displayName}</h3>
                 <span className="text-sm font-semibold text-stone-400">
-                  {schedule.dispensingNumber}번 봉지
+                  {pouchLabelForSchedule(schedule.displayName, schedule.dispensingNumber)}
                 </span>
               </div>
               <dl className="mt-3 grid grid-cols-2 gap-y-2 text-sm">
@@ -184,6 +185,11 @@ export function AddPrescriptionPage() {
                 <dt className="text-stone-400">조제일수</dt>
                 <dd className="text-right font-semibold text-stone-700">{schedule.dispensedDays}일분</dd>
               </dl>
+              {schedule.dispensedDays > 1 && (
+                <p className="mt-3 rounded-2xl bg-brand-50 px-3 py-2 text-sm font-semibold text-brand-700">
+                  매일 같은 복용 순서로 반복돼요.
+                </p>
+              )}
             </Card>
           ))}
         </ul>

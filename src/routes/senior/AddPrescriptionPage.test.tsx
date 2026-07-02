@@ -29,6 +29,7 @@ describe('senior prescription registration', () => {
     fireEvent.click(await screen.findByRole('button', { name: /처방 QR로 약 등록하기/ }));
     expect(await screen.findByRole('heading', { name: '처방 QR을 비춰주세요' })).toBeInTheDocument();
 
+    expect(await screen.findByText('데모 QR로 등록할게요')).toBeInTheDocument();
     fireEvent.click(await screen.findByRole('button', { name: '데모 QR로 계속하기' }));
     expect(await screen.findByRole('heading', { name: '처방 QR을 읽었어요' })).toBeInTheDocument();
     expect(screen.queryByLabelText('등록 코드 직접 입력')).not.toBeInTheDocument();
@@ -49,6 +50,9 @@ describe('senior prescription registration', () => {
     expect(await screen.findByRole('heading', { name: '식사 시간에 맞춰 알려드릴게요' })).toBeInTheDocument();
     expect(screen.getByText('저녁 식사 오후 7시 기준')).toBeInTheDocument();
     expect(screen.getByText('오후 7시 30분 알림')).toBeInTheDocument();
+    expect(screen.getByText('저녁용 봉지')).toBeInTheDocument();
+    expect(screen.getAllByText('30일 동안 매일 같은 순서로 반복돼요.').length).toBeGreaterThan(0);
+    expect(screen.queryByText('3번 봉지')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: '확인' }));
     expect(await screen.findByRole('heading', { name: '약 등록이 끝났어요' })).toBeInTheDocument();

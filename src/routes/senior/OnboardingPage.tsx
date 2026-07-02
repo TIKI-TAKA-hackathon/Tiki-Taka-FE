@@ -5,7 +5,7 @@ export function OnboardingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="gjb-hero-gradient relative isolate flex min-h-full flex-col overflow-hidden px-6 py-8">
+    <div className="gjb-onboarding-bg relative isolate flex min-h-full flex-col overflow-hidden px-6 py-8">
       <img
         src="/brand/고찌봄 인사.svg"
         alt=""
@@ -20,7 +20,7 @@ export function OnboardingPage() {
             className="absolute inset-x-8 bottom-2 h-8 rounded-full bg-sea/20 blur-xl"
           />
           <img
-            src="/brand/고찌봄 로고 잉크.svg"
+            src="/brand/onboarding-logo.svg"
             alt="고찌봄"
             className="relative h-24 w-auto drop-shadow-[0_6px_16px_rgba(42,39,36,.10)]"
           />

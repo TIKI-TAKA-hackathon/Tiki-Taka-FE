@@ -17,10 +17,10 @@ function renderAt(path: string) {
 describe('caregiver signup (demo prefill)', () => {
   afterEach(() => cleanup());
 
-  it('arrives with the owner step prefilled and 인증번호 받기 enabled', () => {
+  it('arrives with the owner step prefilled and 인증번호 받기 enabled', async () => {
     renderAt('/caregiver/signup');
 
-    expect(screen.getByLabelText('이름')).toHaveValue('김보호');
+    expect(await screen.findByLabelText('이름')).toHaveValue('김보호');
     expect(screen.getByLabelText('휴대폰 번호')).toHaveValue('010-1234-5678');
     expect(screen.getByRole('button', { name: '인증번호 받기' })).toBeEnabled();
   });

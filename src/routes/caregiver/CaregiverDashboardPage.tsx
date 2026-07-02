@@ -63,14 +63,22 @@ export function CaregiverDashboardPage() {
             <Badge tone="success">보호자 {circle.family}명</Badge>
             <Badge tone="info">사회복지사 {circle.social}명</Badge>
           </div>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => navigate('/caregiver/notify')}
-              className={TOP_ACTION_CLASS}
-            >
-              🔔 알림 미리보기
-            </button>
+          <button
+            type="button"
+            onClick={() => navigate('/caregiver/notify')}
+            className="flex w-full items-start gap-3 rounded-2xl border border-brand-100 bg-brand-50 px-4 py-3 text-left"
+          >
+            <span className="mt-0.5 text-2xl" aria-hidden>
+              🔔
+            </span>
+            <span>
+              <span className="block text-sm font-extrabold text-brand-700">데모 알림 미리보기</span>
+              <span className="mt-0.5 block text-base font-bold leading-snug text-stone-900">
+                실제 보호자는 복용 완료·확인 필요 알림을 받아요
+              </span>
+            </span>
+          </button>
+          <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
               onClick={() => navigate('/caregiver/add-prescription')}

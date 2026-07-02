@@ -29,8 +29,9 @@ export const DEMO_DAYS: readonly DemoDay[] = [
 export const DEMO_IMG = {
   dosePouch: DEMO_DAYS[0].path, // pouch photo (day1)
   doseOrganizer: '/mock/day3.jpg', // pouch photo (day3)
-  pillWhite: '/mock/pill-white.jpg',
-  pillYellow: '/mock/pill-yellow.jpg',
-  pillBlue: '/mock/pill-blue.jpg',
+  pillWhite: '/mock/pill-white.svg',
+  pillYellow: '/mock/pill-yellow.svg',
+  pillBlue: '/mock/pill-blue.svg',
+  pillPlaceholder: '/mock/pill-placeholder.svg',
   taken: '/mock/day4.jpg', // taken/emptied pouch photo (day4)
 } as const;

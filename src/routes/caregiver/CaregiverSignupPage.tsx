@@ -100,6 +100,9 @@ export function CaregiverSignupPage() {
         careGroupId: group.id,
         seniorId: group.senior.id,
         ownerUserId: connected?.id ?? invitedMemberId,
+        groupName: group.name,
+        ownerName: connected?.name,
+        seniorName: group.senior.name,
       });
       navigate('/caregiver');
     } catch {
@@ -131,6 +134,9 @@ export function CaregiverSignupPage() {
         careGroupId: group.id,
         seniorId: group.senior.id,
         ownerUserId: owner?.user.id ?? group.senior.id,
+        groupName: group.name,
+        ownerName: ownerName.trim(),
+        seniorName: seniorName.trim(),
         seniorPhone: digitsOnly(seniorPhone),
       });
       navigate('/caregiver');

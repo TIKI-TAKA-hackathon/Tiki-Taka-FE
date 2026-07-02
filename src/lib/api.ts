@@ -14,6 +14,7 @@ import {
   seniorDay,
 } from './mock';
 import { loadSession, saveSession } from './session';
+import { DEFAULT_SENIOR_NAME, seniorNameWithHonorific } from './seniorName';
 import type {
   AppNotification,
   CareGroup,
@@ -120,25 +121,28 @@ export function fetchSeniorDay(params: { seniorId?: string; date?: string } = {}
 export function fetchCaregiverBoard(
   params: { careGroupId?: string; date?: string } = {},
 ): Promise<CaregiverBoard> {
-  return load(`/care-groups/${params.careGroupId ?? 'latest'}/board${query({ date: params.date })}`, caregiverBoard);
+  return load(
+    `/care-groups/${params.careGroupId ?? 'latest'}/board${query({ date: params.date })}`,
+    caregiverBoard,
+  ).then(withSessionCaregiverBoard);
 }
 
 // --- Care group (real endpoints) ---
 // POST /care-groups — caregiver signup + senior registration (incl. phone).
 export async function createCareGroup(req: CreateCareGroupRequest): Promise<CareGroup> {
   if (env.demoMode) {
-    return { ...careGroupFixture, name: req.name, senior: { ...careGroupFixture.senior, name: req.senior.name } };
+    return withCreatedCareGroup(req);
   }
   try {
     return await sendJson<CareGroup>('POST', '/care-groups', req);
   } catch {
     // Keep the demo flow alive when the backend is unreachable.
-    return { ...careGroupFixture, name: req.name, senior: { ...careGroupFixture.senior, name: req.senior.name } };
+    return withCreatedCareGroup(req);
   }
 }
 
 export function getCareGroup(id: string): Promise<CareGroup> {
-  return load(`/care-groups/${id}`, careGroupFixture).then(mergeLocalCaregiverMembers);
+  return load(`/care-groups/${id}`, careGroupFixture).then(withSessionCareGroup).then(mergeLocalCaregiverMembers);
 }
 
 export function fetchChangeLog(id: string, limit = 20): Promise<ChangeLog[]> {
@@ -188,12 +192,12 @@ export async function transferPrimary(
   memberId: string,
 ): Promise<CareGroup> {
   if (env.demoMode) {
-    return careGroupFixture;
+    return withSessionCareGroup(careGroupFixture);
   }
   try {
     return await sendJson<CareGroup>('PATCH', `/care-groups/${id}/primary`, { actorUserId, memberId });
   } catch {
-    return careGroupFixture;
+    return withSessionCareGroup(careGroupFixture);
   }
 }
 
@@ -222,13 +226,13 @@ export async function updateMealTimes(seniorId: string, req: UpdateMealTimesRequ
 // GET /prescriptions:lookup?code=<rawValue> — the QR rawValue is the pharmacy registration code.
 export async function fetchPrescriptionByCode(code: string): Promise<ConfirmMedsView> {
   if (env.demoMode) {
-    return confirmMedsViewFixture;
+    return withSessionConfirmMedsView(confirmMedsViewFixture);
   }
   try {
-    return await getJson<ConfirmMedsView>(`/prescriptions:lookup${query({ code })}`);
+    return withSessionConfirmMedsView(await getJson<ConfirmMedsView>(`/prescriptions:lookup${query({ code })}`));
   } catch {
     // Keep the confirm-meds flow demoable before BE is deployed.
-    return confirmMedsViewFixture;
+    return withSessionConfirmMedsView(confirmMedsViewFixture);
   }
 }
 
@@ -359,7 +363,7 @@ export async function fetchSeniorNotifications(
   actorUserId?: string,
 ): Promise<AppNotification[]> {
   if (env.demoMode) {
-    return notificationsFixture;
+    return withSessionNotifications(notificationsFixture);
   }
   try {
     const raw = await getJson<RawNotification[]>(
@@ -367,20 +371,20 @@ export async function fetchSeniorNotifications(
     );
     return raw.map(normalizeNotification);
   } catch {
-    return notificationsFixture;
+    return withSessionNotifications(notificationsFixture);
   }
 }
 
 // GET /care-groups/{id}/notifications — BFF feed for caregivers (newest first).
 export async function fetchCareGroupNotifications(careGroupId: string): Promise<AppNotification[]> {
   if (env.demoMode) {
-    return mergeCaregiverAlerts(notificationsFixture);
+    return mergeCaregiverAlerts(withSessionNotifications(notificationsFixture));
   }
   try {
     const raw = await getJson<RawNotification[]>(`/care-groups/${careGroupId}/notifications`);
     return mergeCaregiverAlerts(raw.map(normalizeNotification));
   } catch {
-    return mergeCaregiverAlerts(notificationsFixture);
+    return mergeCaregiverAlerts(withSessionNotifications(notificationsFixture));
   }
 }
 
@@ -395,6 +399,65 @@ export async function markNotificationRead(id: string, actorUserId?: string): Pr
   } catch {
     // Optimistic UI already reflects the read state; ignore transient failures.
   }
+}
+
+function withCreatedCareGroup(req: CreateCareGroupRequest): CareGroup {
+  return {
+    ...careGroupFixture,
+    name: req.name,
+    senior: { ...careGroupFixture.senior, name: req.senior.name },
+    members: careGroupFixture.members.map((member) =>
+      member.role === 'OWNER'
+        ? { ...member, user: { ...member.user, name: req.owner.name } }
+        : member,
+    ),
+  };
+}
+
+function withSessionCareGroup(group: CareGroup): CareGroup {
+  const session = loadSession();
+  return {
+    ...group,
+    name: session?.groupName ?? group.name,
+    senior: { ...group.senior, name: session?.seniorName ?? group.senior.name },
+    members: group.members.map((member) =>
+      member.role === 'OWNER' && session?.ownerName
+        ? { ...member, user: { ...member.user, name: session.ownerName } }
+        : member,
+    ),
+  };
+}
+
+function withSessionCaregiverBoard(board: CaregiverBoard): CaregiverBoard {
+  return {
+    ...board,
+    patientName: loadSession()?.seniorName ?? board.patientName,
+  };
+}
+
+function withSessionConfirmMedsView(view: ConfirmMedsView): ConfirmMedsView {
+  return {
+    ...view,
+    seniorDisplayName: loadSession()?.seniorName ?? view.seniorDisplayName,
+  };
+}
+
+function withSessionNotifications(items: AppNotification[]): AppNotification[] {
+  const name = loadSession()?.seniorName;
+  if (!name || name === DEFAULT_SENIOR_NAME) {
+    return items;
+  }
+  const from = seniorNameWithHonorific(DEFAULT_SENIOR_NAME);
+  const to = seniorNameWithHonorific(name);
+  return items.map((item) => ({
+    ...item,
+    title: replaceText(replaceText(item.title, from, to), DEFAULT_SENIOR_NAME, name),
+    body: replaceText(replaceText(item.body, from, to), DEFAULT_SENIOR_NAME, name),
+  }));
+}
+
+function replaceText(value: string, from: string, to: string): string {
+  return value.split(from).join(to);
 }
 
 function mergeCaregiverAlerts(items: AppNotification[]): AppNotification[] {

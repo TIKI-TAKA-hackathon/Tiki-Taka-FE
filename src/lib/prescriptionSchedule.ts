@@ -10,6 +10,7 @@ export type PrescriptionAlarmPreview = {
   alarmLabel: string;
   pillText: string;
   packetLabel: string;
+  repeatLabel: string;
 };
 
 const MEAL_LABEL: Record<MealKey, string> = {
@@ -36,9 +37,29 @@ export function buildPrescriptionAlarmPreviews(
       mealLabel,
       alarmLabel: `${formatKoreanTime(alarmMinutes)} 알림`,
       pillText: `약 ${schedule.pillCount}개`,
-      packetLabel: `${schedule.dispensingNumber}번 봉지`,
+      packetLabel: pouchLabelForSchedule(schedule.displayName, schedule.dispensingNumber),
+      repeatLabel:
+        schedule.dispensedDays > 1
+          ? `${schedule.dispensedDays}일 동안 매일 같은 순서로 반복돼요.`
+          : '오늘 복용할 봉지예요.',
     };
   });
+}
+
+export function pouchLabelForSchedule(displayName: string, fallbackNumber?: number): string {
+  if (displayName.includes('아침')) {
+    return '아침용 봉지';
+  }
+  if (displayName.includes('점심')) {
+    return '점심용 봉지';
+  }
+  if (displayName.includes('저녁')) {
+    return '저녁용 봉지';
+  }
+  if (displayName.includes('취침')) {
+    return '취침 전 봉지';
+  }
+  return fallbackNumber ? `${fallbackNumber}번 봉지` : '복용 봉지';
 }
 
 function mealKeyForSchedule(displayName: string): MealKey {

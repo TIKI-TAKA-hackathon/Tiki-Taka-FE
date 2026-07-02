@@ -14,16 +14,16 @@ function renderAt(path: string) {
 describe('add-prescription', () => {
   afterEach(() => cleanup());
 
-  it('renders the scan screen with a manual code fallback', () => {
+  it('renders the scan screen with a manual code fallback', async () => {
     renderAt('/caregiver/add-prescription');
-    expect(screen.getByRole('heading', { name: '처방 QR을 스캔해요' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: '처방 QR을 스캔해요' })).toBeInTheDocument();
     expect(screen.getByLabelText('등록 코드 직접 입력')).toBeInTheDocument();
   });
 
   it('shows the confirm-meds view after entering a code (demo fallback)', async () => {
     renderAt('/caregiver/add-prescription');
 
-    fireEvent.change(screen.getByLabelText('등록 코드 직접 입력'), { target: { value: 'RX-DEMO-001' } });
+    fireEvent.change(await screen.findByLabelText('등록 코드 직접 입력'), { target: { value: 'RX-DEMO-001' } });
     fireEvent.click(screen.getByRole('button', { name: '코드로 등록하기' }));
 
     // Demo mode resolves fetchPrescriptionByCode to the fixture (senior 김순자).

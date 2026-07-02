@@ -152,6 +152,10 @@ textarea:focus-visible {
     );
   }
 
+  .gjb-onboarding-bg {
+    background: #ffd04d url('/brand/onboarding-background.svg') center / cover no-repeat;
+  }
+
   .gjb-senior-title {
     font-size: var(--gjb-senior-title);
     line-height: 1.18;
@@ -195,6 +199,9 @@ textarea:focus-visible {
 /* 스플래시(진입) 배경·인트로 — 감귤→흰색, 은은한 페이드+상승 */
 .gjb-splash {
   background: var(--gjb-bg-main);
+}
+.gjb-splash-art {
+  object-position: 50% 24%;
 }
 .gjb-splash-intro {
   animation: gjb-splash-rise 640ms ease-out both;
