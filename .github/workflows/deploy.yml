@@ -33,8 +33,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_API_BASE_URL: https://api.stdiodh.xyz/api/v1
-          VITE_DEMO_MODE: "true"
+          VITE_API_BASE_URL: https://api.stdiodh.xyz
+          VITE_DEMO_MODE: "false"
 
       - name: Write Firebase service account
         shell: bash
