@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BackHeader, Card, PrimaryButton, SecondaryButton, TextField } from '../../components/ui';
+import { BackHeader, Card, CheckCircle, PrimaryButton, SecondaryButton, TextField } from '../../components/ui';
 import { fetchPrescriptionByCode } from '../../lib/api';
 import type { ConfirmMedsView } from '../../lib/types';
 
@@ -9,7 +9,7 @@ type DetectedBarcode = { rawValue: string };
 type BarcodeDetectorLike = { detect: (source: CanvasImageSource) => Promise<DetectedBarcode[]> };
 type BarcodeDetectorCtor = new (options?: { formats: string[] }) => BarcodeDetectorLike;
 
-type Step = 'scan' | 'confirm';
+type Step = 'scan' | 'confirm' | 'done';
 
 // '식후' + 30분 → '식후 30분' / '식전' + 0 → '식전'. offsetMin is minutes relative to the meal.
 function basisLabel(doseBasis: string, offsetMin: number): string {
@@ -128,6 +128,27 @@ export function AddPrescriptionPage() {
     setStep('scan');
   }
 
+  // D-A: the prescription is already persisted + ACTIVE (created by the pharmacy).
+  // "맞아요" is an activation confirmation — no POST is issued here.
+  if (step === 'done' && view) {
+    return (
+      <div className="flex min-h-full flex-col items-center justify-center gap-5 px-6 pb-10 pt-1 text-center">
+        <CheckCircle />
+        <h2 className="text-2xl font-extrabold text-stone-900">{view.seniorDisplayName}님 약이 등록됐어요</h2>
+        <p className="text-base leading-relaxed text-stone-500">
+          이제 복약 시간에 맞춰
+          <br />
+          알림이 전달돼요.
+        </p>
+        <div className="mt-2 w-full">
+          <PrimaryButton tone="success" onClick={() => navigate('/caregiver')}>
+            복약 상태 보기
+          </PrimaryButton>
+        </div>
+      </div>
+    );
+  }
+
   if (step === 'confirm' && view) {
     return (
       <div className="flex min-h-full flex-col gap-4 px-6 pb-10 pt-1">
@@ -165,7 +186,7 @@ export function AddPrescriptionPage() {
         </ul>
 
         <div className="mt-2 space-y-3">
-          <PrimaryButton tone="success" onClick={() => navigate('/caregiver')}>
+          <PrimaryButton tone="success" onClick={() => setStep('done')}>
             맞아요
           </PrimaryButton>
           <SecondaryButton onClick={rescan}>다시 스캔</SecondaryButton>
