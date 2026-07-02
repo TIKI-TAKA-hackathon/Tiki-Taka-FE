@@ -1,12 +1,32 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PrimaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
+import { getVoice } from '../../lib/voices';
 
 export function DosePage() {
   const navigate = useNavigate();
   const [helpSent, setHelpSent] = useState(false);
   const { nextDose } = seniorDay;
+  const voice = getVoice();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const playGuide = useCallback(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    el.currentTime = 0;
+    try {
+      const played = el.play();
+      // 모바일 자동재생 차단·미지원 환경에서는 조용히 무시하고 아래 텍스트 안내로 폴백한다.
+      if (played && typeof played.catch === 'function') played.catch(() => undefined);
+    } catch {
+      // 재생을 지원하지 않는 환경(테스트 등)
+    }
+  }, []);
+
+  useEffect(() => {
+    playGuide();
+  }, [playGuide]);
 
   return (
     <div className="flex min-h-full flex-col pb-6">
@@ -14,11 +34,14 @@ export function DosePage() {
         <span className="flex items-center gap-2 text-base font-semibold text-brand-700">🔊 음성 안내 중</span>
         <button
           type="button"
+          onClick={playGuide}
           className="flex items-center gap-1 rounded-full bg-brand-600 px-4 py-1.5 text-sm font-semibold text-white"
         >
           ↻ 다시 듣기
         </button>
       </div>
+      <audio ref={audioRef} src={voice.sampleUrl} preload="auto" />
+
 
       <div className="flex flex-1 flex-col items-center px-6 pt-5 text-center">
         <h1 className="text-2xl font-extrabold text-stone-900">지금 드실 약이에요</h1>
