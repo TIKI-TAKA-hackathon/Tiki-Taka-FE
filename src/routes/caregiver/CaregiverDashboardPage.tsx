@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge, Card, ErrorNote, Loading } from '../../components/ui';
+import { Badge, Card, DemoImage, ErrorNote, Loading } from '../../components/ui';
 import { fetchCaregiverBoard, fetchCaregiverPhotos } from '../../lib/api';
 import { loadSession } from '../../lib/session';
 import { useSharedDosePhoto } from '../../lib/shareStore';
@@ -120,10 +120,11 @@ export function CaregiverDashboardPage() {
       {photo && (
         <Card className="p-4">
           <h2 className="mb-3 text-base font-bold text-stone-700">📷 어르신이 보낸 복약 사진</h2>
-          <img src={photo.dataUrl} alt="어르신이 보낸 약 사진" className="w-full rounded-2xl object-cover" />
+          <DemoImage src={photo.dataUrl} alt="어르신이 보낸 약 사진" className="w-full rounded-2xl object-cover" />
           <p className="mt-2 text-sm text-stone-400">
             {photo.doseLabel} · {photo.at} 전송됨
           </p>
+          <p className="mt-1 text-xs text-stone-400">사진은 참고용이며 복용 증명은 아니에요.</p>
         </Card>
       )}
 
@@ -148,10 +149,15 @@ export function CaregiverDashboardPage() {
                 className="flex flex-col overflow-hidden rounded-2xl border border-stone-100 text-left"
                 aria-label={`${item.doseLabel} 사진 보기`}
               >
-                <img
+                <DemoImage
                   src={item.thumbnailUrl}
                   alt={`${item.doseLabel} 복약 사진`}
                   className="aspect-square w-full object-cover"
+                  fallback={
+                    <span className="flex aspect-square w-full items-center justify-center bg-stone-100 text-3xl">
+                      📷
+                    </span>
+                  }
                 />
                 <span className="px-2 py-1.5 text-xs font-semibold text-stone-500">{item.doseLabel}</span>
               </button>

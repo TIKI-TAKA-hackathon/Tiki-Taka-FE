@@ -11,6 +11,7 @@ import type {
   NotificationSettings,
   SeniorDay,
 } from './types';
+import { DEMO_DAYS, DEMO_IMG } from './demoImages';
 
 const doses: Dose[] = [
   {
@@ -59,9 +60,9 @@ export const seniorDay: SeniorDay = {
     spokenText: '저녁 식사 30분 후, 오후 7시 30분입니다. 1번 봉지를 꺼내 약 3개를 모두 드세요.',
     doneTimeLabel: '오후 7:32',
     pills: [
-      { id: 'p1', name: '흰색 동그란 약', shape: 'round', note: '작은 알약' },
-      { id: 'p2', name: '노란색 긴 약', shape: 'oval', note: '타원형 알약' },
-      { id: 'p3', name: '파란색 캡슐', shape: 'capsule', note: '긴 캡슐' },
+      { id: 'p1', name: '흰색 동그란 약', shape: 'round', note: '작은 알약', image: DEMO_IMG.pillWhite },
+      { id: 'p2', name: '노란색 긴 약', shape: 'oval', note: '타원형 알약', image: DEMO_IMG.pillYellow },
+      { id: 'p3', name: '파란색 캡슐', shape: 'capsule', note: '긴 캡슐', image: DEMO_IMG.pillBlue },
     ],
   },
   doses,
@@ -181,56 +182,20 @@ export const confirmMedsView: ConfirmMedsView = {
   ],
 };
 
-// Small inline placeholder image so the gallery renders without network access (demo + tests).
-// A single flat-color SVG data-URI reused as both thumbnail and full photo.
-function placeholderPhoto(label: string, bg: string): string {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320"><rect width="320" height="320" fill="${bg}"/><text x="160" y="170" font-family="sans-serif" font-size="32" fill="#ffffff" text-anchor="middle">${label}</text></svg>`;
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-}
-
-// Demo-fallback fixture for the caregiver photo gallery (WP2). One photo per dose_event.
-export const dosePhotos: DosePhoto[] = [
-  {
-    doseEventId: 'de-morning',
-    doseLabel: '아침약',
-    takenAtLabel: '오전 8:32',
+// Demo-fallback fixture for the caregiver photo gallery (WP2). One photo per dose_event,
+// built from the real 7-day "복용 완료(taken)" 인증 set (see src/lib/demoImages.ts).
+// Newest first (day7 → day1); every item is 복용 완료 (status 'done', reviewStatus 'reviewed').
+export const dosePhotos: DosePhoto[] = [...DEMO_DAYS]
+  .reverse()
+  .map((day) => ({
+    doseEventId: `de-${day.id}`,
+    doseLabel: `${day.slot} · ${day.mgmtNo}`,
+    takenAtLabel: day.takenAtLabel,
     status: 'done',
-    method: 'voice',
     reviewStatus: 'reviewed',
-    photoUrl: placeholderPhoto('아침약', '#3b5bdb'),
-    thumbnailUrl: placeholderPhoto('아침약', '#3b5bdb'),
-  },
-  {
-    doseEventId: 'de-lunch',
-    doseLabel: '점심약',
-    takenAtLabel: '오후 12:08',
-    status: 'done',
-    method: 'button',
-    reviewStatus: 'pending',
-    photoUrl: placeholderPhoto('점심약', '#1c8f4d'),
-    thumbnailUrl: placeholderPhoto('점심약', '#1c8f4d'),
-  },
-  {
-    doseEventId: 'de-dinner',
-    doseLabel: '저녁약',
-    takenAtLabel: '오후 7:41',
-    status: 'done',
-    method: 'button',
-    reviewStatus: 'flagged',
-    photoUrl: placeholderPhoto('저녁약', '#b45309'),
-    thumbnailUrl: placeholderPhoto('저녁약', '#b45309'),
-  },
-  {
-    doseEventId: 'de-morning-prev',
-    doseLabel: '아침약',
-    takenAtLabel: '어제 오전 8:29',
-    status: 'done',
-    method: 'voice',
-    reviewStatus: 'reviewed',
-    photoUrl: placeholderPhoto('아침약', '#4f6bed'),
-    thumbnailUrl: placeholderPhoto('아침약', '#4f6bed'),
-  },
-];
+    photoUrl: day.path,
+    thumbnailUrl: day.path,
+  }));
 
 export const inviteLink: InviteLink = {
   token: 'demo-invite-token',

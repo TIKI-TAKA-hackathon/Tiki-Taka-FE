@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export type BadgeTone = 'success' | 'neutral' | 'meal' | 'next' | 'info' | 'warn';
@@ -19,6 +19,34 @@ export function Badge({ tone = 'neutral', children }: { tone?: BadgeTone; childr
     >
       {children}
     </span>
+  );
+}
+
+type DemoImageProps = {
+  src: string;
+  alt: string;
+  className?: string;
+  // Rendered when the image is missing (404) or fails to load. Defaults to
+  // rendering nothing, so a missing demo image simply disappears instead of
+  // showing a broken-image icon.
+  fallback?: ReactNode;
+};
+
+// Graceful image for demo assets that may not exist yet. Because the demo image
+// files are dropped in by hand later, this swaps to `fallback` on the first load
+// error so a 404 never surfaces a broken-image icon.
+export function DemoImage({ src, alt, className, fallback = null }: DemoImageProps) {
+  const [failed, setFailed] = useState(false);
+  if (failed) {
+    return <>{fallback}</>;
+  }
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      onError={() => setFailed(true)}
+    />
   );
 }
 

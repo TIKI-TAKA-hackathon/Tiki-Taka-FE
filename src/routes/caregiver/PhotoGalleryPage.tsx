@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { BackHeader, Badge, Card, ErrorNote, Loading, SecondaryButton } from '../../components/ui';
+import { BackHeader, Badge, Card, DemoImage, ErrorNote, Loading, SecondaryButton } from '../../components/ui';
 import type { BadgeTone } from '../../components/ui';
 import { fetchCaregiverPhotos, reviewDosePhoto } from '../../lib/api';
 import { loadSession } from '../../lib/session';
@@ -23,11 +23,16 @@ const METHOD_LABEL: Record<ConfirmMethod, string> = {
   button: '버튼 확인',
 };
 
-// The contract sends display strings (e.g. '오전 8:32', '어제 오전 8:29'), so group by a
-// simple day prefix rather than parsing dates on the frontend.
+// The contract sends display strings, so group by a simple day prefix rather than parsing
+// dates on the frontend. Handles both relative labels ('어제 오전 8:29', '오전 8:32') and
+// dated labels ('6월 26일 오전 8:10') — the latter groups by its 'N월 N일' date portion.
 function dayGroupLabel(takenAtLabel: string): string {
   if (takenAtLabel.startsWith('어제')) {
     return '어제';
+  }
+  const dateMatch = takenAtLabel.match(/^\d+월\s*\d+일/);
+  if (dateMatch) {
+    return dateMatch[0];
   }
   return '오늘';
 }
@@ -79,10 +84,15 @@ function PhotoDetail({
         </div>
 
         <div className="mt-4 px-6">
-          <img
+          <DemoImage
             src={photo.photoUrl}
             alt={`${photo.doseLabel} 복약 사진`}
             className="w-full rounded-2xl border border-stone-100 object-cover"
+            fallback={
+              <div className="flex aspect-square w-full items-center justify-center rounded-2xl border border-stone-100 bg-stone-100 text-5xl">
+                📷
+              </div>
+            }
           />
         </div>
 
@@ -172,10 +182,15 @@ export function PhotoGalleryPage() {
                       className="flex w-full flex-col text-left"
                       aria-label={`${photo.doseLabel} ${photo.takenAtLabel} 사진 보기`}
                     >
-                      <img
+                      <DemoImage
                         src={photo.thumbnailUrl}
                         alt={`${photo.doseLabel} 복약 사진`}
                         className="aspect-square w-full object-cover"
+                        fallback={
+                          <span className="flex aspect-square w-full items-center justify-center bg-stone-100 text-3xl">
+                            📷
+                          </span>
+                        }
                       />
                       <div className="flex flex-col gap-1.5 p-3">
                         <div className="flex items-center justify-between">

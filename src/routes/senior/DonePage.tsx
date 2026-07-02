@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, PrimaryButton } from '../../components/ui';
+import { CheckCircle, DemoImage, PrimaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import { useSharedDosePhoto } from '../../lib/shareStore';
 import { GUIDE_AUDIO } from '../../lib/guide';
@@ -31,11 +31,17 @@ export function DonePage() {
         <h1 className="mt-6 text-3xl font-extrabold text-stone-900">잘 하셨어요!</h1>
         <p className="mt-3 text-xl text-stone-500">저녁약을 드셨어요.</p>
         {photo && (
-          <img
-            src={photo.dataUrl}
-            alt="가족에게 보낸 약 사진"
-            className="mt-5 h-32 w-32 rounded-2xl object-cover shadow-sm"
-          />
+          <div className="mt-5 flex w-full flex-col items-center">
+            <DemoImage
+              src={photo.dataUrl}
+              alt="가족에게 보낸 약 사진"
+              className="h-40 w-40 rounded-2xl object-cover shadow-sm"
+            />
+            <p className="mt-3 rounded-full bg-success-50 px-4 py-1.5 text-base font-bold text-success-700">
+              ✓ {photo.at} {photo.doseLabel} 칸 비움 확인
+            </p>
+            <p className="mt-2 text-sm text-stone-400">사진은 참고용이며 복용 증명은 아니에요.</p>
+          </div>
         )}
         <div className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-50 px-5 py-4 text-base font-bold text-brand-700">
           <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden>
