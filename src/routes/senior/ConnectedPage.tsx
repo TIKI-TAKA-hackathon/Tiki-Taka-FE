@@ -21,7 +21,7 @@ export function ConnectedPage() {
         </div>
       </div>
 
-      <PrimaryButton onClick={() => navigate('/senior')}>시작하기</PrimaryButton>
+      <PrimaryButton onClick={() => navigate('/senior/today')}>시작하기</PrimaryButton>
     </div>
   );
 }

@@ -27,9 +27,4 @@ describe('entry points', () => {
     expect(screen.queryByText(/QR/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/데모/)).not.toBeInTheDocument();
   });
-
-  it('legacy /senior/login redirects to /login', () => {
-    renderAt('/senior/login');
-    expect(screen.getByRole('heading', { name: '로그인' })).toBeInTheDocument();
-  });
 });

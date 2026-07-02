@@ -108,21 +108,17 @@ export function SeniorHomePage() {
         </div>
         <button
           type="button"
-          onClick={() => navigate('/senior/photo')}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-stone-200 py-3 text-base font-semibold text-stone-700"
+          onClick={triggerReminder}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-50 py-3 text-base font-bold text-brand-700"
         >
-          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden>
-            <rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" strokeWidth="1.7" />
-            <circle cx="12" cy="12.5" r="3.2" stroke="currentColor" strokeWidth="1.7" />
-          </svg>
-          약 사진 보기
+          🔔 지금 알림 받아보기
         </button>
         <button
           type="button"
-          onClick={triggerReminder}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-50 py-3 text-base font-bold text-brand-700"
+          onClick={() => navigate('/senior/notify')}
+          className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl py-2 text-sm font-semibold text-stone-400"
         >
-          🔔 지금 알림 받아보기
+          🔔 복약 알림 미리보기
         </button>
       </section>
 
