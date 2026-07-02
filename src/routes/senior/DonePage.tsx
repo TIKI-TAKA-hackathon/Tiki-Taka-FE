@@ -1,15 +1,31 @@
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, PrimaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import { useSharedDosePhoto } from '../../lib/shareStore';
+import { GUIDE_AUDIO } from '../../lib/guide';
 
 export function DonePage() {
   const navigate = useNavigate();
   const { nextDose } = seniorDay;
   const photo = useSharedDosePhoto();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // 완료 안내 음성. 자동재생 차단·미지원 환경에서는 조용히 무시한다.
+    const el = audioRef.current;
+    if (!el) return;
+    try {
+      const played = el.play();
+      if (played && typeof played.catch === 'function') played.catch(() => undefined);
+    } catch {
+      // 재생 미지원 환경(테스트 등)
+    }
+  }, []);
 
   return (
     <div className="flex min-h-full flex-col px-6 pb-8">
+      <audio ref={audioRef} src={GUIDE_AUDIO.done} preload="auto" />
       <div className="flex flex-1 flex-col items-center justify-center text-center">
         <CheckCircle />
         <h1 className="mt-6 text-3xl font-extrabold text-stone-900">잘 하셨어요!</h1>
