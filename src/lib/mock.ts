@@ -1,4 +1,5 @@
 import type {
+  AppNotification,
   CareGroup,
   CaregiverBoard,
   ChangeLog,
@@ -185,6 +186,46 @@ export const inviteLink: InviteLink = {
   maxUses: null,
   useCount: 0,
 };
+
+// Demo-fallback fixture for in-app notifications (newest first, mixed read state).
+export const notifications: AppNotification[] = [
+  {
+    id: 'notif-1',
+    type: 'escalation',
+    level: 'high',
+    title: '저녁약 확인이 아직 없어요',
+    body: '재알림 3회 후에도 확인이 없어 가족에게 안내를 보냈어요.',
+    createdAtLabel: '오후 7:45',
+    read: false,
+  },
+  {
+    id: 'notif-2',
+    type: 'missed',
+    level: 'warn',
+    title: '저녁약 미확인',
+    body: '오후 7:30 저녁약 알림에 아직 확인이 없어요.',
+    createdAtLabel: '오후 7:35',
+    read: false,
+  },
+  {
+    id: 'notif-3',
+    type: 'reminder',
+    level: 'info',
+    title: '저녁약 드실 시간이에요',
+    body: '1번 봉지 약 3개를 드세요.',
+    createdAtLabel: '오후 7:30',
+    read: true,
+  },
+  {
+    id: 'notif-4',
+    type: 'reminder',
+    level: 'info',
+    title: '점심약 확인됨',
+    body: '버튼으로 복용을 확인했어요.',
+    createdAtLabel: '오후 12:08',
+    read: true,
+  },
+];
 
 export const changeLog: ChangeLog[] = [
   {

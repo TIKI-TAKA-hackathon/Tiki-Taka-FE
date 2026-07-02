@@ -163,3 +163,17 @@ export type ConfirmMedsView = {
   pharmacyName: string; // '행복약국'
   schedules: ConfirmMedsSchedule[];
 };
+
+// --- In-app notifications (WP3 contract) ---
+// GET /seniors/{id}/notifications and GET /care-groups/{id}/notifications (BFF) return this item shape, newest first.
+export type NotificationType = 'reminder' | 'missed' | 'escalation';
+
+export type AppNotification = {
+  id: string;
+  type: NotificationType;
+  level: string; // backend severity label; kept as a string so the FE stays tolerant.
+  title: string;
+  body: string;
+  createdAtLabel: string; // '오후 7:30' — the backend may send createdAtLabel or a raw createdAt (normalized in api.ts).
+  read: boolean;
+};
