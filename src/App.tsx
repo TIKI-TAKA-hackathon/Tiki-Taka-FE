@@ -5,6 +5,7 @@ import { CaregiverDashboardPage } from './routes/caregiver/CaregiverDashboardPag
 import { CaregiverSignupPage } from './routes/caregiver/CaregiverSignupPage';
 import { ManagePage } from './routes/caregiver/ManagePage';
 import { PillDetailPage } from './routes/caregiver/PillDetailPage';
+import { RegisterPrescriptionPage } from './routes/caregiver/RegisterPrescriptionPage';
 import { SettingsPage } from './routes/caregiver/SettingsPage';
 import { TimelinePage } from './routes/caregiver/TimelinePage';
 import { AlarmPage } from './routes/senior/AlarmPage';
@@ -44,6 +45,7 @@ export default function App() {
         <Route path="caregiver/timeline" element={<TimelinePage />} />
         <Route path="caregiver/manage" element={<ManagePage />} />
         <Route path="caregiver/add-prescription" element={<AddPrescriptionPage />} />
+        <Route path="caregiver/register-prescription" element={<RegisterPrescriptionPage />} />
         <Route path="*" element={<Navigate to="/onboarding" replace />} />
       </Route>
     </Routes>

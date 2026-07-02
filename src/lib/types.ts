@@ -163,3 +163,45 @@ export type ConfirmMedsView = {
   pharmacyName: string; // '행복약국'
   schedules: ConfirmMedsSchedule[];
 };
+
+// --- Prescription create (BE contract: POST /seniors/{id}/prescriptions) ---
+// String unions mirror the BE enums; only the values the FE actually sends/reads are kept.
+export type DoseSlot = 'MORNING' | 'LUNCH' | 'DINNER' | 'BEDTIME' | 'CUSTOM';
+export type MealRelation = 'BEFORE_MEAL' | 'AFTER_MEAL' | 'WITH_MEAL' | 'NONE';
+export type DoseBasis = 'BEFORE_MEAL' | 'AFTER_MEAL' | 'BEDTIME' | 'EMPTY_STOMACH' | 'FIXED';
+export type DispensingType = 'POUCH' | 'ORGANIZER';
+export type PrescriptionStatus = 'ACTIVE' | 'ENDED';
+
+export type CreateDoseScheduleItemRequest = {
+  medicationName: string;
+  count: number;
+};
+
+export type CreateDoseScheduleRequest = {
+  slot: DoseSlot;
+  label: string;
+  scheduledTime: string; // LocalTime 'HH:mm:ss'
+  mealRelation: MealRelation;
+  pillCount: number;
+  doseBasis?: DoseBasis;
+  items: CreateDoseScheduleItemRequest[];
+};
+
+export type CreatePrescriptionRequest = {
+  pharmacistUserId: number;
+  pharmacy: { name: string; phone: string; address?: string };
+  prescribedDate: string; // LocalDate 'YYYY-MM-DD'
+  startDate: string; // LocalDate 'YYYY-MM-DD'
+  endDate?: string;
+  dispensingType?: DispensingType;
+  registrationCode?: string;
+  schedules: CreateDoseScheduleRequest[];
+};
+
+// Subset of BE PrescriptionResponse — only the fields the FE reads.
+export type PrescriptionResponse = {
+  id: number;
+  seniorId: number;
+  status: PrescriptionStatus;
+  registrationCode: string | null;
+};

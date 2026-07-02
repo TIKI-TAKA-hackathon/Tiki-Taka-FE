@@ -16,9 +16,11 @@ import type {
   ChangeLog,
   ConfirmMedsView,
   CreateCareGroupRequest,
+  CreatePrescriptionRequest,
   InviteLink,
   MealTimes,
   NotificationSettings,
+  PrescriptionResponse,
   SeniorDay,
   UpdateMealTimesRequest,
 } from './types';
@@ -182,6 +184,33 @@ export async function fetchPrescriptionByCode(code: string): Promise<ConfirmMeds
   } catch {
     // Keep the confirm-meds flow demoable before BE is deployed.
     return confirmMedsViewFixture;
+  }
+}
+
+// POST /seniors/{seniorId}/prescriptions — pharmacy pre-creates the prescription (D-A).
+// The prescription is persisted + ACTIVE at create time; its registrationCode is scanned/entered later.
+export async function createPrescription(
+  seniorId: string,
+  request: CreatePrescriptionRequest,
+): Promise<PrescriptionResponse> {
+  if (env.demoMode) {
+    return {
+      id: Date.now(),
+      seniorId: Number(seniorId) || 0,
+      status: 'ACTIVE',
+      registrationCode: request.registrationCode ?? null,
+    };
+  }
+  try {
+    return await sendJson<PrescriptionResponse>('POST', `/seniors/${seniorId}/prescriptions`, request);
+  } catch {
+    // Keep the pharmacy-registration flow demoable before BE is deployed.
+    return {
+      id: Date.now(),
+      seniorId: Number(seniorId) || 0,
+      status: 'ACTIVE',
+      registrationCode: request.registrationCode ?? null,
+    };
   }
 }
 

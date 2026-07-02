@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge, BackHeader, Card, Loading, PrimaryButton } from '../../components/ui';
+import { Badge, BackHeader, Card, Loading, PrimaryButton, SecondaryButton } from '../../components/ui';
 import { createInviteLink, getCareGroup } from '../../lib/api';
 import { env } from '../../lib/env';
 import { loadSession } from '../../lib/session';
@@ -124,10 +124,13 @@ export function ManagePage() {
         <Card className="p-4">
           <h2 className="text-base font-bold text-stone-900">약 등록</h2>
           <p className="mt-1 text-sm text-stone-400">약국에서 받은 처방 QR을 스캔해 복약 정보를 등록해요.</p>
-          <div className="mt-3">
+          <div className="mt-3 space-y-2.5">
             <PrimaryButton onClick={() => navigate('/caregiver/add-prescription')}>
               💊 처방 QR 등록하기
             </PrimaryButton>
+            <SecondaryButton onClick={() => navigate('/caregiver/register-prescription')}>
+              🏥 약국 처방 등록
+            </SecondaryButton>
           </div>
         </Card>
 
