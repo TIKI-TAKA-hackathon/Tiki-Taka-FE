@@ -5,6 +5,7 @@ import { fetchCaregiverBoard, fetchCaregiverPhotos } from '../../lib/api';
 // Demo-only refill/weather fixtures (mock). These are static demo values, not part of the board contract.
 import { jejuWeather, refillStatus } from '../../lib/mock';
 import { loadSession } from '../../lib/session';
+import { seniorNameWithHonorific } from '../../lib/seniorName';
 import { useSharedDosePhoto } from '../../lib/shareStore';
 import { useAsync } from '../../lib/useAsync';
 import type { WeekDayStatus } from '../../lib/types';
@@ -14,6 +15,9 @@ const WEEK_DOT: Record<WeekDayStatus, string> = {
   warn: 'bg-check-bg text-check', // ⚠ 미확인 = 주의(check), 경고 아님 (안심 원칙)
   none: 'bg-basalt-200 text-basalt-400',
 };
+
+const TOP_ACTION_CLASS =
+  'flex min-h-12 items-center justify-center gap-1.5 rounded-2xl bg-white px-3 py-3 text-base font-bold text-stone-700 shadow-sm ring-1 ring-stone-100';
 
 export function CaregiverDashboardPage() {
   const navigate = useNavigate();
@@ -33,8 +37,8 @@ export function CaregiverDashboardPage() {
   }
 
   const { patientName, circle, doses, confirmations, pills, week, alert } = data;
+  const seniorLabel = seniorNameWithHonorific(patientName);
   const confirmByLabel = new Map(confirmations.map((log) => [log.doseLabel, log] as const));
-  const confirmThumb = photo?.dataUrl ?? recentPhotos[0]?.thumbnailUrl ?? '';
 
   return (
     <div className="flex min-h-full flex-col gap-4 px-6 pb-10 pt-4">
@@ -42,7 +46,7 @@ export function CaregiverDashboardPage() {
         <div className="flex items-start justify-between">
           <div>
             <p className="text-sm font-medium text-stone-400">복약 모니터링</p>
-            <h1 className="mt-1 text-2xl font-extrabold text-stone-900">{patientName} 복약 상태</h1>
+            <h1 className="mt-1 text-2xl font-extrabold text-stone-900">{seniorLabel} 복약 상태</h1>
             <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-sm font-semibold text-brand-700">
               {jejuWeather.region} {jejuWeather.condition === 'rain' ? '☔' : '☀️'} {jejuWeather.label}{' '}
               {jejuWeather.tempC}°
@@ -54,39 +58,39 @@ export function CaregiverDashboardPage() {
             <span>🏥</span>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between">
-          <div className="flex gap-2">
+        <div className="mt-3 space-y-3">
+          <div className="flex flex-wrap gap-2">
             <Badge tone="success">보호자 {circle.family}명</Badge>
             <Badge tone="info">사회복지사 {circle.social}명</Badge>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => navigate('/caregiver/notify')}
-              className="text-sm font-semibold text-stone-500"
+              className={TOP_ACTION_CLASS}
             >
-              🔔 보호자 알림 미리보기
+              🔔 알림 미리보기
             </button>
             <button
               type="button"
               onClick={() => navigate('/caregiver/add-prescription')}
-              className="text-sm font-semibold text-brand-600"
+              className={`${TOP_ACTION_CLASS} bg-brand-50 text-brand-700 ring-brand-100`}
             >
-              약 등록
+              💊 약 등록
             </button>
             <button
               type="button"
               onClick={() => navigate('/caregiver/settings')}
-              className="text-sm font-semibold text-stone-500"
+              className={TOP_ACTION_CLASS}
             >
-              설정
+              ⚙ 설정
             </button>
             <button
               type="button"
               onClick={() => navigate('/caregiver/manage')}
-              className="text-sm font-semibold text-stone-500"
+              className={TOP_ACTION_CLASS}
             >
-              관리 →
+              👥 방 관리
             </button>
           </div>
         </div>
@@ -96,7 +100,7 @@ export function CaregiverDashboardPage() {
         <div className="rounded-3xl border border-brand-100 bg-brand-50 p-4">
           <h2 className="flex items-center gap-1.5 text-base font-bold text-brand-700">💊 재처방 필요</h2>
           <p className="mt-1 text-sm font-semibold text-stone-700">
-            {patientName} 약이 소진됐어요 · {refillStatus.hospitalName} 재처방 필요
+            {seniorLabel} 약이 소진됐어요 · {refillStatus.hospitalName} 재처방 필요
           </p>
           {jejuWeather.condition === 'rain' && (
             <p className="mt-2 text-sm text-stone-600">☔ 제주 우천 — 재처방 방문은 내일 권장</p>
@@ -130,21 +134,9 @@ export function CaregiverDashboardPage() {
             return (
               <li key={dose.id} className="flex items-center gap-3">
                 {done ? (
-                  <button
-                    type="button"
-                    onClick={() => navigate('/caregiver/photos')}
-                    aria-label={`${dose.label} 복약 사진 보기`}
-                    className="h-11 w-11 shrink-0 overflow-hidden rounded-xl border border-success-100"
-                  >
-                    <DemoImage
-                      src={confirmThumb}
-                      alt={`${dose.label} 복약 사진`}
-                      className="h-full w-full object-cover"
-                      fallback={
-                        <span className="flex h-full w-full items-center justify-center bg-success-50 text-lg">📷</span>
-                      }
-                    />
-                  </button>
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-success-50 text-success-600">
+                    ✓
+                  </span>
                 ) : (
                   <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-stone-100 text-stone-300">
                     ⏳
@@ -163,9 +155,7 @@ export function CaregiverDashboardPage() {
             );
           })}
         </ul>
-        <p className="mt-3 text-xs text-stone-400">
-          사진을 누르면 복약 인증 사진을 볼 수 있어요 · 앱의 확인 결과는 보조 정보입니다.
-        </p>
+        <p className="mt-3 text-xs text-stone-400">오늘 복약 상태를 시간대별로 확인해요.</p>
       </Card>
 
       {photo && (

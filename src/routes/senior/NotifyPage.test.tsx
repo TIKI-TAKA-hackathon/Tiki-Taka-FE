@@ -25,5 +25,7 @@ describe('senior lock-screen notification', () => {
     renderAt('/senior/notify');
     fireEvent.click(screen.getByRole('button', { name: /저녁약 드실 시간이에요/ }));
     expect(screen.getByRole('heading', { name: '약 드실 시간이에요' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '지금 확인하기' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: '10분 뒤에 다시 알림' })).not.toBeInTheDocument();
   });
 });

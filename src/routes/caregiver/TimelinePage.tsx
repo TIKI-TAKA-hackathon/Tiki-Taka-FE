@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { Badge, BackHeader, ErrorNote, Loading } from '../../components/ui';
 import type { BadgeTone } from '../../components/ui';
 import { fetchCareGroupNotifications, markNotificationRead } from '../../lib/api';
-import { notifications as notificationsFixture } from '../../lib/mock';
 import { loadSession } from '../../lib/session';
 import type { AppNotification, NotificationType } from '../../lib/types';
 
@@ -34,10 +33,7 @@ export function TimelinePage() {
     setLoading(true);
     setError(false);
     try {
-      const data = session
-        ? await fetchCareGroupNotifications(session.careGroupId)
-        : // No session yet: fall back to the demo feed so the screen still renders.
-          notificationsFixture;
+      const data = await fetchCareGroupNotifications(session?.careGroupId ?? 'latest');
       setItems(data);
     } catch {
       setError(true);

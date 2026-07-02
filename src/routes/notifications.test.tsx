@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it } from 'vitest';
 import App from '../App';
+import { pushCaregiverAlert } from '../lib/caregiverAlerts';
 
 function renderAt(path: string) {
   return render(
@@ -12,7 +13,10 @@ function renderAt(path: string) {
 }
 
 describe('in-app notifications', () => {
-  afterEach(() => cleanup());
+  afterEach(() => {
+    window.localStorage.clear();
+    cleanup();
+  });
 
   it('senior alerts render notification records from the data layer (demo fallback)', async () => {
     renderAt('/senior/alerts');
@@ -36,5 +40,18 @@ describe('in-app notifications', () => {
     fireEvent.click(item);
     // Tapping an unread item optimistically clears its unread marker.
     expect(screen.getAllByLabelText('읽지 않음').length).toBe(unreadBefore - 1);
+  });
+
+  it('shows locally stored caregiver alerts from senior active flows', async () => {
+    pushCaregiverAlert({
+      id: 'senior-dose-exit',
+      title: '복약 확인 중 앱을 벗어났어요',
+      body: '어르신이 복약 확인을 마치지 못했어요. 확인이 필요해요.',
+    });
+
+    renderAt('/caregiver/timeline');
+
+    expect(await screen.findByText('복약 확인 중 앱을 벗어났어요')).toBeInTheDocument();
+    expect(screen.getByText('어르신이 복약 확인을 마치지 못했어요. 확인이 필요해요.')).toBeInTheDocument();
   });
 });

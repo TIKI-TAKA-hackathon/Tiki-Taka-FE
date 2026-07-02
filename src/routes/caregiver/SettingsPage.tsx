@@ -18,8 +18,12 @@ function toLocalTime(value: string): string {
   return value.length === 5 ? `${value}:00` : value;
 }
 
-const INTERVAL_OPTIONS = [5, 10, 15, 30];
-const RETRY_OPTIONS = [1, 2, 3, 5];
+const INTERVAL_OPTIONS = [5, 10];
+const RETRY_OPTIONS = [1, 3];
+const INTERVAL_MIN = 1;
+const INTERVAL_MAX = 20;
+const RETRY_MIN = 1;
+const RETRY_MAX = 5;
 
 export function SettingsPage() {
   const session = loadSession();
@@ -31,6 +35,10 @@ export function SettingsPage() {
   const [mealMessage, setMealMessage] = useState<string | null>(null);
   const [mealSaving, setMealSaving] = useState(false);
   const [notifMessage, setNotifMessage] = useState<string | null>(null);
+  const [customIntervalOpen, setCustomIntervalOpen] = useState(false);
+  const [customInterval, setCustomInterval] = useState('');
+  const [customRetryOpen, setCustomRetryOpen] = useState(false);
+  const [customRetry, setCustomRetry] = useState('');
 
   const load = useCallback(async () => {
     if (!session) {
@@ -121,6 +129,48 @@ export function SettingsPage() {
     }
   }
 
+  function openCustomInterval() {
+    if (!notif) {
+      return;
+    }
+    setCustomInterval(String(notif.remindIntervalMin));
+    setCustomIntervalOpen(true);
+    setNotifMessage(null);
+  }
+
+  function openCustomRetry() {
+    if (!notif) {
+      return;
+    }
+    setCustomRetry(String(notif.maxRetries));
+    setCustomRetryOpen(true);
+    setNotifMessage(null);
+  }
+
+  function saveCustomInterval() {
+    if (!notif) {
+      return;
+    }
+    const value = parseLimitedNumber(customInterval, INTERVAL_MIN, INTERVAL_MAX);
+    if (value === null) {
+      setNotifMessage(`재알림 간격은 ${INTERVAL_MIN}~${INTERVAL_MAX}분 사이로 입력해주세요.`);
+      return;
+    }
+    void saveNotif({ ...notif, remindIntervalMin: value });
+  }
+
+  function saveCustomRetry() {
+    if (!notif) {
+      return;
+    }
+    const value = parseLimitedNumber(customRetry, RETRY_MIN, RETRY_MAX);
+    if (value === null) {
+      setNotifMessage(`최대 재시도는 ${RETRY_MIN}~${RETRY_MAX}회 사이로 입력해주세요.`);
+      return;
+    }
+    void saveNotif({ ...notif, maxRetries: value });
+  }
+
   return (
     <div className="flex min-h-full flex-col gap-4 px-6 pb-10 pt-1">
       <BackHeader title="설정" />
@@ -191,39 +241,127 @@ export function SettingsPage() {
           <div className="mt-3 space-y-3">
             <div>
               <p className="text-sm font-semibold text-stone-700">재알림 간격</p>
-              <div className="mt-2 flex gap-2">
+              <div role="group" aria-label="재알림 간격 선택" className="mt-2 flex gap-2">
                 {INTERVAL_OPTIONS.map((min) => (
                   <button
                     key={min}
                     type="button"
                     disabled={!canEdit}
-                    onClick={() => void saveNotif({ ...notif, remindIntervalMin: min })}
+                    onClick={() => {
+                      setCustomIntervalOpen(false);
+                      void saveNotif({ ...notif, remindIntervalMin: min });
+                    }}
                     className={`flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ${
-                      notif.remindIntervalMin === min ? 'bg-brand-600 text-white' : 'bg-stone-100 text-stone-500'
+                      !customIntervalOpen && notif.remindIntervalMin === min
+                        ? 'bg-brand-600 text-white'
+                        : 'bg-stone-100 text-stone-500'
                     }`}
                   >
                     {min}분
                   </button>
                 ))}
+                <button
+                  type="button"
+                  disabled={!canEdit}
+                  onClick={openCustomInterval}
+                  className={`flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ${
+                    customIntervalOpen || !INTERVAL_OPTIONS.includes(notif.remindIntervalMin)
+                      ? 'bg-brand-600 text-white'
+                      : 'bg-stone-100 text-stone-500'
+                  }`}
+                >
+                  직접 입력
+                </button>
               </div>
+              {customIntervalOpen && (
+                <div className="mt-2 flex items-end gap-2">
+                  <label className="min-w-0 flex-1">
+                    <span className="text-sm font-semibold text-stone-500">분 단위</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      aria-label="재알림 간격 직접 입력"
+                      value={customInterval}
+                      onChange={(event) => setCustomInterval(event.target.value.replace(/\D/g, '').slice(0, 2))}
+                      placeholder={`${INTERVAL_MIN}~${INTERVAL_MAX}`}
+                      maxLength={2}
+                      disabled={!canEdit}
+                      className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-lg font-bold text-stone-900 outline-none focus:border-brand-500 disabled:bg-stone-50 disabled:text-stone-400"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    disabled={!canEdit}
+                    onClick={saveCustomInterval}
+                    aria-label="재알림 간격 적용"
+                    className="rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+                  >
+                    적용
+                  </button>
+                </div>
+              )}
             </div>
             <div>
               <p className="text-sm font-semibold text-stone-700">최대 재시도</p>
-              <div className="mt-2 flex gap-2">
+              <div role="group" aria-label="최대 재시도 선택" className="mt-2 flex gap-2">
                 {RETRY_OPTIONS.map((count) => (
                   <button
                     key={count}
                     type="button"
                     disabled={!canEdit}
-                    onClick={() => void saveNotif({ ...notif, maxRetries: count })}
+                    onClick={() => {
+                      setCustomRetryOpen(false);
+                      void saveNotif({ ...notif, maxRetries: count });
+                    }}
                     className={`flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ${
-                      notif.maxRetries === count ? 'bg-brand-600 text-white' : 'bg-stone-100 text-stone-500'
+                      !customRetryOpen && notif.maxRetries === count
+                        ? 'bg-brand-600 text-white'
+                        : 'bg-stone-100 text-stone-500'
                     }`}
                   >
                     {count}회
                   </button>
                 ))}
+                <button
+                  type="button"
+                  disabled={!canEdit}
+                  onClick={openCustomRetry}
+                  className={`flex-1 rounded-xl py-2.5 text-sm font-bold disabled:opacity-50 ${
+                    customRetryOpen || !RETRY_OPTIONS.includes(notif.maxRetries)
+                      ? 'bg-brand-600 text-white'
+                      : 'bg-stone-100 text-stone-500'
+                  }`}
+                >
+                  직접 입력
+                </button>
               </div>
+              {customRetryOpen && (
+                <div className="mt-2 flex items-end gap-2">
+                  <label className="min-w-0 flex-1">
+                    <span className="text-sm font-semibold text-stone-500">횟수</span>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      aria-label="최대 재시도 직접 입력"
+                      value={customRetry}
+                      onChange={(event) => setCustomRetry(event.target.value.replace(/\D/g, '').slice(0, 1))}
+                      placeholder={`${RETRY_MIN}~${RETRY_MAX}`}
+                      maxLength={1}
+                      disabled={!canEdit}
+                      className="mt-1 w-full rounded-xl border border-stone-200 px-3 py-2 text-lg font-bold text-stone-900 outline-none focus:border-brand-500 disabled:bg-stone-50 disabled:text-stone-400"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    disabled={!canEdit}
+                    onClick={saveCustomRetry}
+                    aria-label="최대 재시도 적용"
+                    className="rounded-xl bg-stone-900 px-4 py-2.5 text-sm font-bold text-white disabled:opacity-50"
+                  >
+                    적용
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -243,4 +381,12 @@ export function SettingsPage() {
       </Card>
     </div>
   );
+}
+
+function parseLimitedNumber(value: string, min: number, max: number): number | null {
+  if (!/^\d+$/.test(value)) {
+    return null;
+  }
+  const number = Number(value);
+  return number >= min && number <= max ? number : null;
 }

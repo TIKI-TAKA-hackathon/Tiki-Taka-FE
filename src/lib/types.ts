@@ -47,6 +47,8 @@ export type RefillStatus = {
   hospitalAddress: string;
   hospitalPhone: string;
   pharmacyName: string;
+  pharmacyAddress?: string;
+  pharmacyPhone?: string;
 };
 
 // 제주 우천 알림 (mock weather, demo fixture).
@@ -83,7 +85,7 @@ export type SeniorDay = {
 };
 
 export type CaregiverBoard = {
-  patientName: string; // '어머니'
+  patientName: string; // '김순자'
   circle: CareCircle;
   doses: Dose[];
   confirmations: ConfirmLog[];
@@ -151,6 +153,14 @@ export type InviteLink = {
   useCount: number;
 };
 
+// Demo-only pairing code used to connect a senior device without a server.
+export type PairingCode = {
+  code: string;
+  careGroupId: string;
+  seniorId: string;
+  expiresAt: string | null;
+};
+
 // --- Change log (BE contract) ---
 export type ChangeLog = {
   id: string;
@@ -179,10 +189,18 @@ export type ConfirmMedsSchedule = {
   dispensingNumber: number; // 조제번호(봉지 번호)
 };
 
+export type ConfirmMedsMedicine = {
+  name: string;
+  description: string;
+  image?: string;
+};
+
 export type ConfirmMedsView = {
   seniorDisplayName: string; // '김순자'
   prescribedDateLabel: string; // '2026년 6월 25일'
   pharmacyName: string; // '행복약국'
+  hospitalName?: string; // 데모/서버가 제공하는 처방 병원명
+  medicines?: ConfirmMedsMedicine[]; // 데모/서버가 제공하는 약 종류 설명
   schedules: ConfirmMedsSchedule[];
 };
 

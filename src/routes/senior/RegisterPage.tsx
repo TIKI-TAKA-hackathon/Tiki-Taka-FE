@@ -1,57 +1,46 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PrimaryButton, TextField } from '../../components/ui';
-import { findCareGroupBySeniorPhone, getCareGroup, requestOtp, verifyOtp } from '../../lib/api';
+import { getCareGroup, verifyPairingCode } from '../../lib/api';
 import { env } from '../../lib/env';
 import { digitsOnly, formatPhone, isValidPhone } from '../../lib/phone';
 import { loadSession, saveSession } from '../../lib/session';
 
-type Step = 'phone' | 'otp';
-
 export function RegisterPage() {
   const navigate = useNavigate();
-  const [step, setStep] = useState<Step>('phone');
-  // Demo mode pre-fills the senior's registered phone + OTP so the flow is 1-tap.
   const [phone, setPhone] = useState(env.demoMode ? '010-9876-5432' : '');
-  const [otp, setOtp] = useState(env.demoMode ? '123456' : '');
+  const [code, setCode] = useState(env.demoMode ? '123456' : '');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const phoneValid = isValidPhone(phone);
-  const otpValid = /^\d{6}$/.test(otp);
-
-  async function sendCode() {
-    setError(null);
-    if (!phoneValid) {
-      setError('휴대폰 번호를 정확히 입력해주세요.');
-      return;
-    }
-    await requestOtp(digitsOnly(phone));
-    setStep('otp');
-  }
+  const codeValid = /^\d{6}$/.test(code);
 
   async function connect() {
     setError(null);
+    if (!phoneValid) {
+      setError('보호자가 등록한 휴대폰 번호를 정확히 입력해주세요.');
+      return;
+    }
+    if (!codeValid) {
+      setError('연결 코드 6자리를 정확히 입력해주세요.');
+      return;
+    }
     setBusy(true);
     try {
-      const ok = await verifyOtp(digitsOnly(phone), otp);
-      if (!ok) {
-        setError('인증 코드 6자리를 정확히 입력해주세요.');
-        return;
-      }
-      // Find the care group the caregiver registered this phone into, then confirm it exists.
-      const pairing = await findCareGroupBySeniorPhone(phone);
+      const pairing = await verifyPairingCode(code);
       const group = await getCareGroup(pairing.careGroupId);
+      const owner = group.members.find((member) => member.role === 'OWNER') ?? group.members[0];
       const existing = loadSession();
       saveSession({
         careGroupId: group.id,
-        seniorId: group.senior.id,
-        ownerUserId: existing?.ownerUserId ?? group.senior.id,
+        seniorId: pairing.seniorId,
+        ownerUserId: existing?.ownerUserId ?? owner?.user.id ?? group.senior.id,
         seniorPhone: digitsOnly(phone),
       });
       navigate('/senior/connected');
     } catch {
-      setError('연결하지 못했어요. 잠시 후 다시 시도해주세요.');
+      setError('보호자 화면의 6자리 숫자를 다시 확인해주세요.');
     } finally {
       setBusy(false);
     }
@@ -62,7 +51,7 @@ export function RegisterPage() {
       <div className="flex items-center gap-3 py-2">
         <button
           type="button"
-          onClick={() => (step === 'otp' ? setStep('phone') : navigate('/onboarding'))}
+          onClick={() => navigate('/onboarding')}
           aria-label="뒤로"
           className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 text-stone-600"
         >
@@ -73,66 +62,46 @@ export function RegisterPage() {
         <h1 className="text-xl font-bold text-stone-900">어르신 기기 연결</h1>
       </div>
 
-      {step === 'phone' ? (
-        <div className="flex flex-1 flex-col">
-          <h2 className="mt-3 text-3xl font-extrabold leading-snug text-stone-900">
-            휴대폰 번호를
-            <br />
-            입력해주세요
-          </h2>
-          <p className="mt-3 text-lg leading-relaxed text-stone-500">
-            보호자가 등록한 번호를 넣으면
-            <br />
-            보호자 방에 연결돼요.
-          </p>
-          <div className="mt-8">
-            <TextField
-              id="senior-phone"
-              label="휴대폰 번호"
-              type="tel"
-              inputMode="tel"
-              value={phone}
-              onChange={(value) => setPhone(formatPhone(value))}
-              placeholder="010-0000-0000"
-              maxLength={13}
-              autoFocus
-            />
-          </div>
-          {error && <p className="mt-3 text-base font-semibold text-warn-700">{error}</p>}
-          <div className="mt-auto pt-6">
-            <PrimaryButton size="lg" onClick={sendCode} disabled={!phoneValid}>
-              인증번호 받기
-            </PrimaryButton>
-          </div>
+      <div className="flex flex-1 flex-col">
+        <h2 className="mt-3 text-3xl font-extrabold leading-snug text-stone-900">
+          휴대폰 번호와
+          <br />
+          숫자 6자리를 넣어주세요
+        </h2>
+        <p className="mt-3 text-lg leading-relaxed text-stone-500">
+          보호자가 등록한 번호와
+          <br />
+          연결 코드를 입력하면 바로 연결돼요.
+        </p>
+        <div className="mt-8 space-y-4">
+          <TextField
+            id="senior-phone"
+            label="어르신 휴대폰 번호"
+            type="tel"
+            inputMode="tel"
+            value={phone}
+            onChange={(value) => setPhone(formatPhone(value))}
+            placeholder="010-0000-0000"
+            maxLength={13}
+            autoFocus
+          />
+          <TextField
+            id="senior-pairing-code"
+            label="연결 코드"
+            inputMode="numeric"
+            value={code}
+            onChange={(value) => setCode(digitsOnly(value).slice(0, 6))}
+            placeholder="6자리 숫자"
+            maxLength={6}
+          />
         </div>
-      ) : (
-        <div className="flex flex-1 flex-col">
-          <h2 className="mt-3 text-3xl font-extrabold leading-snug text-stone-900">
-            문자로 받은
-            <br />
-            숫자 6자리를 넣어주세요
-          </h2>
-          <p className="mt-3 text-lg leading-relaxed text-stone-500">{formatPhone(phone)}로 보냈어요.</p>
-          <div className="mt-8">
-            <TextField
-              id="senior-otp"
-              label="인증 코드"
-              inputMode="numeric"
-              value={otp}
-              onChange={(value) => setOtp(digitsOnly(value).slice(0, 6))}
-              placeholder="6자리 숫자"
-              maxLength={6}
-              autoFocus
-            />
-          </div>
-          {error && <p className="mt-3 text-base font-semibold text-warn-700">{error}</p>}
-          <div className="mt-auto pt-6">
-            <PrimaryButton size="lg" onClick={connect} disabled={!otpValid || busy}>
-              {busy ? '연결하는 중…' : '연결하기'}
-            </PrimaryButton>
-          </div>
+        {error && <p className="mt-3 text-base font-semibold text-warn-700">{error}</p>}
+        <div className="mt-auto pt-6">
+          <PrimaryButton size="lg" onClick={connect} disabled={!phoneValid || !codeValid || busy}>
+            {busy ? '연결하는 중…' : '연결하기'}
+          </PrimaryButton>
         </div>
-      )}
+      </div>
 
       <p className="mt-4 flex items-center justify-center gap-1.5 text-sm text-stone-400">
         <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" aria-hidden>

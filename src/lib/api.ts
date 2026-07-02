@@ -1,4 +1,6 @@
 import { env } from './env';
+import { loadCaregiverAlerts, markCaregiverAlertRead } from './caregiverAlerts';
+import { mergeLocalCaregiverMembers } from './caregiverMembers';
 import {
   careGroup as careGroupFixture,
   caregiverBoard,
@@ -26,6 +28,7 @@ import type {
   MealTimes,
   NotificationSettings,
   NotificationType,
+  PairingCode,
   PrescriptionResponse,
   ReviewStatus,
   SeniorDay,
@@ -34,6 +37,10 @@ import type {
 
 // Every backend route lives under /api/v1 and wraps responses as { data, error }.
 const API_PREFIX = '/api/v1';
+const DEMO_PAIRING_CODE_KEY = 'gojjibom.demoPairingCode';
+const DEMO_PAIRING_CODE_TTL_MS = 10 * 60 * 1000;
+const DEMO_MEAL_TIMES_KEY = 'gojjibom.demoMealTimes';
+const DEMO_NOTIFICATION_SETTINGS_KEY = 'gojjibom.demoNotificationSettings';
 
 type ApiEnvelope<T> = { data: T | null; error: { code?: string; message?: string } | null };
 
@@ -131,7 +138,7 @@ export async function createCareGroup(req: CreateCareGroupRequest): Promise<Care
 }
 
 export function getCareGroup(id: string): Promise<CareGroup> {
-  return load(`/care-groups/${id}`, careGroupFixture);
+  return load(`/care-groups/${id}`, careGroupFixture).then(mergeLocalCaregiverMembers);
 }
 
 export function fetchChangeLog(id: string, limit = 20): Promise<ChangeLog[]> {
@@ -148,6 +155,30 @@ export async function createInviteLink(id: string, ownerUserId: string, maxUses?
   } catch {
     return inviteLinkFixture;
   }
+}
+
+export async function createPairingCode(careGroupId: string): Promise<PairingCode> {
+  const group = await getCareGroup(careGroupId);
+  const pairingCode: PairingCode = {
+    code: String(Math.floor(100000 + Math.random() * 900000)),
+    careGroupId: group.id,
+    seniorId: group.senior.id,
+    expiresAt: new Date(Date.now() + DEMO_PAIRING_CODE_TTL_MS).toISOString(),
+  };
+  saveDemoPairingCode(pairingCode);
+  return pairingCode;
+}
+
+export async function verifyPairingCode(code: string): Promise<{ careGroupId: string; seniorId: string }> {
+  const normalized = code.replace(/\D/g, '');
+  if (env.demoMode && /^\d{6}$/.test(normalized)) {
+    return { careGroupId: careGroupFixture.id, seniorId: careGroupFixture.senior.id };
+  }
+  const stored = loadDemoPairingCode();
+  if (stored && stored.code === normalized && !isExpired(stored.expiresAt)) {
+    return { careGroupId: stored.careGroupId, seniorId: stored.seniorId };
+  }
+  throw new Error('PAIRING_CODE_INVALID');
 }
 
 // PATCH /care-groups/{id}/primary — transfer the primary (대표자) role.
@@ -168,16 +199,23 @@ export async function transferPrimary(
 
 // --- Meal times (real endpoints) ---
 export function getMealTimes(seniorId: string): Promise<MealTimes> {
-  return load(`/seniors/${seniorId}/meal-times`, mealTimesFixture);
+  if (env.demoMode) {
+    return Promise.resolve(loadDemoMealTimes() ?? mealTimesFixture);
+  }
+  return load(`/seniors/${seniorId}/meal-times`, loadDemoMealTimes() ?? mealTimesFixture);
 }
 
 // PUT /seniors/{id}/meal-times — primary member only; backend returns 403 PRIMARY_REQUIRED otherwise.
 export async function updateMealTimes(seniorId: string, req: UpdateMealTimesRequest): Promise<MealTimes> {
   if (env.demoMode) {
-    return { ...mealTimesFixture, ...req, seniorId, updatedAt: new Date().toISOString() };
+    const next = { ...mealTimesFixture, ...req, seniorId, updatedAt: new Date().toISOString() };
+    saveDemoMealTimes(next);
+    return next;
   }
   // Do not swallow errors here: the caller needs to distinguish 403 PRIMARY_REQUIRED from success.
-  return sendJson<MealTimes>('PUT', `/seniors/${seniorId}/meal-times`, req);
+  const next = await sendJson<MealTimes>('PUT', `/seniors/${seniorId}/meal-times`, req);
+  saveDemoMealTimes(next);
+  return next;
 }
 
 // --- Prescription QR registration (real endpoint) ---
@@ -274,7 +312,10 @@ export async function findCareGroupBySeniorPhone(
 // --- Notification cadence (real endpoints, demo-fallback) ---
 // GET /seniors/{id}/notification-settings — returns defaults (enabled/5min/3retries) if no row exists.
 export function getNotificationSettings(seniorId: string): Promise<NotificationSettings> {
-  return load(`/seniors/${seniorId}/notification-settings`, notificationSettingsFixture);
+  if (env.demoMode) {
+    return Promise.resolve(loadDemoNotificationSettings() ?? notificationSettingsFixture);
+  }
+  return load(`/seniors/${seniorId}/notification-settings`, loadDemoNotificationSettings() ?? notificationSettingsFixture);
 }
 
 // PUT /seniors/{id}/notification-settings — primary member only; 403 PRIMARY_REQUIRED otherwise.
@@ -284,13 +325,16 @@ export async function saveNotificationSettings(
   settings: NotificationSettings,
 ): Promise<NotificationSettings> {
   if (env.demoMode) {
+    saveDemoNotificationSettings(settings);
     return settings;
   }
   // Do not swallow errors: the caller needs to distinguish 403 PRIMARY_REQUIRED from success.
-  return sendJson<NotificationSettings>('PUT', `/seniors/${seniorId}/notification-settings`, {
+  const saved = await sendJson<NotificationSettings>('PUT', `/seniors/${seniorId}/notification-settings`, {
     actorUserId,
     ...settings,
   });
+  saveDemoNotificationSettings(saved);
+  return saved;
 }
 
 // --- In-app notifications (real endpoints, demo-fallback) ---
@@ -330,18 +374,19 @@ export async function fetchSeniorNotifications(
 // GET /care-groups/{id}/notifications — BFF feed for caregivers (newest first).
 export async function fetchCareGroupNotifications(careGroupId: string): Promise<AppNotification[]> {
   if (env.demoMode) {
-    return notificationsFixture;
+    return mergeCaregiverAlerts(notificationsFixture);
   }
   try {
     const raw = await getJson<RawNotification[]>(`/care-groups/${careGroupId}/notifications`);
-    return raw.map(normalizeNotification);
+    return mergeCaregiverAlerts(raw.map(normalizeNotification));
   } catch {
-    return notificationsFixture;
+    return mergeCaregiverAlerts(notificationsFixture);
   }
 }
 
 // PATCH /notifications/{id}:read — marks a notification read. Best-effort in demo/offline mode.
 export async function markNotificationRead(id: string, actorUserId?: string): Promise<void> {
+  markCaregiverAlertRead(id);
   if (env.demoMode) {
     return;
   }
@@ -350,6 +395,10 @@ export async function markNotificationRead(id: string, actorUserId?: string): Pr
   } catch {
     // Optimistic UI already reflects the read state; ignore transient failures.
   }
+}
+
+function mergeCaregiverAlerts(items: AppNotification[]): AppNotification[] {
+  return [...loadCaregiverAlerts(), ...items];
 }
 
 // --- Caregiver photo gallery (real endpoints, demo-fallback) ---
@@ -393,6 +442,115 @@ export async function reviewDosePhoto(
 
 function normalizePhone(phone: string): string {
   return phone.replace(/\D/g, '');
+}
+
+function saveDemoPairingCode(pairingCode: PairingCode): void {
+  try {
+    window.localStorage.setItem(DEMO_PAIRING_CODE_KEY, JSON.stringify(pairingCode));
+  } catch {
+    // localStorage may be unavailable; the caller still receives the generated code.
+  }
+}
+
+function loadDemoPairingCode(): PairingCode | null {
+  try {
+    const raw = window.localStorage.getItem(DEMO_PAIRING_CODE_KEY);
+    if (!raw) {
+      return null;
+    }
+    const parsed: unknown = JSON.parse(raw);
+    if (!isPairingCode(parsed)) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function isPairingCode(value: unknown): value is PairingCode {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.code === 'string' &&
+    typeof candidate.careGroupId === 'string' &&
+    typeof candidate.seniorId === 'string' &&
+    (typeof candidate.expiresAt === 'string' || candidate.expiresAt === null)
+  );
+}
+
+function isExpired(expiresAt: string | null): boolean {
+  return expiresAt !== null && Date.parse(expiresAt) <= Date.now();
+}
+
+function saveDemoMealTimes(mealTimes: MealTimes): void {
+  try {
+    window.localStorage.setItem(DEMO_MEAL_TIMES_KEY, JSON.stringify(mealTimes));
+  } catch {
+    // localStorage may be unavailable; settings still work for the current call.
+  }
+}
+
+function loadDemoMealTimes(): MealTimes | null {
+  try {
+    const raw = window.localStorage.getItem(DEMO_MEAL_TIMES_KEY);
+    if (!raw) {
+      return null;
+    }
+    const parsed: unknown = JSON.parse(raw);
+    return isMealTimes(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function isMealTimes(value: unknown): value is MealTimes {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.seniorId === 'string' &&
+    typeof candidate.breakfast === 'string' &&
+    typeof candidate.lunch === 'string' &&
+    typeof candidate.dinner === 'string' &&
+    (typeof candidate.updatedAt === 'string' || candidate.updatedAt === null)
+  );
+}
+
+function saveDemoNotificationSettings(settings: NotificationSettings): void {
+  try {
+    window.localStorage.setItem(DEMO_NOTIFICATION_SETTINGS_KEY, JSON.stringify(settings));
+  } catch {
+    // localStorage may be unavailable; settings still work for the current call.
+  }
+}
+
+function loadDemoNotificationSettings(): NotificationSettings | null {
+  try {
+    const raw = window.localStorage.getItem(DEMO_NOTIFICATION_SETTINGS_KEY);
+    if (!raw) {
+      return null;
+    }
+    const parsed: unknown = JSON.parse(raw);
+    return isNotificationSettings(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+function isNotificationSettings(value: unknown): value is NotificationSettings {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const candidate = value as Record<string, unknown>;
+  return (
+    typeof candidate.enabled === 'boolean' &&
+    typeof candidate.remindIntervalMin === 'number' &&
+    typeof candidate.maxRetries === 'number'
+  );
 }
 
 // Re-export so pages can persist the senior phone alongside the ids after signup.

@@ -10,6 +10,7 @@ import { PillDetailPage } from './routes/caregiver/PillDetailPage';
 import { SettingsPage } from './routes/caregiver/SettingsPage';
 import { TimelinePage } from './routes/caregiver/TimelinePage';
 import { AlarmPage } from './routes/senior/AlarmPage';
+import { SeniorAddPrescriptionPage } from './routes/senior/AddPrescriptionPage';
 import { AlertsPage } from './routes/senior/AlertsPage';
 import { CameraPage } from './routes/senior/CameraPage';
 import { ConnectedPage } from './routes/senior/ConnectedPage';
@@ -33,6 +34,7 @@ export default function App() {
         <Route path="senior/today" element={<SeniorHomePage />} />
         <Route path="senior/register" element={<RegisterPage />} />
         <Route path="senior/connected" element={<ConnectedPage />} />
+        <Route path="senior/add-prescription" element={<SeniorAddPrescriptionPage />} />
         <Route path="senior/dose" element={<DosePage />} />
         <Route path="senior/done" element={<DonePage />} />
         <Route path="senior/notify" element={<NotifyPage />} />

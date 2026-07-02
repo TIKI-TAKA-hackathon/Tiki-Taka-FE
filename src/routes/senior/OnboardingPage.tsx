@@ -5,10 +5,25 @@ export function OnboardingPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="gjb-hero-gradient flex min-h-full flex-col px-6 py-8">
-      <div className="flex flex-1 flex-col items-center justify-center text-center">
-        <div className="flex items-center justify-center rounded-[2rem] bg-sea-deep px-10 py-7 shadow-[var(--gjb-shadow-soft)]">
-          <img src="/brand/고찌봄 로고.svg" alt="고찌봄" className="h-20 w-auto" />
+    <div className="gjb-hero-gradient relative isolate flex min-h-full flex-col overflow-hidden px-6 py-8">
+      <img
+        src="/brand/고찌봄 인사.svg"
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute right-[-4.75rem] top-14 z-0 h-72 w-auto opacity-95 drop-shadow-[var(--gjb-shadow-float)]"
+      />
+
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center text-center">
+        <div className="relative">
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-8 bottom-2 h-8 rounded-full bg-sea/20 blur-xl"
+          />
+          <img
+            src="/brand/고찌봄 로고 잉크.svg"
+            alt="고찌봄"
+            className="relative h-24 w-auto drop-shadow-[0_6px_16px_rgba(42,39,36,.10)]"
+          />
         </div>
         <p className="mt-6 text-lg text-ink-soft">보호자가 함께 챙기는 복약 안부</p>
 
@@ -18,15 +33,8 @@ export function OnboardingPage() {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col items-center">
-        <button
-          type="button"
-          onClick={() => navigate('/login')}
-          className="text-base font-semibold text-stone-500 underline underline-offset-4"
-        >
-          이미 계정이 있어요 · 로그인
-        </button>
-        <p className="mt-4 text-center text-sm leading-relaxed text-stone-400">
+      <div className="relative z-10 mt-6 flex flex-col items-center">
+        <p className="text-center text-sm leading-relaxed text-stone-400">
           약을 추천하지 않습니다. 약국에서 등록한 복약 정보만 안내합니다.
         </p>
       </div>
