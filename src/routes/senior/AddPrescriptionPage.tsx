@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CheckCircle, DemoImage, PrimaryButton, SeniorActionZone } from '../../components/ui';
+import { Card, CheckCircle, DemoImage, PrimaryButton, SeniorActionZone, SeniorHomeButton } from '../../components/ui';
 import { fetchPrescriptionByCode, getMealTimes } from '../../lib/api';
 import { buildPrescriptionAlarmPreviews, type PrescriptionAlarmPreview } from '../../lib/prescriptionSchedule';
 import { loadSession } from '../../lib/session';
@@ -150,21 +150,22 @@ export function SeniorAddPrescriptionPage() {
   }
 
   return (
-    <div className="flex min-h-full flex-col px-6 pt-6">
+    <div className="relative flex min-h-full flex-col px-[var(--gjb-screen-x)] pt-[var(--gjb-screen-top)]">
+      <SeniorHomeButton />
       {step === 'scan' && (
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="mx-auto mt-3 flex aspect-square w-full max-w-[320px] shrink-0 items-center justify-center overflow-hidden rounded-[2rem] bg-stone-900 p-4 shadow-[var(--gjb-shadow-soft)]">
+          <div className="gjb-senior-scan-shell mx-auto mt-3 flex aspect-square shrink-0 items-center justify-center overflow-hidden bg-stone-900 shadow-[var(--gjb-shadow-soft)]">
             <div className="relative h-full w-full">
               {scanComplete ? (
                 <div className="flex h-full w-full items-center justify-center rounded-3xl bg-success-50">
-                  <span className="text-7xl text-success-700">✓</span>
+                  <span className="text-[length:var(--gjb-senior-icon)] text-success-700">✓</span>
                 </div>
               ) : (
                 <video ref={videoRef} autoPlay muted playsInline className="h-full w-full rounded-3xl bg-stone-800 object-cover" />
               )}
               {!scanComplete && !cameraReady && !cameraError && (
                 <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-stone-800">
-                  <span className="text-7xl">▦</span>
+                  <span className="text-[length:var(--gjb-senior-icon)]">▦</span>
                 </div>
               )}
               {!scanComplete && cameraError && (
@@ -176,10 +177,10 @@ export function SeniorAddPrescriptionPage() {
             </div>
           </div>
           <div className="flex min-h-0 flex-1 flex-col justify-center text-center">
-            <h1 className="text-3xl font-extrabold leading-snug text-stone-900">
+            <h1 className="gjb-senior-title font-extrabold text-stone-900">
               {scanComplete ? '처방 QR을 읽었어요' : '처방 QR을 비춰주세요'}
             </h1>
-            <p className="mt-3 text-xl leading-relaxed text-stone-500">
+            <p className="gjb-senior-copy mt-3 text-stone-500">
               {loading ? (
                 <>
                   QR 내용을
@@ -211,7 +212,7 @@ export function SeniorAddPrescriptionPage() {
             <ConfirmButton onClick={confirm} />
           ) : (
             <SeniorActionZone className="pb-8 pt-4">
-              <PrimaryButton size="xl" tone="success" className="flex-1 text-3xl" disabled={loading} onClick={captureQr}>
+              <PrimaryButton size="xl" tone="success" className="flex-1" disabled={loading} onClick={captureQr}>
                 {loading ? 'QR 확인 중…' : cameraError ? '데모 QR로 계속하기' : 'QR 촬영하기'}
               </PrimaryButton>
             </SeniorActionZone>
@@ -282,8 +283,8 @@ export function SeniorAddPrescriptionPage() {
         <div className="flex min-h-0 flex-1 flex-col px-1 text-center">
           <div className="flex flex-1 flex-col items-center justify-center">
             <CheckCircle />
-            <h1 className="mt-6 text-3xl font-extrabold text-stone-900">약 등록이 끝났어요</h1>
-            <p className="mt-3 text-xl leading-relaxed text-stone-500">
+            <h1 className="gjb-senior-title mt-6 font-extrabold text-stone-900">약 등록이 끝났어요</h1>
+            <p className="gjb-senior-copy mt-3 text-stone-500">
               {seniorLabel} 오늘 약 홈에
               <br />
               새 알림을 넣었어요.
@@ -310,8 +311,8 @@ function StepLayout({
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="py-4">
-        <h1 className="text-3xl font-extrabold leading-snug text-stone-900">{title}</h1>
-        <p className="mt-3 text-xl leading-relaxed text-stone-500">{description}</p>
+        <h1 className="gjb-senior-title font-extrabold text-stone-900">{title}</h1>
+        <p className="gjb-senior-copy mt-3 text-stone-500">{description}</p>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto pb-5">{children}</div>
       <ConfirmButton onClick={onConfirm} />
@@ -323,7 +324,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <p className="text-base font-semibold text-stone-400">{label}</p>
-      <p className="mt-1 text-2xl font-extrabold text-stone-900">{value}</p>
+      <p className="mt-1 text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">{value}</p>
     </div>
   );
 }
@@ -331,7 +332,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 function ConfirmButton({ onClick }: { onClick: () => void }) {
   return (
     <SeniorActionZone className="pb-8 pt-4">
-      <PrimaryButton size="xl" tone="success" className="flex-1 text-3xl" onClick={onClick}>
+      <PrimaryButton size="xl" tone="success" className="flex-1" onClick={onClick}>
         확인
       </PrimaryButton>
     </SeniorActionZone>

@@ -71,5 +71,6 @@ describe('senior camera → self-check → done flow', () => {
       'tel:01012345678',
     );
     expect(screen.queryByRole('button', { name: /네, 맞아요/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /다시/ })).not.toBeInTheDocument();
   });
 });

@@ -38,7 +38,7 @@ export function SeniorHomePage() {
   }
 
   return (
-    <div className="flex min-h-full flex-col gap-5 px-6 pb-8 pt-4">
+    <div className="flex min-h-full flex-col gap-5 px-[var(--gjb-screen-x)] pb-8 pt-4">
       <header className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-stone-400">{dateLabel}</p>
@@ -62,10 +62,18 @@ export function SeniorHomePage() {
 
       <button
         type="button"
-        onClick={() => navigate('/senior/add-prescription')}
-        className="gjb-pill-btn flex min-h-[45dvh] w-full flex-col items-center justify-center gap-5 px-6 py-8 text-center text-3xl font-extrabold leading-tight text-stone-900"
+        onClick={() => navigate('/senior/notify')}
+        className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-50 py-3 text-base font-bold text-brand-700"
       >
-        <span className="text-7xl" aria-hidden>
+        🔔 복약 알림 미리보기
+      </button>
+
+      <button
+        type="button"
+        onClick={() => navigate('/senior/add-prescription')}
+        className="gjb-pill-btn flex min-h-[var(--gjb-senior-qr-entry-min)] w-full flex-col items-center justify-center gap-5 px-6 py-8 text-center text-[length:var(--gjb-senior-action-label)] font-extrabold leading-tight text-stone-900"
+      >
+        <span className="text-[length:var(--gjb-senior-icon)]" aria-hidden>
           📷
         </span>
         <span>
@@ -140,13 +148,6 @@ export function SeniorHomePage() {
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-50 py-3 text-base font-bold text-brand-700"
         >
           🔔 지금 알림 받아보기
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/senior/notify')}
-          className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl py-2 text-sm font-semibold text-stone-400"
-        >
-          🔔 복약 알림 미리보기
         </button>
       </section>
 

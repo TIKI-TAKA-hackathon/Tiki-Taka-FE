@@ -169,7 +169,7 @@ type ButtonSize = 'md' | 'lg' | 'xl';
 const BUTTON_SIZE: Record<ButtonSize, string> = {
   md: 'min-h-[var(--gjb-tap)] py-4 text-lg',
   lg: 'min-h-[var(--gjb-elder-tap)] py-5 text-xl',
-  xl: 'min-h-24 py-7 text-2xl',
+  xl: 'min-h-[var(--gjb-senior-action-min)] py-[var(--gjb-senior-action-py)] text-[length:var(--gjb-senior-action-label)] leading-tight',
 };
 
 type PrimaryButtonProps = {
@@ -226,8 +226,22 @@ export function SecondaryButton({ children, onClick, type = 'button', size = 'md
 
 export function SeniorActionZone({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`gjb-senior-action-zone flex min-h-[32dvh] shrink-0 flex-col justify-center gap-3 ${className}`}>
+    <div className={`gjb-senior-action-zone flex min-h-[var(--gjb-senior-action-zone)] shrink-0 flex-col justify-center gap-3 ${className}`}>
       {children}
     </div>
+  );
+}
+
+export function SeniorHomeButton() {
+  const navigate = useNavigate();
+  return (
+    <button
+      type="button"
+      aria-label="홈화면으로 나가기"
+      onClick={() => navigate('/senior/today')}
+      className="gjb-senior-home-btn"
+    >
+      홈으로
+    </button>
   );
 }
