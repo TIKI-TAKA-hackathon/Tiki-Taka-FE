@@ -100,7 +100,7 @@ export function DosePage() {
         </button>
         {helpSent && (
           <p className="mt-4 rounded-2xl bg-success-50 px-4 py-3 text-base font-semibold text-success-700">
-            가족에게 도움 요청을 보냈어요.
+            보호자에게 도움 요청을 보냈어요.
           </p>
         )}
       </div>

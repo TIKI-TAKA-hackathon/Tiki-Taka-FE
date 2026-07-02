@@ -54,7 +54,7 @@ export function CaregiverSignupPage() {
   async function submit() {
     setError(null);
     if (!groupValid) {
-      setError('가족방 이름과 어르신 정보를 확인해주세요.');
+      setError('보호자 방 이름과 어르신 정보를 확인해주세요.');
       return;
     }
     setSubmitting(true);
@@ -77,7 +77,7 @@ export function CaregiverSignupPage() {
       });
       navigate('/caregiver');
     } catch {
-      setError('가족방을 만들지 못했어요. 잠시 후 다시 시도해주세요.');
+      setError('보호자 방을 만들지 못했어요. 잠시 후 다시 시도해주세요.');
     } finally {
       setSubmitting(false);
     }
@@ -145,14 +145,14 @@ export function CaregiverSignupPage() {
 
         {step === 'group' && (
           <>
-            <h2 className="text-2xl font-extrabold text-stone-900">가족방을 만들어요</h2>
-            <p className="text-base text-stone-500">어르신을 등록하면 가족이 함께 복약을 챙길 수 있어요.</p>
+            <h2 className="text-2xl font-extrabold text-stone-900">보호자 방을 만들어요</h2>
+            <p className="text-base text-stone-500">어르신을 등록하면 보호자가 함께 복약을 챙길 수 있어요.</p>
             <TextField
               id="group-name"
-              label="가족방 이름"
+              label="보호자 방 이름"
               value={groupName}
               onChange={setGroupName}
-              placeholder="예) 우리 엄마 가족방"
+              placeholder="예) 우리 엄마 방"
               autoFocus
             />
             <TextField
@@ -190,7 +190,7 @@ export function CaregiverSignupPage() {
             {error && <p className="text-sm font-semibold text-warn-700">{error}</p>}
             <div className="mt-auto pt-4">
               <PrimaryButton onClick={submit} disabled={!groupValid || submitting}>
-                {submitting ? '가족방 만드는 중…' : '가족방 만들기'}
+                {submitting ? '보호자 방 만드는 중…' : '보호자 방 만들기'}
               </PrimaryButton>
             </div>
           </>

@@ -47,7 +47,7 @@ describe('senior camera → self-check → done flow', () => {
     fireEvent.click(screen.getByRole('button', { name: /네, 맞아요/ }));
 
     expect(await screen.findByRole('heading', { name: '잘 하셨어요!' })).toBeInTheDocument();
-    const shared = screen.getByAltText('가족에게 보낸 약 사진') as HTMLImageElement;
+    const shared = screen.getByAltText('보호자에게 보낸 약 사진') as HTMLImageElement;
     expect(shared.src).toMatch(/^data:image\/png/);
     expect(screen.getByText('사진은 참고용이며 복용 증명은 아니에요.')).toBeInTheDocument();
   });

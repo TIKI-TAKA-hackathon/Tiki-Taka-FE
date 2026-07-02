@@ -34,7 +34,7 @@ export function DonePage() {
           <div className="mt-5 flex w-full flex-col items-center">
             <DemoImage
               src={photo.dataUrl}
-              alt="가족에게 보낸 약 사진"
+              alt="보호자에게 보낸 약 사진"
               className="h-40 w-40 rounded-2xl object-cover shadow-sm"
             />
             <p className="mt-3 rounded-full bg-success-50 px-4 py-1.5 text-base font-bold text-success-700">
@@ -49,7 +49,7 @@ export function DonePage() {
             <circle cx="9.5" cy="8" r="3" stroke="currentColor" strokeWidth="1.7" />
             <path d="M17 8h4M19 6v4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
           </svg>
-          {photo ? '약 사진과 함께 카카오톡으로 가족에게 알렸어요.' : '가족에게 카카오톡으로 알렸어요.'}
+          {photo ? '약 사진과 함께 카카오톡으로 보호자에게 알렸어요.' : '보호자에게 카카오톡으로 알렸어요.'}
         </div>
         <p className="mt-4 rounded-2xl bg-stone-100 px-5 py-3 text-base font-medium text-stone-500">
           {nextDose.doneTimeLabel} · 저녁약 1번 봉지 · 완료
