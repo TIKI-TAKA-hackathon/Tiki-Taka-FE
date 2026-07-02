@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from './components/AppLayout';
 import { AddPrescriptionPage } from './routes/caregiver/AddPrescriptionPage';
 import { CaregiverDashboardPage } from './routes/caregiver/CaregiverDashboardPage';
+import { CaregiverNotifyPage } from './routes/caregiver/CaregiverNotifyPage';
 import { CaregiverSignupPage } from './routes/caregiver/CaregiverSignupPage';
 import { ManagePage } from './routes/caregiver/ManagePage';
 import { PhotoGalleryPage } from './routes/caregiver/PhotoGalleryPage';
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="senior/alarm" element={<AlarmPage />} />
         <Route path="senior/camera" element={<CameraPage />} />
         <Route path="caregiver" element={<CaregiverDashboardPage />} />
+        <Route path="caregiver/notify" element={<CaregiverNotifyPage />} />
         <Route path="caregiver/signup" element={<CaregiverSignupPage />} />
         <Route path="caregiver/settings" element={<SettingsPage />} />
         <Route path="caregiver/pills" element={<PillDetailPage />} />
