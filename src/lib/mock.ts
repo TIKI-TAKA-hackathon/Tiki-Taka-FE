@@ -4,6 +4,7 @@ import type {
   ChangeLog,
   ConfirmMedsView,
   Dose,
+  DosePhoto,
   InviteLink,
   MealTimes,
   NotificationSettings,
@@ -178,6 +179,57 @@ export const confirmMedsView: ConfirmMedsView = {
     },
   ],
 };
+
+// Small inline placeholder image so the gallery renders without network access (demo + tests).
+// A single flat-color SVG data-URI reused as both thumbnail and full photo.
+function placeholderPhoto(label: string, bg: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320"><rect width="320" height="320" fill="${bg}"/><text x="160" y="170" font-family="sans-serif" font-size="32" fill="#ffffff" text-anchor="middle">${label}</text></svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+}
+
+// Demo-fallback fixture for the caregiver photo gallery (WP2). One photo per dose_event.
+export const dosePhotos: DosePhoto[] = [
+  {
+    doseEventId: 'de-morning',
+    doseLabel: '아침약',
+    takenAtLabel: '오전 8:32',
+    status: 'done',
+    method: 'voice',
+    reviewStatus: 'reviewed',
+    photoUrl: placeholderPhoto('아침약', '#3b5bdb'),
+    thumbnailUrl: placeholderPhoto('아침약', '#3b5bdb'),
+  },
+  {
+    doseEventId: 'de-lunch',
+    doseLabel: '점심약',
+    takenAtLabel: '오후 12:08',
+    status: 'done',
+    method: 'button',
+    reviewStatus: 'pending',
+    photoUrl: placeholderPhoto('점심약', '#1c8f4d'),
+    thumbnailUrl: placeholderPhoto('점심약', '#1c8f4d'),
+  },
+  {
+    doseEventId: 'de-dinner',
+    doseLabel: '저녁약',
+    takenAtLabel: '오후 7:41',
+    status: 'done',
+    method: 'button',
+    reviewStatus: 'flagged',
+    photoUrl: placeholderPhoto('저녁약', '#b45309'),
+    thumbnailUrl: placeholderPhoto('저녁약', '#b45309'),
+  },
+  {
+    doseEventId: 'de-morning-prev',
+    doseLabel: '아침약',
+    takenAtLabel: '어제 오전 8:29',
+    status: 'done',
+    method: 'voice',
+    reviewStatus: 'reviewed',
+    photoUrl: placeholderPhoto('아침약', '#4f6bed'),
+    thumbnailUrl: placeholderPhoto('아침약', '#4f6bed'),
+  },
+];
 
 export const inviteLink: InviteLink = {
   token: 'demo-invite-token',

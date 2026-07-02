@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Card, ErrorNote, Loading } from '../../components/ui';
-import { fetchCaregiverBoard } from '../../lib/api';
+import { fetchCaregiverBoard, fetchCaregiverPhotos } from '../../lib/api';
 import { loadSession } from '../../lib/session';
 import { useSharedDosePhoto } from '../../lib/shareStore';
 import { useAsync } from '../../lib/useAsync';
@@ -18,7 +18,10 @@ export function CaregiverDashboardPage() {
   const careGroupId = loadSession()?.careGroupId;
   const loadBoard = useCallback(() => fetchCaregiverBoard({ careGroupId }), [careGroupId]);
   const { data, loading, error } = useAsync(loadBoard);
+  const loadPhotos = useCallback(() => fetchCaregiverPhotos(careGroupId), [careGroupId]);
+  const { data: photos } = useAsync(loadPhotos);
   const photo = useSharedDosePhoto();
+  const recentPhotos = (photos ?? []).slice(0, 3);
 
   if (loading) {
     return <Loading label="복약 상태를 불러오는 중…" />;
@@ -121,6 +124,40 @@ export function CaregiverDashboardPage() {
           <p className="mt-2 text-sm text-stone-400">
             {photo.doseLabel} · {photo.at} 전송됨
           </p>
+        </Card>
+      )}
+
+      {recentPhotos.length > 0 && (
+        <Card className="p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-bold text-stone-900">📷 최근 복약 사진</h2>
+            <button
+              type="button"
+              onClick={() => navigate('/caregiver/photos')}
+              className="text-sm font-semibold text-brand-600"
+            >
+              전체 보기 ›
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {recentPhotos.map((item) => (
+              <button
+                key={item.doseEventId}
+                type="button"
+                onClick={() => navigate('/caregiver/photos')}
+                className="flex flex-col overflow-hidden rounded-2xl border border-stone-100 text-left"
+                aria-label={`${item.doseLabel} 사진 보기`}
+              >
+                <img
+                  src={item.thumbnailUrl}
+                  alt={`${item.doseLabel} 복약 사진`}
+                  className="aspect-square w-full object-cover"
+                />
+                <span className="px-2 py-1.5 text-xs font-semibold text-stone-500">{item.doseLabel}</span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-2 text-xs text-stone-400">사진은 참고용이며 복용 증명은 아니에요.</p>
         </Card>
       )}
 

@@ -164,6 +164,28 @@ export type ConfirmMedsView = {
   schedules: ConfirmMedsSchedule[];
 };
 
+// --- Caregiver photo gallery (BE contract: GET /care-groups/{id}/photos) ---
+// Caregiver review state for a dose photo. Photos are reference-only, not proof of intake.
+export type ReviewStatus = 'pending' | 'reviewed' | 'flagged';
+
+// One photo per dose event (WP2 decision: 1 photo per dose_event).
+export type DosePhoto = {
+  doseEventId: string;
+  doseLabel: string; // '아침약'
+  takenAtLabel: string; // '오전 8:32'
+  status: DoseStatus; // 'done' | 'upcoming' | 'missed'
+  method?: ConfirmMethod; // 'voice' | 'button'
+  reviewStatus: ReviewStatus;
+  photoUrl: string;
+  thumbnailUrl: string;
+};
+
+// GET /care-groups/{id}/photos response.
+export type CaregiverPhotos = {
+  careGroupId: string;
+  photos: DosePhoto[];
+};
+
 // --- Prescription create (BE contract: POST /seniors/{id}/prescriptions) ---
 // String unions mirror the BE enums; only the values the FE actually sends/reads are kept.
 export type DoseSlot = 'MORNING' | 'LUNCH' | 'DINNER' | 'BEDTIME' | 'CUSTOM';

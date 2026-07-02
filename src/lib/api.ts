@@ -4,6 +4,7 @@ import {
   caregiverBoard,
   changeLog as changeLogFixture,
   confirmMedsView as confirmMedsViewFixture,
+  dosePhotos as dosePhotosFixture,
   inviteLink as inviteLinkFixture,
   mealTimes as mealTimesFixture,
   notificationSettings as notificationSettingsFixture,
@@ -13,14 +14,17 @@ import { loadSession, saveSession } from './session';
 import type {
   CareGroup,
   CaregiverBoard,
+  CaregiverPhotos,
   ChangeLog,
   ConfirmMedsView,
   CreateCareGroupRequest,
   CreatePrescriptionRequest,
+  DosePhoto,
   InviteLink,
   MealTimes,
   NotificationSettings,
   PrescriptionResponse,
+  ReviewStatus,
   SeniorDay,
   UpdateMealTimesRequest,
 } from './types';
@@ -284,6 +288,45 @@ export async function saveNotificationSettings(
     actorUserId,
     ...settings,
   });
+}
+
+// --- Caregiver photo gallery (real endpoints, demo-fallback) ---
+// GET /care-groups/{id}/photos?from=&to= — dose photos for the caregiver review gallery.
+export async function fetchCaregiverPhotos(
+  careGroupId: string | undefined,
+  params: { from?: string; to?: string } = {},
+): Promise<DosePhoto[]> {
+  const id = careGroupId ?? 'latest';
+  const view = await load<CaregiverPhotos>(
+    `/care-groups/${id}/photos${query(params)}`,
+    { careGroupId: id, photos: dosePhotosFixture },
+  );
+  return view.photos;
+}
+
+// PATCH /dose-events/{id}/photo:review — caregiver marks a photo reviewed or flagged.
+export async function reviewDosePhoto(
+  doseEventId: string,
+  reviewStatus: Exclude<ReviewStatus, 'pending'>,
+  actorUserId: string,
+): Promise<DosePhoto> {
+  const fallback: DosePhoto = {
+    ...(dosePhotosFixture.find((photo) => photo.doseEventId === doseEventId) ?? dosePhotosFixture[0]),
+    doseEventId,
+    reviewStatus,
+  };
+  if (env.demoMode) {
+    return fallback;
+  }
+  try {
+    return await sendJson<DosePhoto>('PATCH', `/dose-events/${doseEventId}/photo:review`, {
+      actorUserId,
+      reviewStatus,
+    });
+  } catch {
+    // Optimistic fallback so the review flow works before BE is deployed.
+    return fallback;
+  }
 }
 
 function normalizePhone(phone: string): string {
