@@ -2,14 +2,13 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DemoImage, PrimaryButton, SeniorActionZone, SeniorHomeButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
-import { detailGuideUrl, type DispensingType } from '../../lib/guide';
+import { GUIDE_AUDIO } from '../../lib/guide';
 import { useCaregiverExitAlert } from '../../lib/useCaregiverExitAlert';
 
 export function DosePage() {
   const navigate = useNavigate();
   const { nextDose } = seniorDay;
   const pouchName = nextDose.label.split('·')[1]?.trim().replace(/ 봉지$/, '') ?? `${nextDose.packetNo}번`;
-  const dispensingType = (nextDose as { dispensingType?: DispensingType }).dispensingType ?? 'pouch';
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useCaregiverExitAlert(true, {
@@ -40,7 +39,7 @@ export function DosePage() {
       <div className="flex items-center bg-brand-50 px-5 py-3">
         <span className="flex items-center gap-2 text-base font-semibold text-brand-700">🔊 음성 안내 중</span>
       </div>
-      <audio ref={audioRef} src={detailGuideUrl(dispensingType)} preload="auto" />
+      <audio ref={audioRef} src={GUIDE_AUDIO.detailEnvelope} preload="auto" />
 
       <div className="flex min-h-0 flex-1 flex-col items-center overflow-y-auto px-[var(--gjb-screen-x)] pt-5 text-center">
         <h1 className="text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">지금 드실 약이에요</h1>
