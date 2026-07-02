@@ -14,7 +14,8 @@ export function SeniorHomePage() {
     return <ErrorNote message={error ?? '복약 정보를 불러오지 못했어요.'} />;
   }
 
-  const { dateLabel, nextDose, doses } = data;
+  const { dateLabel, nextDose, doses, refill, weather } = data;
+  const rainy = weather.condition === 'rain';
 
   async function triggerReminder() {
     try {
@@ -40,6 +41,9 @@ export function SeniorHomePage() {
         <div>
           <p className="text-sm font-medium text-stone-400">{dateLabel}</p>
           <h1 className="mt-1 text-2xl font-extrabold text-stone-900">오늘 먹을 약</h1>
+          <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1 text-sm font-semibold text-brand-700">
+            {weather.region} {rainy ? '☔' : '☀️'} {weather.label} {weather.tempC}°
+          </span>
         </div>
         <button
           type="button"
@@ -53,6 +57,38 @@ export function SeniorHomePage() {
           </svg>
         </button>
       </header>
+
+      {refill.depleted && (
+        <section className="rounded-3xl border border-brand-100 bg-brand-50 p-5 shadow-sm">
+          <h2 className="text-2xl font-extrabold text-stone-900">약이 다 떨어졌어요 💊</h2>
+          <p className="mt-1 text-lg font-semibold text-brand-700">재처방이 필요해요</p>
+          <div className="mt-4 rounded-2xl bg-white px-4 py-3">
+            <p className="text-lg font-bold text-stone-900">🏥 {refill.hospitalName}</p>
+            <p className="mt-1 text-base text-stone-600">{refill.hospitalAddress}</p>
+          </div>
+          {rainy && (
+            <p className="mt-3 rounded-2xl bg-white px-4 py-3 text-base font-semibold text-stone-700">
+              ☔ 오늘 제주에 비가 와요 — 병원 방문은 내일로 권해요.
+            </p>
+          )}
+          <div className="mt-4 flex gap-3">
+            <a
+              href={`tel:${refill.hospitalPhone.replace(/-/g, '')}`}
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-brand-600 py-4 text-lg font-bold text-white shadow-sm"
+            >
+              📞 전화하기
+            </a>
+            <button
+              type="button"
+              // 지도 연동은 데모 범위 밖(placeholder). 실제로는 병원 위치 지도 앱/웹으로 연결.
+              onClick={() => {}}
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl border-2 border-stone-200 bg-white py-4 text-lg font-bold text-stone-700"
+            >
+              🗺 지도
+            </button>
+          </div>
+        </section>
+      )}
 
       <section className="rounded-3xl border border-stone-100 bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between">

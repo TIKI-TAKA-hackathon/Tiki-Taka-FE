@@ -38,6 +38,26 @@ export type PillTracking = {
 export type WeekDayStatus = 'done' | 'warn' | 'none';
 export type WeekDay = { label: string; status: WeekDayStatus };
 
+// 약 소진 → 병원 재처방 안내 (mock-only, demo fixture).
+export type RefillStatus = {
+  daysTotal: number;
+  daysRemaining: number;
+  depleted: boolean;
+  hospitalName: string;
+  hospitalAddress: string;
+  hospitalPhone: string;
+  pharmacyName: string;
+};
+
+// 제주 우천 알림 (mock weather, demo fixture).
+export type Weather = {
+  region: '제주';
+  condition: 'rain' | 'clear';
+  label: string; // '비' / '맑음'
+  tempC: number;
+  advisory: string;
+};
+
 export type ConfirmLog = {
   doseLabel: string;
   status: DoseStatus;
@@ -58,6 +78,8 @@ export type SeniorDay = {
   dateLabel: string; // '2026년 7월 2일 목요일'
   nextDose: NextDose;
   doses: Dose[];
+  refill: RefillStatus;
+  weather: Weather;
 };
 
 export type CaregiverBoard = {
