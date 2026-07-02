@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PrimaryButton } from '../../components/ui';
+import { DemoImage, PrimaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import { GUIDE_AUDIO, detailGuideUrl, type DispensingType } from '../../lib/guide';
 
@@ -60,7 +60,27 @@ export function DosePage() {
         <p className="mt-2 text-base text-stone-400">{nextDose.baselineNote}</p>
 
         <div className="mt-5 flex flex-col items-center rounded-3xl border-2 border-dashed border-brand-200 bg-brand-50 px-10 py-6">
-          <span className="text-6xl">💊</span>
+          {nextDose.pills.some((pill) => pill.image) ? (
+            <div className="flex items-center gap-2">
+              {nextDose.pills.map((pill) =>
+                pill.image ? (
+                  <DemoImage
+                    key={pill.id}
+                    src={pill.image}
+                    alt={pill.name}
+                    className="h-14 w-14 rounded-2xl object-cover"
+                    fallback={<span className="text-6xl">💊</span>}
+                  />
+                ) : (
+                  <span key={pill.id} className="text-6xl">
+                    💊
+                  </span>
+                ),
+              )}
+            </div>
+          ) : (
+            <span className="text-6xl">💊</span>
+          )}
           <span className="mt-2 flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 text-base font-bold text-white">
             {nextDose.packetNo}
           </span>

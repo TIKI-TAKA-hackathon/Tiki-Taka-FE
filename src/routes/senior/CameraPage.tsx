@@ -1,8 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BackHeader, PrimaryButton, SecondaryButton } from '../../components/ui';
+import { BackHeader, DemoImage, PrimaryButton, SecondaryButton } from '../../components/ui';
+import { DEMO_DAYS } from '../../lib/demoImages';
 import { seniorDay } from '../../lib/mock';
 import { shareDosePhoto } from '../../lib/shareStore';
+
+// Preset demo photos for the "예시 봉지 사진" quick-pick. All demo images are emptied
+// medicine pouches; tapping one selects it as the photo (its src is a /mock/... path)
+// and enters the same self-check step. day1/day4 are both 아침 pouch shots.
+const DEMO_PRESETS = [
+  { src: DEMO_DAYS[0].path, label: '아침 봉지' },
+  { src: DEMO_DAYS[3].path, label: '아침 봉지' },
+] as const;
 
 export function CameraPage() {
   const navigate = useNavigate();
@@ -101,6 +110,14 @@ export function CameraPage() {
     navigate('/senior/done');
   }
 
+  // Quick-pick a preset demo photo (a /mock/... path). Stops the camera and enters
+  // the same self-check step as a captured/uploaded photo.
+  function pickPreset(src: string) {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    setError(null);
+    setPhoto(src);
+  }
+
   function retake() {
     setPhoto(null);
     setError(null);
@@ -131,10 +148,15 @@ export function CameraPage() {
           <h1 className="mt-1 text-2xl font-extrabold text-stone-900">이 사진이 약이 맞나요?</h1>
           <p className="mt-1 text-base text-stone-500">맞으면 가족에게 보여드릴게요.</p>
           <div className="mt-4 flex-1">
-            <img
+            <DemoImage
               src={photo}
               alt="넣은 약 봉지 사진"
               className="aspect-[3/4] w-full rounded-3xl object-cover"
+              fallback={
+                <div className="flex aspect-[3/4] w-full items-center justify-center rounded-3xl bg-stone-100 p-6 text-center text-base font-semibold text-stone-400">
+                  예시 사진을 아직 준비 중이에요.
+                </div>
+              }
             />
           </div>
           <div className="mt-4 space-y-3">
@@ -180,6 +202,34 @@ export function CameraPage() {
             <SecondaryButton size="lg" onClick={() => albumInputRef.current?.click()}>
               🖼 앨범에서 선택
             </SecondaryButton>
+
+            <div className="pt-1">
+              <p className="text-sm font-semibold text-stone-400">예시 봉지 사진</p>
+              <div className="mt-2 flex gap-2">
+                {DEMO_PRESETS.map((preset, index) => (
+                  <button
+                    key={preset.src}
+                    type="button"
+                    onClick={() => pickPreset(preset.src)}
+                    aria-label={`예시 ${preset.label} 사진 ${index + 1}`}
+                    className="flex flex-1 flex-col items-center gap-1 overflow-hidden rounded-2xl border-2 border-stone-200 p-2"
+                  >
+                    <DemoImage
+                      src={preset.src}
+                      alt={`예시 ${preset.label} 사진 ${index + 1}`}
+                      className="h-16 w-full rounded-xl object-cover"
+                      fallback={
+                        <span className="flex h-16 w-full items-center justify-center rounded-xl bg-stone-100 text-2xl">
+                          💊
+                        </span>
+                      }
+                    />
+                    <span className="text-sm font-semibold text-stone-600">{preset.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button
               type="button"
               onClick={() => navigate('/senior/done')}

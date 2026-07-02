@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle, PrimaryButton } from '../../components/ui';
+import { CheckCircle, DemoImage, PrimaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
 import { useSharedDosePhoto } from '../../lib/shareStore';
 import { GUIDE_AUDIO } from '../../lib/guide';
@@ -32,7 +32,7 @@ export function DonePage() {
         <p className="mt-3 text-xl text-stone-500">저녁약을 드셨어요.</p>
         {photo && (
           <div className="mt-5 flex w-full flex-col items-center">
-            <img
+            <DemoImage
               src={photo.dataUrl}
               alt="가족에게 보낸 약 사진"
               className="h-40 w-40 rounded-2xl object-cover shadow-sm"

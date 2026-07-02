@@ -2,7 +2,7 @@ export type DoseStatus = 'done' | 'upcoming' | 'missed';
 export type ConfirmMethod = 'voice' | 'button';
 
 export type PillShape = 'round' | 'oval' | 'capsule';
-export type Pill = { id: string; name: string; shape: PillShape; note: string };
+export type Pill = { id: string; name: string; shape: PillShape; note: string; image?: string };
 
 export type Dose = {
   id: string;

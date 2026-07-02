@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { BackHeader, PrimaryButton } from '../../components/ui';
+import { BackHeader, DemoImage, PrimaryButton } from '../../components/ui';
 import { seniorDay } from '../../lib/mock';
-import type { PillShape } from '../../lib/types';
+import type { Pill, PillShape } from '../../lib/types';
 
 function PillIcon({ shape }: { shape: PillShape }) {
   if (shape === 'round') {
@@ -28,6 +28,22 @@ function PillIcon({ shape }: { shape: PillShape }) {
   );
 }
 
+// Shows the pill photo when the demo image exists, otherwise falls back to the
+// shape placeholder so a missing file never breaks the list.
+function PillThumb({ pill }: { pill: Pill }) {
+  if (!pill.image) {
+    return <PillIcon shape={pill.shape} />;
+  }
+  return (
+    <DemoImage
+      src={pill.image}
+      alt={pill.name}
+      className="h-14 w-14 shrink-0 rounded-2xl object-cover"
+      fallback={<PillIcon shape={pill.shape} />}
+    />
+  );
+}
+
 export function MedicationPhotoPage() {
   const navigate = useNavigate();
   const { pills } = seniorDay.nextDose;
@@ -48,7 +64,7 @@ export function MedicationPhotoPage() {
               key={pill.id}
               className="flex items-center gap-4 rounded-3xl border border-stone-100 bg-white p-4 shadow-sm"
             >
-              <PillIcon shape={pill.shape} />
+              <PillThumb pill={pill} />
               <div>
                 <p className="text-xl font-bold text-stone-900">{pill.name}</p>
                 <p className="mt-0.5 text-base text-stone-400">{pill.note}</p>
