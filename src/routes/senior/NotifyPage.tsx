@@ -25,7 +25,11 @@ export function NotifyPage() {
           className="w-full rounded-3xl bg-white/85 p-5 text-left shadow-2xl backdrop-blur-md"
         >
           <div className="flex items-center gap-2 text-sm font-semibold text-stone-500">
-            <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-brand-100 text-base">💊</span>
+            <img
+              src="/brand/고찌봄 기본.svg"
+              alt="고찌봄"
+              className="gjb-mascot-muted h-6 w-6 rounded-lg object-contain shadow-[var(--gjb-shadow-soft)]"
+            />
             <span>고찌봄</span>
             <span className="ml-auto font-medium text-stone-400">지금</span>
           </div>

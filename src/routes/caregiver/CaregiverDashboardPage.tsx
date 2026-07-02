@@ -10,9 +10,9 @@ import { useAsync } from '../../lib/useAsync';
 import type { WeekDayStatus } from '../../lib/types';
 
 const WEEK_DOT: Record<WeekDayStatus, string> = {
-  done: 'bg-success-100 text-success-600',
-  warn: 'bg-warn-100 text-warn-700',
-  none: 'bg-stone-100 text-stone-300',
+  done: 'bg-done-bg text-done',
+  warn: 'bg-check-bg text-check', // ⚠ 미확인 = 주의(check), 경고 아님 (안심 원칙)
+  none: 'bg-basalt-200 text-basalt-400',
 };
 
 export function CaregiverDashboardPage() {
@@ -258,8 +258,8 @@ export function CaregiverDashboardPage() {
       </Card>
 
       {alert && (
-        <div className="rounded-3xl border border-warn-100 bg-warn-50 p-4">
-          <h2 className="flex items-center gap-1.5 text-base font-bold text-warn-700">
+        <div className="rounded-3xl bg-check-bg p-4 shadow-[var(--gjb-shadow-soft)]">
+          <h2 className="flex items-center gap-1.5 text-base font-bold text-check">
             ⚠ 확인 필요 — {alert.doseLabel}
           </h2>
           <p className="mt-1 text-sm text-stone-600">
@@ -281,7 +281,7 @@ export function CaregiverDashboardPage() {
             <button
               type="button"
               onClick={() => navigate('/caregiver/timeline')}
-              className="flex-1 rounded-2xl bg-warn-100 py-3 text-sm font-bold text-warn-700"
+              className="flex-1 rounded-2xl bg-check-bg py-3 text-sm font-bold text-check"
             >
               🕐 타임라인 보기
             </button>

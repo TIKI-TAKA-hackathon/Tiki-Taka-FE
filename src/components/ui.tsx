@@ -1,15 +1,17 @@
 import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export type BadgeTone = 'success' | 'neutral' | 'meal' | 'next' | 'info' | 'warn';
+export type BadgeTone = 'success' | 'neutral' | 'meal' | 'next' | 'info' | 'warn' | 'check';
 
+// 상태색은 색만으로 구분하지 않고 글자·아이콘을 병기한다 (5·9장 안심/접근성 원칙).
 const TONES: Record<BadgeTone, string> = {
-  success: 'bg-success-100 text-success-700',
-  neutral: 'bg-stone-100 text-stone-500',
-  meal: 'bg-success-50 text-success-700',
-  next: 'bg-amber-100 text-amber-800',
-  info: 'bg-brand-50 text-brand-700',
-  warn: 'bg-warn-100 text-warn-700',
+  success: 'bg-done-bg text-done', // 완료 ✓
+  neutral: 'bg-basalt-200 text-ink',
+  meal: 'bg-done-bg text-done',
+  next: 'bg-citrus-wash text-ink',
+  info: 'bg-brand-50 text-sea-deep',
+  warn: 'bg-delay-bg text-delay', // 지연 ⏳
+  check: 'bg-check-bg text-check', // 확인 필요 ⚠
 };
 
 export function Badge({ tone = 'neutral', children }: { tone?: BadgeTone; children: ReactNode }) {
@@ -52,7 +54,9 @@ export function DemoImage({ src, alt, className, fallback = null }: DemoImagePro
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <section className={`rounded-3xl border border-stone-100 bg-white shadow-sm ${className}`}>
+    <section
+      className={`rounded-[var(--gjb-radius-card)] bg-surface shadow-[var(--gjb-shadow-soft)] ${className}`}
+    >
       {children}
     </section>
   );
@@ -62,8 +66,8 @@ export function CheckCircle({ size = 'lg' }: { size?: 'sm' | 'lg' }) {
   const box = size === 'lg' ? 'h-24 w-24' : 'h-6 w-6';
   const icon = size === 'lg' ? 'h-11 w-11' : 'h-4 w-4';
   return (
-    <span className={`inline-flex ${box} items-center justify-center rounded-full bg-success-100`}>
-      <svg className={`${icon} text-success-600`} viewBox="0 0 24 24" fill="none" aria-hidden>
+    <span className={`inline-flex ${box} items-center justify-center rounded-full bg-done-bg`}>
+      <svg className={`${icon} text-done`} viewBox="0 0 24 24" fill="none" aria-hidden>
         <path
           d="M5 13l4 4L19 7"
           stroke="currentColor"
@@ -84,21 +88,21 @@ export function BackHeader({ title }: { title: string }) {
         type="button"
         onClick={() => navigate(-1)}
         aria-label="뒤로"
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 text-stone-600"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-basalt-300 text-ink-soft"
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
           <path d="M15 5l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </button>
-      <h1 className="text-xl font-bold text-stone-900">{title}</h1>
+      <h1 className="text-xl font-bold text-ink">{title}</h1>
     </div>
   );
 }
 
 export function Loading({ label = '불러오는 중…' }: { label?: string }) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-3 py-16 text-stone-400">
-      <span className="h-8 w-8 animate-spin rounded-full border-2 border-stone-200 border-t-brand-600" />
+    <div className="flex flex-1 flex-col items-center justify-center gap-3 py-16 text-ink-soft">
+      <span className="h-8 w-8 animate-spin rounded-full border-2 border-basalt-300 border-t-sea-deep" />
       <p className="text-base">{label}</p>
     </div>
   );
@@ -161,9 +165,10 @@ export function TextField({
 type ButtonTone = 'brand' | 'success';
 type ButtonSize = 'md' | 'lg';
 
+// 캡슐 버튼 높이: 어르신 주 동작(lg) ≥ --gjb-elder-tap(64px), 기본(md) ≥ --gjb-tap(48px).
 const BUTTON_SIZE: Record<ButtonSize, string> = {
-  md: 'py-4 text-lg',
-  lg: 'py-5 text-xl',
+  md: 'min-h-[var(--gjb-tap)] py-4 text-lg',
+  lg: 'min-h-[var(--gjb-elder-tap)] py-5 text-xl',
 };
 
 type PrimaryButtonProps = {
@@ -175,21 +180,20 @@ type PrimaryButtonProps = {
   disabled?: boolean;
 };
 
+// 주 버튼 = 감귤 2톤 캡슐 + 은은한 상단 광택 + 잉크 글자 (7장①). 흰 글자 금지.
 export function PrimaryButton({
   children,
   onClick,
   type = 'button',
-  tone = 'brand',
   size = 'md',
   disabled = false,
 }: PrimaryButtonProps) {
-  const background = tone === 'success' ? 'bg-success-600' : 'bg-brand-600';
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`flex w-full items-center justify-center gap-2 rounded-2xl ${background} ${BUTTON_SIZE[size]} font-bold text-white shadow-sm transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40`}
+      className={`gjb-pill-btn flex w-full items-center justify-center gap-2 ${BUTTON_SIZE[size]} font-bold transition active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40`}
     >
       {children}
     </button>
@@ -203,12 +207,13 @@ type SecondaryButtonProps = {
   size?: ButtonSize;
 };
 
+// 보조 버튼 = 현무암 2톤 캡슐 + 잉크 글자 (7장①).
 export function SecondaryButton({ children, onClick, type = 'button', size = 'md' }: SecondaryButtonProps) {
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-stone-200 ${BUTTON_SIZE[size]} font-bold text-stone-700 transition active:scale-[0.99]`}
+      className={`gjb-pill-btn gjb-pill-btn--secondary flex w-full items-center justify-center gap-2 ${BUTTON_SIZE[size]} font-bold transition active:scale-[0.99]`}
     >
       {children}
     </button>

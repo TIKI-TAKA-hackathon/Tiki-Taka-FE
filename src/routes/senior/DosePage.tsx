@@ -105,7 +105,7 @@ export function DosePage() {
         <button
           type="button"
           onClick={sendHelp}
-          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-red-200 py-4 text-lg font-bold text-red-500"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-check-bg py-4 text-lg font-bold text-check"
         >
           📞 도와주세요
         </button>

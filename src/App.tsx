@@ -19,13 +19,14 @@ import { LoginPage } from './routes/senior/LoginPage';
 import { NotifyPage } from './routes/senior/NotifyPage';
 import { OnboardingPage } from './routes/senior/OnboardingPage';
 import { RegisterPage } from './routes/senior/RegisterPage';
+import { SplashPage } from './routes/SplashPage';
 import { SeniorHomePage } from './routes/senior/SeniorHomePage';
 
 export default function App() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
-        <Route index element={<Navigate to="/onboarding" replace />} />
+        <Route index element={<SplashPage />} />
         <Route path="onboarding" element={<OnboardingPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="senior" element={<Navigate to="/senior/today" replace />} />
