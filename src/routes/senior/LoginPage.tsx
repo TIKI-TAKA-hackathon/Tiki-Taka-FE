@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BackHeader, PrimaryButton, TextField } from '../../components/ui';
 import { requestOtp, verifyOtp } from '../../lib/api';
+import { env } from '../../lib/env';
 import { digitsOnly, formatPhone, isValidPhone } from '../../lib/phone';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const [phone, setPhone] = useState('');
-  const [code, setCode] = useState('');
+  // Demo mode pre-fills the caregiver phone + OTP so login is 1-tap.
+  const [phone, setPhone] = useState(env.demoMode ? '010-1234-5678' : '');
+  const [code, setCode] = useState(env.demoMode ? '123456' : '');
   const [error, setError] = useState<string | null>(null);
   const [codeSent, setCodeSent] = useState(false);
   const [busy, setBusy] = useState(false);

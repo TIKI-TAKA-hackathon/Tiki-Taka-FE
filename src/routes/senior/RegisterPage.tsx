@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PrimaryButton, TextField } from '../../components/ui';
 import { findCareGroupBySeniorPhone, getCareGroup, requestOtp, verifyOtp } from '../../lib/api';
+import { env } from '../../lib/env';
 import { digitsOnly, formatPhone, isValidPhone } from '../../lib/phone';
 import { loadSession, saveSession } from '../../lib/session';
 
@@ -10,8 +11,9 @@ type Step = 'phone' | 'otp';
 export function RegisterPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('phone');
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
+  // Demo mode pre-fills the senior's registered phone + OTP so the flow is 1-tap.
+  const [phone, setPhone] = useState(env.demoMode ? '010-9876-5432' : '');
+  const [otp, setOtp] = useState(env.demoMode ? '123456' : '');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
