@@ -1,8 +1,10 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AppLayout } from './components/AppLayout';
 import { CaregiverDashboardPage } from './routes/caregiver/CaregiverDashboardPage';
+import { CaregiverSignupPage } from './routes/caregiver/CaregiverSignupPage';
 import { ManagePage } from './routes/caregiver/ManagePage';
 import { PillDetailPage } from './routes/caregiver/PillDetailPage';
+import { SettingsPage } from './routes/caregiver/SettingsPage';
 import { TimelinePage } from './routes/caregiver/TimelinePage';
 import { AlarmPage } from './routes/senior/AlarmPage';
 import { AlertsPage } from './routes/senior/AlertsPage';
@@ -22,6 +24,7 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/onboarding" replace />} />
         <Route path="onboarding" element={<OnboardingPage />} />
+        <Route path="login" element={<LoginPage />} />
         <Route path="senior" element={<AlarmPage />} />
         <Route path="senior/today" element={<SeniorHomePage />} />
         <Route path="senior/register" element={<RegisterPage />} />
@@ -30,10 +33,12 @@ export default function App() {
         <Route path="senior/done" element={<DonePage />} />
         <Route path="senior/photo" element={<MedicationPhotoPage />} />
         <Route path="senior/alerts" element={<AlertsPage />} />
-        <Route path="senior/login" element={<LoginPage />} />
+        <Route path="senior/login" element={<Navigate to="/login" replace />} />
         <Route path="senior/alarm" element={<AlarmPage />} />
         <Route path="senior/camera" element={<CameraPage />} />
         <Route path="caregiver" element={<CaregiverDashboardPage />} />
+        <Route path="caregiver/signup" element={<CaregiverSignupPage />} />
+        <Route path="caregiver/settings" element={<SettingsPage />} />
         <Route path="caregiver/pills" element={<PillDetailPage />} />
         <Route path="caregiver/timeline" element={<TimelinePage />} />
         <Route path="caregiver/manage" element={<ManagePage />} />

@@ -14,7 +14,7 @@ export function OnboardingPage() {
         <p className="mt-3 text-lg text-stone-500">가족이 함께 챙기는 복약 안부</p>
 
         <div className="mt-10 w-full space-y-3">
-          <PrimaryButton onClick={() => navigate('/caregiver')}>보호자·복지사로 시작하기</PrimaryButton>
+          <PrimaryButton onClick={() => navigate('/caregiver/signup')}>보호자·복지사로 시작하기</PrimaryButton>
           <SecondaryButton onClick={() => navigate('/senior/register')}>어르신 기기로 시작하기</SecondaryButton>
         </div>
       </div>
@@ -22,7 +22,7 @@ export function OnboardingPage() {
       <div className="mt-6 flex flex-col items-center">
         <button
           type="button"
-          onClick={() => navigate('/senior/login')}
+          onClick={() => navigate('/login')}
           className="text-base font-semibold text-stone-500 underline underline-offset-4"
         >
           이미 계정이 있어요 · 로그인

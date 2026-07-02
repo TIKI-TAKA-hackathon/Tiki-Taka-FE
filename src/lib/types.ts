@@ -69,3 +69,78 @@ export type CaregiverBoard = {
   week: WeekDay[];
   alert: EscalationAlert | null;
 };
+
+// --- Care group / membership (BE contract) ---
+export type UserType = 'SENIOR' | 'CAREGIVER';
+export type MemberRole = 'OWNER' | 'FAMILY' | 'SOCIAL_WORKER';
+export type MemberStatus = 'CONNECTED' | 'INVITED' | 'REMOVED';
+
+export type CareGroupUser = {
+  id: string;
+  name: string;
+  userType: UserType;
+};
+
+export type CareGroupMember = {
+  id: string;
+  user: CareGroupUser;
+  role: MemberRole;
+  status: MemberStatus;
+  joinedAt: string | null;
+  isPrimary: boolean;
+  viewerOnly: boolean;
+};
+
+export type CareGroup = {
+  id: string;
+  name: string;
+  senior: CareGroupUser;
+  members: CareGroupMember[];
+};
+
+// POST /care-groups request body.
+export type CreateCareGroupRequest = {
+  name: string;
+  senior: { name: string; phone: string; birthDate?: string };
+  owner: { name: string; phone: string };
+};
+
+// --- Meal times (BE contract, LocalTime 'HH:mm:ss') ---
+export type MealTimes = {
+  seniorId: string;
+  breakfast: string;
+  lunch: string;
+  dinner: string;
+  updatedAt: string | null;
+};
+
+export type UpdateMealTimesRequest = {
+  actorUserId: string;
+  breakfast: string;
+  lunch: string;
+  dinner: string;
+};
+
+// --- Invite links (BE contract) ---
+export type InviteLink = {
+  token: string;
+  expiresAt: string | null;
+  maxUses: number | null;
+  useCount: number;
+};
+
+// --- Change log (BE contract) ---
+export type ChangeLog = {
+  id: string;
+  action: string;
+  actorName: string | null;
+  detail: string | null;
+  createdAt: string;
+};
+
+// --- Notification cadence (mock-only, no BE endpoint yet) ---
+export type NotificationSettings = {
+  enabled: boolean;
+  remindIntervalMin: number;
+  maxRetries: number;
+};

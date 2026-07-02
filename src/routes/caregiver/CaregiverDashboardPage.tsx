@@ -1,6 +1,8 @@
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge, Card, ErrorNote, Loading } from '../../components/ui';
 import { fetchCaregiverBoard } from '../../lib/api';
+import { loadSession } from '../../lib/session';
 import { useSharedDosePhoto } from '../../lib/shareStore';
 import { useAsync } from '../../lib/useAsync';
 import type { WeekDayStatus } from '../../lib/types';
@@ -13,7 +15,9 @@ const WEEK_DOT: Record<WeekDayStatus, string> = {
 
 export function CaregiverDashboardPage() {
   const navigate = useNavigate();
-  const { data, loading, error } = useAsync(fetchCaregiverBoard);
+  const careGroupId = loadSession()?.careGroupId;
+  const loadBoard = useCallback(() => fetchCaregiverBoard({ careGroupId }), [careGroupId]);
+  const { data, loading, error } = useAsync(loadBoard);
   const photo = useSharedDosePhoto();
 
   if (loading) {
@@ -44,13 +48,22 @@ export function CaregiverDashboardPage() {
             <Badge tone="success">가족 {circle.family}명</Badge>
             <Badge tone="info">사회복지사 {circle.social}명</Badge>
           </div>
-          <button
-            type="button"
-            onClick={() => navigate('/caregiver/manage')}
-            className="text-sm font-semibold text-stone-500"
-          >
-            관리 →
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigate('/caregiver/settings')}
+              className="text-sm font-semibold text-stone-500"
+            >
+              설정
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/caregiver/manage')}
+              className="text-sm font-semibold text-stone-500"
+            >
+              관리 →
+            </button>
+          </div>
         </div>
       </header>
 

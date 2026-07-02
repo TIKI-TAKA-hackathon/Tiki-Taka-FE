@@ -1,4 +1,13 @@
-import type { CaregiverBoard, Dose, SeniorDay } from './types';
+import type {
+  CareGroup,
+  CaregiverBoard,
+  ChangeLog,
+  Dose,
+  InviteLink,
+  MealTimes,
+  NotificationSettings,
+  SeniorDay,
+} from './types';
 
 const doses: Dose[] = [
   {
@@ -82,3 +91,77 @@ export const caregiverBoard: CaregiverBoard = {
     steps: ['1차 +5분', '2차 10분', '3차 15분', '에스컬레이션'],
   },
 };
+
+// Demo-fallback fixture for the care group (used when the backend is down or in demo mode).
+export const careGroup: CareGroup = {
+  id: 'demo-group',
+  name: '우리 가족방',
+  senior: { id: 'demo-senior', name: '어머니', userType: 'SENIOR' },
+  members: [
+    {
+      id: 'demo-owner',
+      user: { id: 'demo-owner', name: '김영수', userType: 'CAREGIVER' },
+      role: 'OWNER',
+      status: 'CONNECTED',
+      joinedAt: '2026-06-20T09:00:00',
+      isPrimary: true,
+      viewerOnly: false,
+    },
+    {
+      id: 'demo-family',
+      user: { id: 'demo-family', name: '김지은', userType: 'CAREGIVER' },
+      role: 'FAMILY',
+      status: 'CONNECTED',
+      joinedAt: '2026-06-21T10:00:00',
+      isPrimary: false,
+      viewerOnly: false,
+    },
+    {
+      id: 'demo-social',
+      user: { id: 'demo-social', name: '행복복지관', userType: 'CAREGIVER' },
+      role: 'SOCIAL_WORKER',
+      status: 'CONNECTED',
+      joinedAt: '2026-06-22T11:00:00',
+      isPrimary: false,
+      viewerOnly: true,
+    },
+  ],
+};
+
+export const mealTimes: MealTimes = {
+  seniorId: 'demo-senior',
+  breakfast: '08:00:00',
+  lunch: '12:00:00',
+  dinner: '19:00:00',
+  updatedAt: '2026-06-25T08:00:00',
+};
+
+export const notificationSettings: NotificationSettings = {
+  enabled: true,
+  remindIntervalMin: 10,
+  maxRetries: 3,
+};
+
+export const inviteLink: InviteLink = {
+  token: 'demo-invite-token',
+  expiresAt: null,
+  maxUses: null,
+  useCount: 0,
+};
+
+export const changeLog: ChangeLog[] = [
+  {
+    id: 'log-1',
+    action: 'MEAL_TIMES_UPDATED',
+    actorName: '김영수',
+    detail: '저녁 식사시간을 오후 7:00으로 변경',
+    createdAt: '2026-06-25T08:00:00',
+  },
+  {
+    id: 'log-2',
+    action: 'MEMBER_JOINED',
+    actorName: '김지은',
+    detail: '가족방에 참여',
+    createdAt: '2026-06-21T10:00:00',
+  },
+];
