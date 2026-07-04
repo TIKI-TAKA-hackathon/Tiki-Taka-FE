@@ -59,17 +59,18 @@ describe('senior camera → self-check → done flow', () => {
       fireEvent.click(await screen.findByRole('button', { name: /예시 사진으로 계속/ }));
       await screen.findByRole('heading', { name: '이 사진이 약이 맞나요?' });
       fireEvent.click(screen.getByRole('button', { name: /다시/ }));
-      await waitFor(() =>
-        expect(screen.getByRole('button', { name: /예시 사진으로 계속/ })).toBeInTheDocument(),
-      );
+      if (index < 2) {
+        await waitFor(() =>
+          expect(screen.getByRole('button', { name: /예시 사진으로 계속/ })).toBeInTheDocument(),
+        );
+      }
     }
-
-    fireEvent.click(await screen.findByRole('button', { name: /예시 사진으로 계속/ }));
 
     expect(await screen.findByRole('link', { name: /보호자에게 전화하기/ })).toHaveAttribute(
       'href',
       'tel:01012345678',
     );
+    expect(screen.getByRole('heading', { name: '대표 보호자에게 전화하세요' })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /네, 맞아요/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /다시/ })).not.toBeInTheDocument();
   });

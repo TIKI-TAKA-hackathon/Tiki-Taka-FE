@@ -49,7 +49,7 @@ export function CameraPage() {
       }
     }
 
-    if (!photo) {
+    if (!photo && !shouldCallCaregiver) {
       void start();
     }
 
@@ -58,7 +58,7 @@ export function CameraPage() {
       streamRef.current?.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     };
-  }, [photo]);
+  }, [photo, shouldCallCaregiver]);
 
   function capture() {
     const video = videoRef.current;
@@ -146,11 +146,19 @@ export function CameraPage() {
         </>
       ) : (
         <>
-          <h1 className="text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">약 봉지 사진</h1>
-          <p className="text-base text-stone-500">약 봉지를 사진으로 남겨 보호자에게 보여주세요.</p>
+          <h1 className="text-[length:var(--gjb-senior-subtitle)] font-extrabold leading-snug text-stone-900">
+            {shouldCallCaregiver ? '대표 보호자에게 전화하세요' : '약 봉지 사진'}
+          </h1>
+          <p className="text-base text-stone-500">
+            {shouldCallCaregiver ? '사진이 계속 헷갈리면 보호자가 함께 확인할게요.' : '약 봉지를 사진으로 남겨 보호자에게 보여주세요.'}
+          </p>
 
           <div className="mt-4 min-h-0 flex-1">
-            {error ? (
+            {shouldCallCaregiver ? (
+              <div className="flex h-full min-h-[clamp(16rem,46dvh,18rem)] w-full items-center justify-center rounded-3xl bg-warn-50 p-6 text-center text-base font-semibold text-warn-700">
+                사진을 다시 확인하기 어려우면 대표 보호자에게 바로 전화하세요.
+              </div>
+            ) : error ? (
               <div className="flex h-full min-h-[clamp(16rem,46dvh,18rem)] w-full items-center justify-center rounded-3xl bg-warn-50 p-6 text-center text-base font-semibold text-warn-700">
                 {error}
               </div>
@@ -166,12 +174,18 @@ export function CameraPage() {
           </div>
 
           <SeniorActionZone className="pb-8 pt-4">
-            {!error && (
+            {shouldCallCaregiver ? (
+              <a
+                href={`tel:${CAREGIVER_PHONE}`}
+                className="gjb-pill-btn gjb-senior-action-link flex w-full flex-1 items-center justify-center gap-2 px-5 font-extrabold text-stone-900 transition active:scale-[0.99]"
+              >
+                📞 보호자에게 전화하기
+              </a>
+            ) : !error ? (
               <PrimaryButton size="xl" className="flex-1" onClick={capture}>
                 📷 사진 촬영
               </PrimaryButton>
-            )}
-            {error && (
+            ) : (
               <PrimaryButton size="xl" className="flex-1" onClick={useFallbackPhoto}>
                 📷 예시 사진으로 계속
               </PrimaryButton>
