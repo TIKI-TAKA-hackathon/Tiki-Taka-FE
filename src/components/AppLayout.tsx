@@ -34,15 +34,17 @@ export function AppLayout() {
           <Outlet />
         </div>
         {env.demoMode ? (
-          <div className="pointer-events-none absolute inset-x-0 bottom-1 z-30 flex justify-center px-4">
-            <button
-              type="button"
-              onClick={resetDemo}
-              className="pointer-events-auto rounded-full border border-white/70 bg-white/85 px-3 py-1 text-[11px] font-semibold text-stone-400 shadow-sm backdrop-blur underline-offset-2 hover:text-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sea-deep"
-              aria-label="데모 발표용 초기화 버튼. 처음 화면으로 돌아가기"
-            >
-              데모용 · 처음 화면으로
-            </button>
+          <div className="shrink-0 bg-white/95 px-4 pb-3 pt-2">
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={resetDemo}
+                className="rounded-full border border-white/70 bg-white/85 px-3 py-1 text-[11px] font-semibold text-stone-400 shadow-sm backdrop-blur underline-offset-2 hover:text-stone-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sea-deep"
+                aria-label="데모 발표용 초기화 버튼. 처음 화면으로 돌아가기"
+              >
+                데모용 · 처음 화면으로
+              </button>
+            </div>
           </div>
         ) : null}
       </div>
